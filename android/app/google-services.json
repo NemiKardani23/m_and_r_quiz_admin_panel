@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "623408932792",
+    "project_id": "m-and-r-education",
+    "storage_bucket": "m-and-r-education.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:623408932792:android:d03956d7409ee37642514d",
+        "android_client_info": {
+          "package_name": "com.mr.quiz.m_a"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5tyJqvs1pUdvtRHj2rW34mFqfHRYonCM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:623408932792:android:59621d842d29224542514d",
+        "android_client_info": {
+          "package_name": "com.mr.quiz.m_and_r_"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5tyJqvs1pUdvtRHj2rW34mFqfHRYonCM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:623408932792:android:e37f210ac750eedd42514d",
+        "android_client_info": {
+          "package_name": "com.mreducation.mr_education"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5tyJqvs1pUdvtRHj2rW34mFqfHRYonCM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
