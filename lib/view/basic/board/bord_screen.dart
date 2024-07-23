@@ -72,8 +72,7 @@ class _BordScreenState extends State<BordScreen> {
                               if (board != null &&
                                   boardListData.data!.isNotEmpty) {
                                 boardListData.data?.add(board);
-                                boardListData
-                                    .onUpdate(boardListData.data ?? []);
+
                                 TempDataStore.tempBoardList.value
                                     ?.addAll(boardListData.data ?? []);
                               } else if (board != null) {
@@ -127,8 +126,8 @@ class _BordScreenState extends State<BordScreen> {
             Wrap(
               children: [
                 IconButton(
-                    onPressed: () {
-                      showAdaptiveDialog(
+                    onPressed: () async {
+                      await showAdaptiveDialog(
                           context: context,
                           builder: (builder) {
                             return AddBoardDiloag(
@@ -139,6 +138,7 @@ class _BordScreenState extends State<BordScreen> {
                                     boardListData.data?[index] = board;
                                     TempDataStore.tempBoardList.value?[index] =
                                         board;
+                                    return;
                                   }
                                 });
                               },

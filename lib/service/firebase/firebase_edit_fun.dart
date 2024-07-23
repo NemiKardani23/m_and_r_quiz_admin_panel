@@ -21,7 +21,9 @@ class FirebaseEditFun extends ApiConstant {
         "boardName": bordModel.boardName,
       };
       if (image != null && filename != null) {
-        await FirebaseDeleteFun().deleteImage(bordModel.image!);
+        if(bordModel.image!=null){
+           await FirebaseDeleteFun().deleteImage(bordModel.image!);
+        }
         map.addAll({
           "image": await FirebaseStorageFun()
               .uploadImage(file: image, fileName: board, name: filename)
@@ -47,7 +49,9 @@ class FirebaseEditFun extends ApiConstant {
     try {
       var map = standardModel.toJson();
       if (image != null && filename != null) {
-        await FirebaseDeleteFun().deleteImage(standardModel.image!);
+       if(standardModel.image!=null){
+         await FirebaseDeleteFun().deleteImage(standardModel.image!);
+       }
         map.addAll({
           "image": await FirebaseStorageFun()
               .uploadImage(file: image, fileName: standard, name: filename)
@@ -92,7 +96,9 @@ class FirebaseEditFun extends ApiConstant {
     try {
       var map = subjectModel.toJson();
       if (image != null && filename != null) {
-        await FirebaseDeleteFun().deleteImage(subjectModel.image!);
+        if(subjectModel.image!=null){
+          await FirebaseDeleteFun().deleteImage(subjectModel.image!);
+        }
         map.addAll({
           "image": await FirebaseStorageFun()
               .uploadImage(file: image, fileName: standard, name: filename)
@@ -163,7 +169,9 @@ class FirebaseEditFun extends ApiConstant {
     try {
       var map = chapterModel.toJson();
       if (image != null && filename != null) {
-        await FirebaseDeleteFun().deleteImage(chapterModel.image!);
+        if(chapterModel.image!=null){
+          await FirebaseDeleteFun().deleteImage(chapterModel.image!);
+        }
         map.addAll({
           "image": await FirebaseStorageFun()
               .uploadImage(file: image, fileName: standard, name: filename)

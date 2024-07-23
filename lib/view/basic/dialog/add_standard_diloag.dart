@@ -41,12 +41,13 @@ class _AddStandardDiloagState extends State<AddStandardDiloag> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      scrollable: true,
       backgroundColor: primaryColor,
       titlePadding: 16.horizontal,
       title: MyAppBar(
         heading: widget.standardListModel != null
-            ? "$editStr $boardStr"
-            : "$addStr $boardStr",
+            ? "$editStr $standardStr"
+            : "$addStr $standardStr",
       ),
       content: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: context.width * 0.25),
@@ -100,8 +101,8 @@ class _AddStandardDiloagState extends State<AddStandardDiloag> {
           MyThemeButton(
               isLoadingButton: true,
               buttonText: widget.standardListModel != null
-                  ? "$updateStr $boardStr"
-                  : "$addStr $boardStr",
+                  ? "$updateStr $standardStr"
+                  : "$addStr $standardStr",
               onPressed: () async {
                 try {
                   if (formKey.currentState!.validate()) {

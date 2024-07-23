@@ -106,8 +106,8 @@ class _AddChapterDiloagState extends State<AddChapterDiloag> {
       titlePadding: 16.horizontal,
       title: MyAppBar(
         heading: widget.chapterListModel != null
-            ? "$editStr $subjectStr"
-            : "$addStr $subjectStr",
+            ? "$editStr $chapterStr"
+            : "$addStr $chapterStr",
       ),
       content: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: context.width * 0.25),
@@ -228,6 +228,7 @@ class _AddChapterDiloagState extends State<AddChapterDiloag> {
                     if (widget.chapterListModel != null) {
                       await FirebaseEditFun()
                           .editChapterDetails(
+                            
                         chapterModel: widget.chapterListModel!,
                         newBoardId: newSelectedBoard?.boardId,
                         newStandardId: newSelectedStandard?.standardId,

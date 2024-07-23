@@ -327,10 +327,10 @@ class _ChapterScreenState extends State<ChapterScreen> {
                               appBarTitle: chapter.chapterName ?? "",
                               onPressed: () async {
                                 await FirebaseDeleteFun()
-                                    .deleteSubject(
+                                    .deleteChapter(
                                         chapter.boardId ?? "",
                                         chapter.standardId ?? "",
-                                        chapter.subjectId ?? "",
+                                        chapter.subjectId ?? "",chapter.chapterId??"",
                                         imageUrl: chapter.image)
                                     .whenComplete(() {
                                   NKToast.success(

@@ -72,6 +72,7 @@ class _AddSubjectDiloagState extends State<AddSubjectDiloag> {
     return AlertDialog(
       backgroundColor: primaryColor,
       titlePadding: 16.horizontal,
+      scrollable: true,
       title: MyAppBar(
         heading: widget.subjectListModel != null
             ? "$editStr $subjectStr"
