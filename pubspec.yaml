@@ -60,6 +60,17 @@ dependencies:
   #Responsive Grid
   responsive_grid_list: ^1.4.0
 
+  #Country Code
+  country_code_picker: ^3.0.0
+
+  # #CSC Picker
+  # csc_picker: ^0.2.7
+
+  
+
+  #HTTPs
+  http: ^1.2.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

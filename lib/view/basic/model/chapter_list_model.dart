@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:m_and_r_quiz_admin_panel/utills/datetime/nk_date_utils.dart';
+
 class ChapterListModel {
   String? chapterName;
   String? chapterId;
@@ -17,7 +20,7 @@ class ChapterListModel {
     subjectId = json['subjectId'];
     boardId = json['boardId'];
     image = json['image'];
-    createAt = json['createAt'];
+    createAt = json['createdAt'] is Timestamp ? NKDateUtils.appDisplayDate((json['createdAt'] as Timestamp).toDate()) : json['createdAt'].toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -28,7 +31,7 @@ class ChapterListModel {
     data['subjectId'] = subjectId;
     data['boardId'] = boardId;
     data['image'] = image;
-    data['createAt'] = createAt;
+    data['createdAt'] = createAt;
     return data;
   }
 }

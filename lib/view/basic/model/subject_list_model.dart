@@ -21,8 +21,7 @@ class SubjectListModel {
     subjectId = json['subjectId'].toString();
     boardId = json['boardId'].toString();
     image = json['image'];
-    createAt =
-        NKDateUtils.appDisplayDate((json['createdAt'] as Timestamp).toDate());
+    createAt = json['createdAt'] is Timestamp ? NKDateUtils.appDisplayDate((json['createdAt'] as Timestamp).toDate()) : json['createdAt'].toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -32,7 +31,7 @@ class SubjectListModel {
     data['standardId'] = standardId;
     data['boardId'] = boardId;
     data['image'] = image;
-
+    data['createdAt'] = createAt;
     return data;
   }
 }

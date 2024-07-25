@@ -41,7 +41,7 @@ class _AddBoardDiloagState extends State<AddBoardDiloag> {
             : "$addStr $boardStr",
       ),
       content: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: context.width * 0.25),
+        constraints: BoxConstraints(minWidth: context.isMobile?context.width:context.width * 0.35),
         child: _body(context),
       ),
     );

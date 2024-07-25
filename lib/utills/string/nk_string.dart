@@ -32,6 +32,17 @@ const String areYouSureYouWantToDelete = "Are you sure you want to delete?";
 const String closeStr = "Close";
 const String deleteStr = "Delete";
 
+/// STUDENT
+const String studentStr = "Student";
+const String nameStr = "Name";
+const String numberStr = "Mobile Number";
+const String numberCountryCodeStr = "Country Code";
+const String cityStr = "City";
+const String stateStr = "State";
+const String countryStr = "Country";
+const String imageStr = "Image";
+const String addStudentStr = "Add Student";
+
 abstract final class ErrorStrings {
   static const String noDataFound = "No data found";
   static const String selectImage = "Select Image";

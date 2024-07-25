@@ -67,4 +67,17 @@ class FirebaseDeleteFun extends ApiConstant {
         .delete();
     return;
   }
+  /// STUDENT
+  Future<void> deleteStudent(
+      String studentId,
+      {String? imageUrl}) async {
+    if (imageUrl != null) {
+      await deleteImage(imageUrl);
+    }
+    await _firebaseCloudStorage
+        .collection(student)
+        .doc(studentId)
+        .delete();
+    return;
+  }
 }

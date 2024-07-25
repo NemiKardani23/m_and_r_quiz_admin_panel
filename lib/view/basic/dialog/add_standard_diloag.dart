@@ -50,7 +50,7 @@ class _AddStandardDiloagState extends State<AddStandardDiloag> {
             : "$addStr $standardStr",
       ),
       content: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: context.width * 0.25),
+        constraints: BoxConstraints(minWidth: context.isMobile?context.width:context.width * 0.35),
         child: _body(context),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
+import 'package:m_and_r_quiz_admin_panel/local_storage/temp_data_store/temp_data_store.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -26,19 +27,23 @@ class HomeScreen extends StatelessWidget {
         const Size.square(180),
       ),
       padding: nkRegularPadding,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          MyRegularText(
-            label: "0",
-            fontSize: NkFontSize.headingFont,
-            fontWeight: NkGeneralSize.nkBoldFontWeight,
-          ),
-          const MyRegularText(
-            label: totalStudentStr,
-          )
-        ].addSpaceEveryWidget(space: nkExtraSmallSizedBox),
-      ),
+      child: FutureBuilder(
+          future: TempDataStore.getStudentCount,
+          builder: (context, snapshot) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                MyRegularText(
+                  label: snapshot.data?.toString() ?? "0",
+                  fontSize: NkFontSize.headingFont,
+                  fontWeight: NkGeneralSize.nkBoldFontWeight,
+                ),
+                const MyRegularText(
+                  label: totalStudentStr,
+                )
+              ].addSpaceEveryWidget(space: nkExtraSmallSizedBox),
+            );
+          }),
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:m_and_r_quiz_admin_panel/view/basic/model/board_list_model.dart'
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/chapter_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/standard_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/subject_list_model.dart';
+import 'package:m_and_r_quiz_admin_panel/view/student/model/student_list_model.dart';
 
 class FirebaseGetFun extends ApiConstant {
   FirebaseFirestore storage = FirebaseFirestore.instance;
@@ -188,4 +189,40 @@ class FirebaseGetFun extends ApiConstant {
       return null;
     }
   }
+
+  /// STUDENT
+  Future<List<StudentListModel>?> getStudentList() async {
+    nkDevLog("--------------- GET SUBJECT LIST CALLED");
+    try {
+      return await storage.collection(student).get().then(
+        (value) {
+          return (value.docs as List<QueryDocumentSnapshot>)
+              .map((e) =>
+                  StudentListModel.fromJson(e.data() as Map<String, dynamic>))
+              .toList();
+        },
+      );
+    } on FirebaseException catch (e) {
+      NKToast.error(title: e.message.toString());
+      return null;
+    }
+  }
+
+  Future<StudentListModel?> getStudent(String studentId) async {
+    nkDevLog("--------------- GET STUDENT CALLED");
+    try {
+      return await storage.collection(student).doc(studentId).get().then(
+        (value) {
+          return StudentListModel.fromJson(
+              value.data() as Map<String, dynamic>);
+        },
+      );
+    } on FirebaseException catch (e) {
+      NKToast.error(title: e.message.toString());
+      return null;
+    }
+  }
+
+
+
 }

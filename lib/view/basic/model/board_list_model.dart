@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:m_and_r_quiz_admin_panel/utills/datetime/nk_date_utils.dart';
 
@@ -12,8 +13,7 @@ class BoardListModel {
     boardName = json['boardName'];
     boardId = json['boardId'].toString();
     image = json['image'];
-    createAt =
-        NKDateUtils.appDisplayDate((json['createdAt'] as Timestamp).toDate());
+    createAt = json['createdAt'] is Timestamp ? NKDateUtils.appDisplayDate((json['createdAt'] as Timestamp).toDate()) : json['createdAt'].toString();
   }
 
   Map<String, dynamic> toJson() {

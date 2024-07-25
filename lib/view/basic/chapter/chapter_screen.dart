@@ -282,14 +282,19 @@ class _ChapterScreenState extends State<ChapterScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        MyRegularText(
-                          align: TextAlign.start,
-                          label: chapter.chapterName ?? "",
+                        Flexible(
+                          child: MyRegularText(
+                            align: TextAlign.start,
+                            label: chapter.chapterName ?? "",
+                          ),
                         ),
-                        MyRegularText(
-                          label: chapter.createAt ?? "",
-                          fontSize: NkFontSize.extraSmallFont,
-                          color: secondaryTextColor,
+                        Flexible(
+                          child: MyRegularText(
+                            align: TextAlign.start,
+                            label: chapter.createAt ?? "",
+                            fontSize: NkFontSize.extraSmallFont,
+                            color: secondaryTextColor,
+                          ),
                         )
                       ],
                     ),
@@ -330,7 +335,8 @@ class _ChapterScreenState extends State<ChapterScreen> {
                                     .deleteChapter(
                                         chapter.boardId ?? "",
                                         chapter.standardId ?? "",
-                                        chapter.subjectId ?? "",chapter.chapterId??"",
+                                        chapter.subjectId ?? "",
+                                        chapter.chapterId ?? "",
                                         imageUrl: chapter.image)
                                     .whenComplete(() {
                                   NKToast.success(

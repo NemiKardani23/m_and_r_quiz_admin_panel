@@ -106,17 +106,17 @@ class _LoginScreenState extends State<LoginScreen> {
         nkDevLog("USER DATA CONVERTED : ${value?.toMap()}");
         if (value == null) {
           NKToast.warning(title: ErrorStrings.noDataFound);
-        } else if ((value.email)?.toLowerCase() !=
+        } else if ((value.email)?.toLowerCase() ==
                 (emailController.text).toLowerCase() &&
-            value.password != passwordController.text) {
-          NKToast.warning(title: ErrorStrings.incorrectEmailOrPassword);
-        } else {
+            value.password == passwordController.text) {
           SessionHelper.instance.setLoginData(value).then(
             (value) {
               AppRoutes.navigator
                   .pushReplacementNamed(AppRoutes.dashboardScreen);
             },
           );
+        } else {
+          NKToast.warning(title: ErrorStrings.incorrectEmailOrPassword);
         }
       },
     );

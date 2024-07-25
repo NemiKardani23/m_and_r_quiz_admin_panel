@@ -5,6 +5,7 @@ import 'package:toastification/toastification.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  
   FirebaseInit.init().whenComplete(
     () {
       AppRoutes.routesData();

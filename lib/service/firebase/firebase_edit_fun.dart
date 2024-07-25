@@ -7,6 +7,7 @@ import 'package:m_and_r_quiz_admin_panel/view/basic/model/board_list_model.dart'
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/chapter_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/standard_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/subject_list_model.dart';
+import 'package:m_and_r_quiz_admin_panel/view/student/model/student_list_model.dart';
 
 class FirebaseEditFun extends ApiConstant {
   final FirebaseFirestore _firebaseCloudStorage = FirebaseFirestore.instance;
@@ -21,8 +22,8 @@ class FirebaseEditFun extends ApiConstant {
         "boardName": bordModel.boardName,
       };
       if (image != null && filename != null) {
-        if(bordModel.image!=null){
-           await FirebaseDeleteFun().deleteImage(bordModel.image!);
+        if (bordModel.image != null) {
+          await FirebaseDeleteFun().deleteImage(bordModel.image!);
         }
         map.addAll({
           "image": await FirebaseStorageFun()
@@ -49,9 +50,9 @@ class FirebaseEditFun extends ApiConstant {
     try {
       var map = standardModel.toJson();
       if (image != null && filename != null) {
-       if(standardModel.image!=null){
-         await FirebaseDeleteFun().deleteImage(standardModel.image!);
-       }
+        if (standardModel.image != null) {
+          await FirebaseDeleteFun().deleteImage(standardModel.image!);
+        }
         map.addAll({
           "image": await FirebaseStorageFun()
               .uploadImage(file: image, fileName: standard, name: filename)
@@ -96,7 +97,7 @@ class FirebaseEditFun extends ApiConstant {
     try {
       var map = subjectModel.toJson();
       if (image != null && filename != null) {
-        if(subjectModel.image!=null){
+        if (subjectModel.image != null) {
           await FirebaseDeleteFun().deleteImage(subjectModel.image!);
         }
         map.addAll({
@@ -169,7 +170,7 @@ class FirebaseEditFun extends ApiConstant {
     try {
       var map = chapterModel.toJson();
       if (image != null && filename != null) {
-        if(chapterModel.image!=null){
+        if (chapterModel.image != null) {
           await FirebaseDeleteFun().deleteImage(chapterModel.image!);
         }
         map.addAll({
@@ -264,6 +265,35 @@ class FirebaseEditFun extends ApiConstant {
           newStandardId ?? chapterModel.standardId!,
           newSubjectId ?? chapterModel.subjectId!,
           chapterId);
+    } on FirebaseException catch (e) {
+      NKToast.error(title: e.message.toString());
+      return null;
+    }
+  }
+
+  Future<StudentListModel?> editStudent(
+      {required String studentId,
+      required StudentListModel studentModel,
+      Uint8List? image,
+      String? filename}) async {
+    try {
+      var map = studentModel.toJson();
+      if (image != null && filename != null) {
+        if (studentModel.image != null) {
+          await FirebaseDeleteFun().deleteImage(studentModel.image!);
+        }
+        map.addAll({
+          "image": await FirebaseStorageFun()
+              .uploadImage(file: image, fileName: standard, name: filename)
+        });
+      }
+
+      await _firebaseCloudStorage
+          .collection(student)
+          .doc(studentId)
+          .set(map, SetOptions(merge: true));
+
+      return FirebaseGetFun().getStudent(studentId);
     } on FirebaseException catch (e) {
       NKToast.error(title: e.message.toString());
       return null;

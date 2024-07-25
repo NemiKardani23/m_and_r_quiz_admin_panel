@@ -6,6 +6,7 @@ mixin class ApiConstant {
   final String standard = "standard";
   final String subject = "subject";
   final String chapter = "chapter";
+  final String student = "student";
 
   /// Storage
   final String images = "images";

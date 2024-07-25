@@ -1,3 +1,4 @@
+import 'package:m_and_r_quiz_admin_panel/components/my_network_image.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionhelper.dart';
 import 'package:m_and_r_quiz_admin_panel/router/custom_page_builder.dart';
@@ -75,12 +76,22 @@ class AppRoutes {
         if (await SessionHelper.instance.getLoginData() == null) {
           return loginScreen;
         } else {
-          return dashboardScreen;
+          if (state.name == dashboardScreen) {
+            return dashboardScreen;
+          } else {
+            return state.fullPath;
+          }
         }
       },
       observers: [AuthRouteObserver()],
       errorBuilder: (context, state) {
-        return const FlutterLogo();
+        return LayoutBuilder(builder: (context, consta) {
+          return MyNetworkImage(
+              appWidth: consta.maxWidth,
+              appHeight: consta.maxHeight,
+              imageUrl:
+                  "https://cdn.dribbble.com/users/1138875/screenshots/4669703/media/c25729131efb71198034c0275c21aea8.gif");
+        });
       },
     );
   }

@@ -6,6 +6,7 @@ import 'package:m_and_r_quiz_admin_panel/view/basic/model/board_list_model.dart'
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/chapter_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/standard_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/subject_list_model.dart';
+import 'package:m_and_r_quiz_admin_panel/view/student/model/student_list_model.dart';
 
 class FirebaseAddFun with ApiConstant {
   final FirebaseFirestore _firebaseCloudStorage = FirebaseFirestore.instance;
@@ -17,7 +18,7 @@ class FirebaseAddFun with ApiConstant {
       var map = {
         "boardName": boardName,
         "boardId": "",
-        "createdAt": DateTime.timestamp()
+       "createdAt": DateTime.timestamp().toString()
       };
       if (image != null && filename != null) {
         map["image"] = (await FirebaseStorageFun()
@@ -51,7 +52,7 @@ class FirebaseAddFun with ApiConstant {
         "standardName": standardName,
         "standardId": "",
         "boardId": boardId,
-        "createdAt": DateTime.timestamp()
+       "createdAt": DateTime.timestamp().toString()
       };
       if (image != null && filename != null) {
         map["image"] = (await FirebaseStorageFun()
@@ -89,7 +90,7 @@ class FirebaseAddFun with ApiConstant {
         "standardId": standardId,
         "subjectId": "",
         "boardId": boardId,
-        "createdAt": DateTime.timestamp()
+       "createdAt": DateTime.timestamp().toString()
       };
       if (image != null && filename != null) {
         map["image"] = (await FirebaseStorageFun()
@@ -131,7 +132,7 @@ class FirebaseAddFun with ApiConstant {
         "subjectId": subjectId,
         "chapterId": "",
         "boardId": boardId,
-        "createdAt": DateTime.timestamp()
+        "createdAt": DateTime.timestamp().toString().toString()
       };
       if (image != null && filename != null) {
         map["image"] = (await FirebaseStorageFun()
@@ -158,6 +159,55 @@ class FirebaseAddFun with ApiConstant {
       );
     } on FirebaseException catch (e) {
       nkDevLog("ADD CHAPTER ERROR : ${e.message.toString()}");
+      NKToast.error(title: e.message.toString());
+      return null;
+    }
+  }
+
+  /// STUDENT
+  Future<StudentListModel?> addStudent(
+      {required String studentName,
+      required String studentNumber,
+      required String numberCountryCode,
+      required String boardId,
+      required String standardId,
+      required String studentCity,
+      required String studentState,
+      Uint8List? image,
+      String? filename}) async {
+    try {
+      var map = {
+        "studentName": studentName,
+        "studentNumber": studentNumber,
+        "numberCountryCode": numberCountryCode,
+        "studentCity": studentCity,
+        "studentState": studentState,
+        "boardId": boardId,
+        "standardId": standardId,
+        "fcm_tocken": "",
+        "device_name": "",
+        "device_id": "",
+        "studentId": "",
+       "createdAt": DateTime.timestamp().toString().toString()
+      };
+      if (image != null && filename != null) {
+        map["image"] = (await FirebaseStorageFun()
+            .uploadImage(file: image, fileName: student, name: filename))!;
+      }
+      return await _firebaseCloudStorage
+          .collection(student)
+          .add(
+            map,
+          )
+          .then(
+        (value) {
+          value.update({"studentId": value.id});
+
+          return FirebaseGetFun().getStudent(value.id);
+        },
+      );
+    } on FirebaseException catch (e) {
+      nkDevLog("ADD STUDENT ERROR : ${e.message.toString()}");
       NKToast.error(title: e.message.toString());
       return null;
     }
