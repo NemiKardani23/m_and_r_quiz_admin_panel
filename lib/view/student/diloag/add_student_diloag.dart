@@ -12,6 +12,7 @@ import 'package:m_and_r_quiz_admin_panel/service/firebase/firebase_edit_fun.dart
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/board_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/standard_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/student/model/student_list_model.dart';
+import 'package:country_state_city/country_state_city.dart' as cs;
 
 class AddStudentDiloag extends StatefulWidget {
   final StudentListModel? studentListModel;
@@ -40,8 +41,8 @@ class _AddStudentDiloagState extends State<AddStudentDiloag> {
     dialCode: "+91",
     name: "India",
   );
-  StateModel? newSelectedState;
-  CityModel? newSelectedCity;
+  cs.State? newSelectedState;
+  cs.City? newSelectedCity;
   (
     Uint8List? imageBytes,
     String? imageName,
@@ -76,15 +77,25 @@ class _AddStudentDiloagState extends State<AddStudentDiloag> {
       newSelectedCountryCode = CountryCode(
         dialCode: widget.studentListModel!.numberCountryCode ?? "+91",
       );
-      newSelectedState = StateModel(
-        stateName: widget.studentListModel!.studentState ?? "",
-      );
-      newSelectedCity = CityModel(
-        districtName: widget.studentListModel!.studentCity ?? "",
-      );
+      getStateCityData();
       loadDropDownData();
     }
     super.initState();
+  }
+
+  getStateCityData() async {
+    newSelectedState = (await StateCityApi.getStateList()).firstWhere(
+      (element) => element.name == widget.studentListModel!.studentState,
+    );
+    newSelectedCity = (await StateCityApi.getCityList(
+            newSelectedState!.countryCode, newSelectedState!.isoCode))
+        .firstWhere(
+      (element) => element.name == widget.studentListModel!.studentCity,
+    );
+    setState(() {
+      newSelectedState;
+      newSelectedCity;
+    });
   }
 
   loadDropDownData() {
@@ -210,13 +221,13 @@ class _AddStudentDiloagState extends State<AddStudentDiloag> {
           const MyRegularText(label: "$studentStr $stateStr"),
           showStateDialog(
             context,
-            selectedState: newSelectedState?.stateName,
+            selectedState: newSelectedState?.name,
             onTap: (state) {
               setState(() {
                 newSelectedState = state;
               });
               if (widget.studentListModel != null) {
-                widget.studentListModel?.studentState = state?.stateName;
+                widget.studentListModel?.studentState = state?.name;
               }
             },
           ),
@@ -225,16 +236,16 @@ class _AddStudentDiloagState extends State<AddStudentDiloag> {
             isEnable: newSelectedState != null,
             child: showCityDialog(
               context,
-              selectedCity: newSelectedCity?.districtName,
+              selectedCity: newSelectedCity?.name,
               onTap: (city) {
                 setState(() {
                   newSelectedCity = city;
                 });
                 if (widget.studentListModel != null) {
-                  widget.studentListModel?.studentState = city?.districtName;
+                  widget.studentListModel?.studentState = city?.name;
                 }
               },
-              state: newSelectedState?.stateName ?? "",
+              state: newSelectedState?.name ?? "",
             ),
           ),
           nkExtraSmallSizedBox,
@@ -279,9 +290,8 @@ class _AddStudentDiloagState extends State<AddStudentDiloag> {
                                 studentNumber: numberController.text,
                                 numberCountryCode:
                                     newSelectedCountryCode!.dialCode!,
-                                studentCity:
-                                    newSelectedCity?.districtName ?? "",
-                                studentState: newSelectedState?.stateName ?? "")
+                                studentCity: newSelectedCity?.name ?? "",
+                                studentState: newSelectedState?.name ?? "")
                             .then(
                           (value) {
                             NKToast.success(

@@ -70,6 +70,7 @@ class AppRoutes {
     navigator = GoRouter(
       routes: routes,
       debugLogDiagnostics: true,
+      routerNeglect:  true,
       navigatorKey: $navigatorKey,
       initialLocation: loginScreen,
       redirect: (context, state) async {

@@ -112,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
           SessionHelper.instance.setLoginData(value).then(
             (value) {
               AppRoutes.navigator
-                  .pushReplacementNamed(AppRoutes.dashboardScreen);
+                  .goNamed(AppRoutes.dashboardScreen);
             },
           );
         } else {

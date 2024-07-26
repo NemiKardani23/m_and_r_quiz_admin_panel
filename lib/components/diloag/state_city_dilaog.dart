@@ -1,8 +1,9 @@
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/service/api/state_city_api.dart';
+import 'package:country_state_city/country_state_city.dart' as cs;
 
 Widget showStateDialog(BuildContext context,
-    {String? selectedState, void Function(StateModel? state)? onTap}) {
+    {String? selectedState, void Function(cs.State? state)? onTap}) {
   return SearchAnchor(
     builder: (BuildContext context, SearchController controller) {
       if (selectedState != null) {
@@ -41,17 +42,16 @@ Widget showStateDialog(BuildContext context,
                     controller.closeView("");
                   },
                   child: MyRegularText(
-                      label: e.stateName ?? "",
-                      color: selectedState == e.stateName
+                      label: e.name,
+                      color: selectedState == e.name
                           ? Colors.blue
                           : Colors.black)),
             );
       } else {
         return (await StateCityApi.getStateList())
             .toList()
-            .where((e) => e.stateName!
-                .toLowerCase()
-                .contains(controller.text.toLowerCase()))
+            .where((e) =>
+                e.name.toLowerCase().contains(controller.text.toLowerCase()))
             .map(
               (e) => InkWell(
                   onTap: () {
@@ -59,10 +59,8 @@ Widget showStateDialog(BuildContext context,
                     controller.closeView("");
                   },
                   child: MyRegularText(
-                    label: e.stateName ?? "",
-                    color: selectedState == e.stateName
-                        ? Colors.blue
-                        : Colors.black,
+                    label: e.name,
+                    color: selectedState == e.name ? Colors.blue : Colors.black,
                   )),
             );
       }
@@ -73,7 +71,7 @@ Widget showStateDialog(BuildContext context,
 Widget showCityDialog(BuildContext context,
     {String? selectedCity,
     required String state,
-    void Function(CityModel? city)? onTap}) {
+    void Function(cs.City? city)? onTap}) {
   return SearchAnchor(
     builder: (BuildContext context, SearchController controller) {
       if (selectedCity != null) {
@@ -104,13 +102,12 @@ Widget showCityDialog(BuildContext context,
     },
     suggestionsBuilder:
         (BuildContext context, SearchController controller) async {
+      var stateData = (await StateCityApi.getStateList())
+          .firstWhere((element) => element.name == state);
       if (controller.text.isEmpty) {
         return (await StateCityApi.getCityList(
-                (await StateCityApi.getStateList())
-                        .firstWhere((element) => element.stateName == state)
-                        .id
-                        ?.toString() ??
-                    "0"))
+          stateData.countryCode,stateData.isoCode
+        ))
             .toList()
             .map(
               (e) => InkWell(
@@ -119,20 +116,16 @@ Widget showCityDialog(BuildContext context,
                     controller.closeView("");
                   },
                   child: MyRegularText(
-                      label: e.districtName ?? "",
-                      color: selectedCity == e.districtName
+                      label: e.name,
+                      color: selectedCity == e.name
                           ? Colors.blue
                           : Colors.black)),
             );
       } else {
         return (await StateCityApi.getCityList(
-                (await StateCityApi.getStateList())
-                        .firstWhere((element) => element.stateName == state)
-                        .id
-                        ?.toString() ??
-                    "0"))
+                stateData.countryCode,stateData.isoCode))
             .toList()
-            .where((e) => e.districtName!
+            .where((e) => e.name
                 .toLowerCase()
                 .contains(controller.text.toLowerCase()))
             .map(
@@ -142,8 +135,8 @@ Widget showCityDialog(BuildContext context,
                     controller.closeView("");
                   },
                   child: MyRegularText(
-                    label: e.districtName ?? "",
-                    color: selectedCity == e.districtName
+                    label: e.name ,
+                    color: selectedCity == e.name
                         ? Colors.blue
                         : Colors.black,
                   )),
