@@ -284,14 +284,14 @@ class FirebaseEditFun extends ApiConstant {
         }
         map.addAll({
           "image": await FirebaseStorageFun()
-              .uploadImage(file: image, fileName: standard, name: filename)
+              .uploadImage(file: image, fileName: student, name: filename)
         });
       }
 
       await _firebaseCloudStorage
           .collection(student)
           .doc(studentId)
-          .set(map, SetOptions(merge: true));
+          .update(map);
 
       return FirebaseGetFun().getStudent(studentId);
     } on FirebaseException catch (e) {
