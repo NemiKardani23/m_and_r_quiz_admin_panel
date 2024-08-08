@@ -2,6 +2,7 @@ import 'package:m_and_r_quiz_admin_panel/components/my_common_container.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/basic_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/home/home_screen.dart';
+import 'package:m_and_r_quiz_admin_panel/view/questions/questions_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/student/student_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     const HomeScreen(),
     const BasicScreen(),
     const StudentScreen(),
+    const QuestionsScreen(),
   ];
 
   @override
@@ -83,8 +85,16 @@ class _AppMenu extends StatelessWidget {
                   label: basicStr,
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.people,),
-                 label: "Student",
+                  icon: Icon(
+                    Icons.people,
+                  ),
+                  label: "Student",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.people,
+                  ),
+                  label: "Questions",
                 ),
               ]),
         ),
@@ -129,6 +139,13 @@ class _AppMenu extends StatelessWidget {
                   icon: Icon(
                     Icons.people,
                     color: selctedIconColor(2),
+                  )),
+              _webTabBuilder(3,
+                  onItemSelected: onItemSelected,
+                  tabName: "Questions",
+                  icon: Icon(
+                    Icons.people,
+                    color: selctedIconColor(3),
                   )),
             ].addSpaceEveryWidget(space: nkExtraSmallSizedBox),
           ),

@@ -165,13 +165,9 @@ class _StudentScreenState extends State<StudentScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Row(
-                          children: [
-                            MyRegularText(
-                              align: TextAlign.start,
-                              label: student.studentName ?? "",
-                            ),                         
-                          ],
+                        MyRegularText(
+                          align: TextAlign.start,
+                          label: student.studentName ?? "",
                         ),
                         Flexible(
                           child: MyRegularText(
@@ -198,7 +194,8 @@ class _StudentScreenState extends State<StudentScreen> {
                               studentListModel: student,
                               boardList: boardListData.data ?? [],
                               onUpdated: (student) {
-                                TempDataStore.tempStudentList.value![index] = student!;
+                                TempDataStore.tempStudentList.value![index] =
+                                    student!;
                                 setState(() {
                                   studentListData.onSuccess(
                                       TempDataStore.tempStudentList.value ??

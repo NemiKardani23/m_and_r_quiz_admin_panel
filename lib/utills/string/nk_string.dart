@@ -43,6 +43,9 @@ const String countryStr = "Country";
 const String imageStr = "Image";
 const String addStudentStr = "Add Student";
 
+/// QUESTION
+const String questionStr = "Question";
+
 abstract final class ErrorStrings {
   static const String noDataFound = "No data found";
   static const String selectImage = "Select Image";

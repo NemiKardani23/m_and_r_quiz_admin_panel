@@ -1,14 +1,19 @@
 import 'package:m_and_r_quiz_admin_panel/components/my_network_image.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionhelper.dart';
+import 'package:m_and_r_quiz_admin_panel/local_storage/temp_data_store/temp_data_store.dart';
 import 'package:m_and_r_quiz_admin_panel/router/custom_page_builder.dart';
 import 'package:m_and_r_quiz_admin_panel/view/auth/login_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/dahsboard/dashboard_screen.dart';
+import 'package:m_and_r_quiz_admin_panel/view/questions/diloag/add_question_diloag.dart';
 
 class AppRoutes {
   static const String loginScreen = "/login";
   static const String intro = "/intro";
   static const String dashboardScreen = "/dashboard";
+
+  /// QUESTIONS
+  static const String addQuestionScreen = "/add-question";
 
   static GlobalKey<NavigatorState>? $navigatorKey = GlobalKey<NavigatorState>();
 
@@ -50,19 +55,40 @@ class AppRoutes {
                     },
                   ),
                   GoRoute(
-                    path: dashboardScreen,
-                    name: dashboardScreen,
-                    builder: (context, state) {
-                      return const DashboardScreen();
-                    },
-                    pageBuilder: (context, state) {
-                      return CustomPageBuilder.getTransitionPage(
-                          child: const DashboardScreen(),
-                          settings: state,
-                          context: context,
-                          state: state);
-                    },
-                  ),
+                      path: dashboardScreen,
+                      name: dashboardScreen,
+                      builder: (context, state) {
+                        return const DashboardScreen();
+                      },
+                      pageBuilder: (context, state) {
+                        return CustomPageBuilder.getTransitionPage(
+                            child: const DashboardScreen(),
+                            settings: state,
+                            context: context,
+                            state: state);
+                      },
+                      routes: [
+                        GoRoute(
+                          path: addQuestionScreen,
+                          name: addQuestionScreen,
+                          // builder: (context, state) {
+                          //   var mapData = state.extra as Map;
+                          //   return AddQuestionDiloag(
+                          //     boardList: mapData["boardList"],
+                          //   );
+                          // },
+                          pageBuilder: (context, state) {
+                            var mapData = state.extra as Map;
+                            return CustomPageBuilder.getTransitionPage(
+                                child: AddQuestionDiloag(
+                                  boardList: mapData["boardList"],
+                                ),
+                                settings: state,
+                                context: context,
+                                state: state);
+                          },
+                        ),
+                      ]),
                 ])
           ])
     ];
@@ -70,7 +96,7 @@ class AppRoutes {
     navigator = GoRouter(
       routes: routes,
       debugLogDiagnostics: true,
-      routerNeglect:  true,
+      routerNeglect: true,
       navigatorKey: $navigatorKey,
       initialLocation: loginScreen,
       redirect: (context, state) async {

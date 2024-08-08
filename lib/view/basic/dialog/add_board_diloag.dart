@@ -107,8 +107,9 @@ class _AddBoardDiloagState extends State<AddBoardDiloag> {
                         NKToast.success(
                             title:
                                 "$boardStr ${SuccessStrings.addedSuccessfully}");
+                                Navigator.pop(context);
                         widget.onBoardUpdated?.call(value);
-                        AppRoutes.navigator.pop();
+                       
                       },
                     );
                   }

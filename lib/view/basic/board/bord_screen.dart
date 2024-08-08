@@ -68,21 +68,21 @@ class _BordScreenState extends State<BordScreen> {
                       builder: (builder) {
                         return AddBoardDiloag(
                           onBoardUpdated: (board) {
-                            setState(() {
-                              if (board != null &&
-                                  boardListData.data!.isNotEmpty) {
-                                boardListData.data?.add(board);
+                            if (board != null &&
+                                boardListData.data!.isNotEmpty) {
+                              boardListData.data?.add(board);
 
-                                TempDataStore.tempBoardList.value
-                                    ?.addAll(boardListData.data ?? []);
-                              } else if (board != null) {
-                                boardListData.onSuccess([board]);
-                                TempDataStore.tempBoardList.value?.add(board);
-                              }
-                            });
+                              // TempDataStore.tempBoardList.value
+                              //     ?.addAll(boardListData.data ?? []);
+                            } else if (board != null) {
+                              boardListData.onSuccess([board]);
+                              //TempDataStore.tempBoardList.value?.add(board);
+                            }
                           },
                         );
-                      });
+                      }).then(
+                    (value) => setState(() {}),
+                  );
                 }),
           ],
         ),
@@ -133,17 +133,18 @@ class _BordScreenState extends State<BordScreen> {
                             return AddBoardDiloag(
                               boardListModel: board,
                               onBoardUpdated: (board) {
-                                setState(() {
-                                  if (board != null) {
-                                    boardListData.data?[index] = board;
-                                    TempDataStore.tempBoardList.value?[index] =
-                                        board;
-                                    return;
-                                  }
-                                });
+                                if (board != null) {
+                                  boardListData.data?[index] = board;
+                                   boardListData.onSuccess( boardListData.data??[]);
+                                  // TempDataStore.tempBoardList.value?[index] =
+                                  //     board;
+                                  return;
+                                }
                               },
                             );
-                          });
+                          }).then(
+                        (value) => setState(() {}),
+                      );
                     },
                     icon: const Icon(Icons.edit)),
                 IconButton(
@@ -163,8 +164,8 @@ class _BordScreenState extends State<BordScreen> {
                                           "${board.boardName} ${SuccessStrings.deletedSuccessfully}");
                                   setState(() {
                                     boardListData.data?.removeAt(index);
-                                    TempDataStore.tempBoardList.value
-                                        ?.removeAt(index);
+                                    // TempDataStore.tempBoardList.value
+                                    //     ?.removeAt(index);
                                   });
                                 });
                               },
