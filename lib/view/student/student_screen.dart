@@ -158,7 +158,7 @@ class _StudentScreenState extends State<StudentScreen> {
             Expanded(
               child: Row(
                 children: [
-                  MyNetworkImage(imageUrl: student.image ?? ""),
+                  MyNetworkImage(url: student.image ?? ""),
                   nkExtraSmallSizedBox,
                   Flexible(
                     child: Column(

@@ -41,7 +41,8 @@ class _AddBoardDiloagState extends State<AddBoardDiloag> {
             : "$addStr $boardStr",
       ),
       content: ConstrainedBox(
-        constraints: BoxConstraints(minWidth: context.isMobile?context.width:context.width * 0.35),
+        constraints: BoxConstraints(
+            minWidth: context.isMobile ? context.width : context.width * 0.35),
         child: _body(context),
       ),
     );
@@ -55,9 +56,10 @@ class _AddBoardDiloagState extends State<AddBoardDiloag> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Center(
-            child: NkImagePickerWithPlaceHolder(
+            child: NkPickerWithPlaceHolder(
               imageUrl: widget.boardListModel?.image ?? "",
-              onImagePicked: (imageBytes, imageName) {
+              fileType: "image",
+              onFilePicked: (imageBytes, imageName) {
                 onImagePicked = (imageBytes, imageName);
               },
             ),
@@ -107,9 +109,8 @@ class _AddBoardDiloagState extends State<AddBoardDiloag> {
                         NKToast.success(
                             title:
                                 "$boardStr ${SuccessStrings.addedSuccessfully}");
-                                Navigator.pop(context);
+                        Navigator.pop(context);
                         widget.onBoardUpdated?.call(value);
-                       
                       },
                     );
                   }

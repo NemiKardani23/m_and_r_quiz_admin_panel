@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/service/firebase/firebase_get_fun.dart';
 import 'package:m_and_r_quiz_admin_panel/service/firebase/firebase_storage_fun.dart';
+import 'package:m_and_r_quiz_admin_panel/view/app_management/model/my_learning_category_list_model.dart';
+import 'package:m_and_r_quiz_admin_panel/view/app_management/model/slider_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/board_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/chapter_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/standard_list_model.dart';
@@ -18,7 +20,7 @@ class FirebaseAddFun with ApiConstant {
       var map = {
         "boardName": boardName,
         "boardId": "",
-       "createdAt": DateTime.timestamp().toString()
+        "createdAt": DateTime.timestamp().toString()
       };
       if (image != null && filename != null) {
         map["image"] = (await FirebaseStorageFun()
@@ -52,7 +54,7 @@ class FirebaseAddFun with ApiConstant {
         "standardName": standardName,
         "standardId": "",
         "boardId": boardId,
-       "createdAt": DateTime.timestamp().toString()
+        "createdAt": DateTime.timestamp().toString()
       };
       if (image != null && filename != null) {
         map["image"] = (await FirebaseStorageFun()
@@ -90,7 +92,7 @@ class FirebaseAddFun with ApiConstant {
         "standardId": standardId,
         "subjectId": "",
         "boardId": boardId,
-       "createdAt": DateTime.timestamp().toString()
+        "createdAt": DateTime.timestamp().toString()
       };
       if (image != null && filename != null) {
         map["image"] = (await FirebaseStorageFun()
@@ -188,7 +190,7 @@ class FirebaseAddFun with ApiConstant {
         "device_name": "",
         "device_id": "",
         "studentId": "",
-       "createdAt": DateTime.timestamp().toString().toString()
+        "createdAt": DateTime.timestamp().toString().toString()
       };
       if (image != null && filename != null) {
         map["image"] = (await FirebaseStorageFun()
@@ -208,6 +210,83 @@ class FirebaseAddFun with ApiConstant {
       );
     } on FirebaseException catch (e) {
       nkDevLog("ADD STUDENT ERROR : ${e.message.toString()}");
+      NKToast.error(title: e.message.toString());
+      return null;
+    }
+  }
+
+  /// SLIDER
+  Future<SliderListModel?> addAppDashboardSlider(
+      {required SliderListModel sliderData,
+      Uint8List? image,
+      String? filename}) async {
+    try {
+      var map = sliderData.toJson();
+
+      map.remove("sliderId");
+      map.update(
+        "createdAt",
+        (value) => DateTime.timestamp().toString(),
+      );
+      if (image != null && filename != null) {
+        map["image"] = (await FirebaseStorageFun()
+            .uploadImage(file: image, fileName: "$appManagement/$appDashboard/$slider", name: filename))!;
+      }
+      return await _firebaseCloudStorage
+          .collection(appManagement)
+          .doc(appDashboard)
+          .collection(slider)
+          .add(
+            map,
+          )
+          .then(
+        (value) {
+          value.update({"sliderId": value.id});
+         
+          return FirebaseGetFun().getAppDashboardSingleSlider(value.id);
+        },
+      );
+    } on FirebaseException catch (e) {
+      nkDevLog("ADD STUDENT ERROR : ${e.message.toString()}");
+      NKToast.error(title: e.message.toString());
+      return null;
+    }
+  }
+
+
+  /// My Learning Category
+  Future<MyLearningCategoryListModel?> addMyLearningCategory(
+      {required MyLearningCategoryListModel myLearningCategoryData,
+      Uint8List? image,
+      String? filename}) async {
+    try {
+      var map = myLearningCategoryData.toJson();
+
+      map.remove("categoryId");
+      map.update(
+        "createdAt",
+        (value) => DateTime.timestamp().toString(),
+      );
+      if (image != null && filename != null) {
+        map["image"] = (await FirebaseStorageFun()
+            .uploadImage(file: image, fileName: "$appManagement/$appMyLearning/$category", name: filename))!;
+      }
+      return await _firebaseCloudStorage
+          .collection(appManagement)
+          .doc(appMyLearning)
+          .collection(category)
+          .add(
+            map,
+          )
+          .then(
+        (value) {
+          value.update({"categoryId": value.id});
+         
+          return FirebaseGetFun().getAppMyLearningSingleCategory(value.id);
+        },
+      );
+    } on FirebaseException catch (e) {
+      nkDevLog("ADD MY LEARNING CATEGORY ERROR : ${e.message.toString()}");
       NKToast.error(title: e.message.toString());
       return null;
     }

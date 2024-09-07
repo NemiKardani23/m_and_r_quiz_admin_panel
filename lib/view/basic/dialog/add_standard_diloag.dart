@@ -50,7 +50,8 @@ class _AddStandardDiloagState extends State<AddStandardDiloag> {
             : "$addStr $standardStr",
       ),
       content: ConstrainedBox(
-        constraints: BoxConstraints(minWidth: context.isMobile?context.width:context.width * 0.35),
+        constraints: BoxConstraints(
+            minWidth: context.isMobile ? context.width : context.width * 0.35),
         child: _body(context),
       ),
     );
@@ -64,9 +65,10 @@ class _AddStandardDiloagState extends State<AddStandardDiloag> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Center(
-            child: NkImagePickerWithPlaceHolder(
+            child: NkPickerWithPlaceHolder(
+              fileType: "image",
               imageUrl: widget.standardListModel?.image ?? "",
-              onImagePicked: (imageBytes, imageName) {
+              onFilePicked: (imageBytes, imageName) {
                 onImagePicked = (imageBytes, imageName);
               },
             ),

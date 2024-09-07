@@ -32,7 +32,7 @@ class MyScaffold extends Scaffold {
       this.isRightSafeArea = true,
       this.isBottomSafeArea = false,
       this.isTopSafeArea = true,
-      this.minimumPadding = nkRegularPadding,
+      this.minimumPadding = EdgeInsets.zero,
       this.myExtendBodyBehindAppBar = false,
       this.myAppBar,
       this.myDrawer,

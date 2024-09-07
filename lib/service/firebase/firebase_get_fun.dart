@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
+import 'package:m_and_r_quiz_admin_panel/view/app_management/model/my_learning_category_list_model.dart';
+import 'package:m_and_r_quiz_admin_panel/view/app_management/model/slider_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/board_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/chapter_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/standard_list_model.dart';
@@ -223,6 +225,90 @@ class FirebaseGetFun extends ApiConstant {
     }
   }
 
+  /// SLIDER
+  Future<List<SliderListModel>?> getAppDashboardSliderList() async {
+    nkDevLog("--------------- GET APP DASHBOARD SLIDER LIST CALLED");
+    try {
+      return await storage
+          .collection(appManagement)
+          .doc(appDashboard)
+          .collection(slider)
+          .get()
+          .then(
+        (value) {
+          return (value.docs as List<QueryDocumentSnapshot>)
+              .map((e) =>
+                  SliderListModel.fromJson(e.data() as Map<String, dynamic>))
+              .toList();
+        },
+      );
+    } on FirebaseException catch (e) {
+      NKToast.error(title: e.message.toString());
+      return null;
+    }
+  }
+
+  Future<SliderListModel?> getAppDashboardSingleSlider(String sliderId) async {
+    nkDevLog("--------------- GET APP DASHBOARD SINGLE SLIDER CALLED");
+    try {
+      return await storage
+          .collection(appManagement)
+          .doc(appDashboard)
+          .collection(slider)
+          .doc(sliderId)
+          .get()
+          .then(
+        (value) {
+          return SliderListModel.fromJson(value.data() as Map<String, dynamic>);
+        },
+      );
+    } on FirebaseException catch (e) {
+      NKToast.error(title: e.message.toString());
+      return null;
+    }
+  }
 
 
+  /// My Learning Category
+  Future<List<MyLearningCategoryListModel>?> getAppMyLearningCategoryList() async {
+    nkDevLog("--------------- GET APP MY LEARNING CATEGORY LIST CALLED");
+    try {
+      return await storage
+          .collection(appManagement)
+          .doc(appMyLearning)
+          .collection(category)
+          .get()
+          .then(
+        (value) {
+          return (value.docs as List<QueryDocumentSnapshot>)
+              .map((e) =>
+                  MyLearningCategoryListModel.fromJson(e.data() as Map<String, dynamic>))
+              .toList();
+        },
+      );
+    } on FirebaseException catch (e) {
+      NKToast.error(title: e.message.toString());
+      return null;
+    }
+  }
+
+  Future<MyLearningCategoryListModel?> getAppMyLearningSingleCategory(String categoryId) async {
+    nkDevLog("--------------- GET APP MY LEARNING SINGLE CATEGORY CALLED");
+    try {
+      return await storage
+          .collection(appManagement)
+          .doc(appMyLearning)
+          .collection(category)
+          .doc(categoryId)
+          .get()
+          .then(
+        (value) {
+          return MyLearningCategoryListModel.fromJson(value.data() as Map<String, dynamic>);
+        },
+      );
+    } on FirebaseException catch (e) {
+      NKToast.error(title: e.message.toString());
+      return null;
+    }
+  }
 }

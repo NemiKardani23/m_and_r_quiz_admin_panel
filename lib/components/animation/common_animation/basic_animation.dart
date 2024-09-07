@@ -50,4 +50,12 @@ extension BasicAnimation on Widget {
           begin: const Offset(0, 1),
         );
   }
+
+  Widget get fadeInAnimation {
+    return animate(
+      key: UniqueKey(),
+      autoPlay: true,
+    ).fadeIn(duration: NkGeneralSize.nkCommonDuration);
+    
+  }
 }

@@ -94,11 +94,12 @@ class _AddSubjectDiloagState extends State<AddSubjectDiloag> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Center(
-            child: NkImagePickerWithPlaceHolder(
+            child: NkPickerWithPlaceHolder(
               imageUrl: widget.subjectListModel?.image ?? "",
-              onImagePicked: (imageBytes, imageName) {
+              onFilePicked: (imageBytes, imageName) {
                 onImagePicked = (imageBytes, imageName);
               },
+              fileType: "image",
             ),
           ),
           const MyRegularText(label: boardStr),

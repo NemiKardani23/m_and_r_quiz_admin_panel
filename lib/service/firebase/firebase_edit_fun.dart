@@ -3,6 +3,8 @@ import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/service/firebase/firebase_delete_fun.dart';
 import 'package:m_and_r_quiz_admin_panel/service/firebase/firebase_get_fun.dart';
 import 'package:m_and_r_quiz_admin_panel/service/firebase/firebase_storage_fun.dart';
+import 'package:m_and_r_quiz_admin_panel/view/app_management/model/my_learning_category_list_model.dart';
+import 'package:m_and_r_quiz_admin_panel/view/app_management/model/slider_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/board_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/chapter_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/standard_list_model.dart';
@@ -299,4 +301,74 @@ class FirebaseEditFun extends ApiConstant {
       return null;
     }
   }
+
+    /// SLIDER
+  Future<SliderListModel?> editAppDashboardSlider(
+      {required SliderListModel sliderData,
+      Uint8List? image,
+      String? filename}) async {
+    try {
+      var map = sliderData.toJson();
+      if (image != null && filename != null) {
+        if (sliderData.image != null) {
+          await FirebaseDeleteFun().deleteImage(sliderData.image!);
+        }
+        map["image"] = (await FirebaseStorageFun()
+            .uploadImage(file: image, fileName: "$appManagement/$appDashboard", name: filename))!;
+      }
+      return await _firebaseCloudStorage
+           .collection(appManagement)
+          .doc(appDashboard)
+          .collection(slider).doc(sliderData.sliderId)
+          .update(
+            map,
+          )
+          .then(
+        (value) {
+        
+
+          return FirebaseGetFun().getAppDashboardSingleSlider(sliderData.sliderId!);
+        },
+      );
+    } on FirebaseException catch (e) {
+      nkDevLog("ADD STUDENT ERROR : ${e.message.toString()}");
+      NKToast.error(title: e.message.toString());
+      return null;
+    }
+  }
+    /// MY LEARNING CATEGORY
+  Future<MyLearningCategoryListModel?> editAppMyLearningCategory(
+      {required MyLearningCategoryListModel myLearningCategory,
+      Uint8List? image,
+      String? filename}) async {
+    try {
+      var map = myLearningCategory.toJson();
+      if (image != null && filename != null) {
+        if (myLearningCategory.image != null) {
+          await FirebaseDeleteFun().deleteImage(myLearningCategory.image!);
+        }
+        map["image"] = (await FirebaseStorageFun()
+            .uploadImage(file: image, fileName: "$appManagement/$appDashboard", name: filename))!;
+      }
+      return await _firebaseCloudStorage
+           .collection(appManagement)
+          .doc(appMyLearning)
+          .collection(category).doc(myLearningCategory.categoryId)
+          .update(
+            map,
+          )
+          .then(
+        (value) {
+        
+
+          return FirebaseGetFun().getAppMyLearningSingleCategory(myLearningCategory.categoryId!);
+        },
+      );
+    } on FirebaseException catch (e) {
+      nkDevLog("ADD APP MY LEARNING CATEGORY ERROR : ${e.message.toString()}");
+      NKToast.error(title: e.message.toString());
+      return null;
+    }
+  }
+
 }

@@ -110,7 +110,8 @@ class _AddChapterDiloagState extends State<AddChapterDiloag> {
             : "$addStr $chapterStr",
       ),
       content: ConstrainedBox(
-        constraints: BoxConstraints(minWidth: context.isMobile?context.width:context.width * 0.35),
+        constraints: BoxConstraints(
+            minWidth: context.isMobile ? context.width : context.width * 0.35),
         child: _body(context),
       ),
     );
@@ -124,11 +125,11 @@ class _AddChapterDiloagState extends State<AddChapterDiloag> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Center(
-            child: NkImagePickerWithPlaceHolder(
+            child: NkPickerWithPlaceHolder(
               imageUrl: widget.chapterListModel?.image ?? "",
-              onImagePicked: (imageBytes, imageName) {
+              onFilePicked: (imageBytes, imageName) {
                 onImagePicked = (imageBytes, imageName);
-              },
+              }, fileType: "image",
             ),
           ),
           const MyRegularText(label: boardStr),
@@ -228,7 +229,6 @@ class _AddChapterDiloagState extends State<AddChapterDiloag> {
                     if (widget.chapterListModel != null) {
                       await FirebaseEditFun()
                           .editChapterDetails(
-                            
                         chapterModel: widget.chapterListModel!,
                         newBoardId: newSelectedBoard?.boardId,
                         newStandardId: newSelectedStandard?.standardId,

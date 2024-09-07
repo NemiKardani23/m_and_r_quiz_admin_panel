@@ -12,7 +12,7 @@ class FirebaseStorageFun extends ApiConstant {
       return _firebaseStorage
           .ref("$images/$fileName/")
           .child("${DateTime.timestamp()}_$name")
-          .putData(file)
+          .putData(file, SettableMetadata(contentType: _getContentType(name)))
           .then(
         (p0) {
           return p0.ref.getDownloadURL();
@@ -21,6 +21,23 @@ class FirebaseStorageFun extends ApiConstant {
     } on FirebaseException catch (e) {
       NKToast.error(title: e.message.toString());
       return null;
+    } on Exception catch (e) {
+      nkDevLog("IMAGE UPLOAD ERROR : ${e.toString()}");
+      return null;
     }
+  }
+
+
+  String? _getContentType(String fileName) {
+   switch(fileName.split('.').last){
+     case "jpg" || "jpeg" || "png" || "JPG" || "JPEG" || "PNG" || "WEBp" || "webp":
+       return "image/${fileName.split('.').last}";
+     case "mp4" || "MP4" || "mov" || "MOV" || "mkv" || "MKV" || "webm" || "WEBM" || "avi" || "AVI":
+       return "video/${fileName.split('.').last}";
+       case "mp3" || "MP3":
+       return "audio/${fileName.split('.').last}";
+     default:
+       return null;
+   }
   }
 }

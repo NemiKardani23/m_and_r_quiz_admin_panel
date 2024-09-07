@@ -222,7 +222,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
             Expanded(
               child: Row(
                 children: [
-                  MyNetworkImage(imageUrl: subject.image ?? ""),
+                  MyNetworkImage(url: subject.image ?? ""),
                   nkExtraSmallSizedBox,
                   Flexible(
                     child: Column(

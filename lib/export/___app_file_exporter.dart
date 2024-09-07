@@ -3,7 +3,7 @@ export "package:flutter/material.dart";
 
 // Dart Core
 export "dart:async";
-export "dart:io";
+export  "package:universal_io/io.dart";
 export "dart:math";
 export 'package:flutter/services.dart';
 

@@ -46,6 +46,20 @@ const String addStudentStr = "Add Student";
 /// QUESTION
 const String questionStr = "Question";
 
+/// APP MANAGEMENT
+
+// App Dashboard
+const String appDashboardStr = "App Dashboard";
+const String appDashboardSliderStr = "App Dashboard Slider";
+const String sliderStr = "Slider";
+const String mediaTypeStr = "Media Type";
+const String modeTypeStr = "Mode Type";
+
+// App My Learning
+const String myLearningStr = "My Learning";
+const String categoryStr = "Category";
+
+
 abstract final class ErrorStrings {
   static const String noDataFound = "No data found";
   static const String selectImage = "Select Image";

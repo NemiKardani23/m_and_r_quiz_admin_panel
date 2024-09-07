@@ -275,7 +275,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
             Expanded(
               child: Row(
                 children: [
-                  MyNetworkImage(imageUrl: chapter.image ?? ""),
+                  MyNetworkImage(url: chapter.image ?? ""),
                   nkExtraSmallSizedBox,
                   Flexible(
                     child: Column(
@@ -343,9 +343,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
                                       title:
                                           "${chapter.chapterName} ${SuccessStrings.deletedSuccessfully}");
                                   setState(() {
-                                    subjectListData.data?.removeAt(index);
-                                    TempDataStore.tempSubjectList.value
-                                        ?.removeAt(index);
+                                    chapterListData.data?.removeAt(index);
                                   });
                                 });
                               },

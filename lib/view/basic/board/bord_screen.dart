@@ -101,7 +101,7 @@ class _BordScreenState extends State<BordScreen> {
             Expanded(
               child: Row(
                 children: [
-                  MyNetworkImage(imageUrl: board.image ?? ""),
+                  MyNetworkImage(url: board.image ?? ""),
                   nkExtraSmallSizedBox,
                   Flexible(
                     child: Column(
@@ -135,7 +135,8 @@ class _BordScreenState extends State<BordScreen> {
                               onBoardUpdated: (board) {
                                 if (board != null) {
                                   boardListData.data?[index] = board;
-                                   boardListData.onSuccess( boardListData.data??[]);
+                                  boardListData
+                                      .onSuccess(boardListData.data ?? []);
                                   // TempDataStore.tempBoardList.value?[index] =
                                   //     board;
                                   return;

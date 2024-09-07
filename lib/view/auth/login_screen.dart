@@ -20,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return MyScaffold(
+      minimumPadding: nkRegularPadding,
       context: context,
       myBody: MyScrollView(
         children: [_mainWidget(context)],
@@ -111,8 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
             value.password == passwordController.text) {
           SessionHelper.instance.setLoginData(value).then(
             (value) {
-              AppRoutes.navigator
-                  .goNamed(AppRoutes.dashboardScreen);
+              AppRoutes.navigator.goNamed(AppRoutes.dashboardScreen);
             },
           );
         } else {

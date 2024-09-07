@@ -1,5 +1,5 @@
-import 'package:m_and_r_quiz_admin_panel/components/my_common_container.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
+import 'package:m_and_r_quiz_admin_panel/view/app_management/app_management_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/basic_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/home/home_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/questions/questions_screen.dart';
@@ -19,12 +19,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
     const HomeScreen(),
     const BasicScreen(),
     const StudentScreen(),
+    const AppManagementScreen(),
     const QuestionsScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return MyScaffold(context: context, myBody: myBody);
+    return MyScaffold(
+      context: context,
+      myBody: myBody,
+      minimumPadding: EdgeInsets.zero,
+    );
   }
 
   Widget get myBody {
@@ -40,7 +45,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget navigatePage() {
     return Expanded(
-      child: pageList[selectedIndex],
+      child: Padding(
+        padding: nkRegularPadding,
+        child: pageList[selectedIndex],
+      ),
     );
   }
 
@@ -64,39 +72,83 @@ class _AppMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (context.isMobile) {
-      return Card(
-        child: ClipOval(
-          child: BottomNavigationBar(
-              currentIndex: selectedIndex,
-              fixedColor: secondaryBackgroundColor,
-              onTap: onItemSelected,
-              unselectedLabelStyle: TextStyle(
-                color: primaryTextColor.withOpacity(0.5),
+      return SizedBox(
+        height: context.height * 0.12,
+        child: PageView(
+          clipBehavior: Clip.none,
+          children: [
+            Card(
+              margin: nkRegularPadding,
+              clipBehavior: Clip.antiAlias,
+              child: ClipRRect(
+                child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _mobileTabComponent(context,
+                          index: 0,
+                          onSelectedItem: onItemSelected,
+                          tabItem: BottomNavigationBarItem(
+                            icon: Icon(Icons.home, color: selctedIconColor(0)),
+                            label: 'Home',
+                          )),
+                      _mobileTabComponent(
+                        context,
+                        index: 1,
+                        onSelectedItem: onItemSelected,
+                        tabItem: BottomNavigationBarItem(
+                          icon: Icon(
+                            Icons.category,
+                            color: selctedIconColor(1),
+                          ),
+                          label: basicStr,
+                        ),
+                      ),
+                      _mobileTabComponent(
+                        context,
+                        index: 2,
+                        onSelectedItem: onItemSelected,
+                        tabItem: BottomNavigationBarItem(
+                          icon: Icon(
+                            Icons.people,
+                            color: selctedIconColor(2),
+                          ),
+                          label: "Student",
+                        ),
+                      ),
+                      _mobileTabComponent(context,
+                          index: 3,
+                          onSelectedItem: onItemSelected,
+                          tabItem: BottomNavigationBarItem(
+                            icon: Icon(
+                              Icons.app_settings_alt,
+                              color: selctedIconColor(3),
+                            ),
+                            label: "App Management",
+                          )),
+                    ]),
               ),
-              landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
-              type: BottomNavigationBarType.fixed,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.category),
-                  label: basicStr,
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.people,
-                  ),
-                  label: "Student",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.people,
-                  ),
-                  label: "Questions",
-                ),
-              ]),
+            ),
+            Card(
+              margin: nkRegularPadding,
+              clipBehavior: Clip.antiAlias,
+              child: ClipRRect(
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _mobileTabComponent(context,
+                          index: 4,
+                          onSelectedItem: onItemSelected,
+                          tabItem: BottomNavigationBarItem(
+                            icon: Icon(
+                              Icons.people,
+                              color: selctedIconColor(4),
+                            ),
+                            label: "Questions",
+                          )),
+                    ]),
+              ),
+            ),
+          ],
         ),
       );
     } else {
@@ -142,16 +194,55 @@ class _AppMenu extends StatelessWidget {
                   )),
               _webTabBuilder(3,
                   onItemSelected: onItemSelected,
+                  tabName: "App Management",
+                  icon: Icon(
+                    Icons.app_settings_alt,
+                    color: selctedIconColor(3),
+                  )),
+              _webTabBuilder(4,
+                  onItemSelected: onItemSelected,
                   tabName: "Questions",
                   icon: Icon(
                     Icons.people,
-                    color: selctedIconColor(3),
+                    color: selctedIconColor(4),
                   )),
             ].addSpaceEveryWidget(space: nkExtraSmallSizedBox),
           ),
         ),
       );
     }
+  }
+
+  Widget _mobileTabComponent(BuildContext context,
+      {required BottomNavigationBarItem tabItem,
+      required int index,
+      Function(int)? onSelectedItem}) {
+    return Flexible(
+      fit: FlexFit.tight,
+      child: InkResponse(
+        onTap: () {
+          onSelectedItem?.call(index);
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            tabItem.icon,
+            if (tabItem.label != null) ...[
+              MyRegularText(
+                fontSize: NkFontSize.smallFont,
+                label: tabItem.label!,
+                fontWeight: selectedIndex == index
+                    ? NkGeneralSize.nkBoldFontWeight
+                    : null,
+                color: selectedIndex == index
+                    ? primaryTextColor
+                    : primaryTextColor.withOpacity(0.5),
+              ),
+            ]
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _webTabBuilder(int index,

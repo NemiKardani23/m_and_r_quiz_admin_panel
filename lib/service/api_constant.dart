@@ -7,6 +7,11 @@ mixin class ApiConstant {
   final String subject = "subject";
   final String chapter = "chapter";
   final String student = "student";
+  final String appManagement = "appManagement";
+  final String appDashboard = "appDashboard";
+  final String appMyLearning = "appMyLearning";
+  final String slider = "slider";
+  final String category = "category";
 
   /// Storage
   final String images = "images";

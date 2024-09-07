@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:m_and_r_quiz_admin_panel/components/nk_error_widget.dart';
-import 'package:m_and_r_quiz_admin_panel/components/nk_loading_widget.dart';
+
+
+import '../export/___app_file_exporter.dart';
 
 class DataHandler<T> {
   late bool _isLoading;
@@ -14,8 +15,8 @@ class DataHandler<T> {
     if (data != null) {
       _data = data;
     }
-    _hasEmpty = false;
-    _isLoading = true;
+    _hasEmpty = true;
+    _isLoading = false;
     _hasError = false;
     _data = null;
     _error = '';
@@ -35,13 +36,6 @@ class DataHandler<T> {
     _error = '';
   }
 
-  void onUpdate(T newData) {
-    _isLoading = false;
-    _hasError = false;
-    _data = newData;
-    _error = '';
-  }
-
   void onSuccess(T newData) {
     _isLoading = false;
     _hasError = false;
@@ -56,9 +50,10 @@ class DataHandler<T> {
     _error = errorMessage;
   }
 
-  void onEmpty(String errorMessage) {
+  void onEmpty(String errorMessage, {bool hasError = true}) {
     _isLoading = false;
-    _hasError = true;
+    _hasEmpty = hasError;
+    _hasError = false;
     _data = null;
     _error = errorMessage;
     _emptyError = errorMessage;
@@ -81,12 +76,36 @@ class DataHandler<T> {
     } else if (_data != null) {
       return successBuilder.call(_data as T);
     } else if (_hasEmpty) {
-      return emptyBuilder?.call(_emptyError) ??
-          NkErrorWidget(
-            errorMessage: _error,
-          );
+      return emptyBuilder?.call(_emptyError) ?? const NkEmptyWidget();
     } else {
       return const NkErrorWidget(); // You can return a default widget for empty state
+    }
+  }
+
+  List<Widget> whenListWidget({
+    required BuildContext context,
+    Widget Function(BuildContext)? loadingBuilder,
+    required List<Widget> Function(T) successBuilder,
+    Widget Function(String)? errorBuilder,
+    Widget Function(String)? emptyBuilder,
+  }) {
+    if (_isLoading) {
+      return [loadingBuilder?.call(context) ?? const NkLoadingWidget()];
+    } else if (_hasError) {
+      return [
+        errorBuilder?.call(_error) ??
+            NkErrorWidget(
+              errorMessage: _error,
+            )
+      ];
+    } else if (_data != null) {
+      return successBuilder.call(_data as T);
+    } else if (_hasEmpty) {
+      return [emptyBuilder?.call(_emptyError) ?? const NkEmptyWidget()];
+    } else {
+      return [
+        const NkErrorWidget()
+      ]; // You can return a default widget for empty state
     }
   }
 }

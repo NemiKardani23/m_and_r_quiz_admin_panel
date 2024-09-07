@@ -9,9 +9,8 @@
 //   }
 // }
 
-import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
-import 'package:m_and_r_quiz_admin_panel/utills/shape/nk_general_size.dart';
+import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 
 //////// Handle [Web] Hover Effect
 class NkHoverChangeWidget {
@@ -29,5 +28,28 @@ class NkHoverChangeWidget {
       secondCurve: Curves.fastOutSlowIn,
       sizeCurve: Curves.fastOutSlowIn,
     );
+  }
+
+  static Widget hoverToOverlay({
+    required final Widget child,
+    required final Widget overlayChild,
+    AlignmentGeometry alignmentry = Alignment.center,
+  }) {
+    final childData = child;
+    return HoverWidget(
+        hoverChild: Stack(
+          alignment: alignmentry,
+          fit: StackFit.expand,
+          clipBehavior: Clip.none,
+          children: [
+            Positioned.fill(child: childData),
+            Positioned.fill(
+              child: ColoredBox(
+                  color: secondaryColor.withOpacity(0.5), child: overlayChild),
+            ),
+          ],
+        ),
+        onHover: (val) {},
+        child: childData);
   }
 }

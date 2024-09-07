@@ -1,7 +1,6 @@
 import 'package:m_and_r_quiz_admin_panel/components/my_network_image.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionhelper.dart';
-import 'package:m_and_r_quiz_admin_panel/local_storage/temp_data_store/temp_data_store.dart';
 import 'package:m_and_r_quiz_admin_panel/router/custom_page_builder.dart';
 import 'package:m_and_r_quiz_admin_panel/view/auth/login_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/dahsboard/dashboard_screen.dart';
@@ -13,7 +12,7 @@ class AppRoutes {
   static const String dashboardScreen = "/dashboard";
 
   /// QUESTIONS
-  static const String addQuestionScreen = "/add-question";
+  static const String addQuestionScreen = "add-question";
 
   static GlobalKey<NavigatorState>? $navigatorKey = GlobalKey<NavigatorState>();
 
@@ -116,7 +115,7 @@ class AppRoutes {
           return MyNetworkImage(
               appWidth: consta.maxWidth,
               appHeight: consta.maxHeight,
-              imageUrl:
+              url:
                   "https://cdn.dribbble.com/users/1138875/screenshots/4669703/media/c25729131efb71198034c0275c21aea8.gif");
         });
       },

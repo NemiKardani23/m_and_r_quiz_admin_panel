@@ -129,11 +129,12 @@ class _AddStudentDiloagState extends State<AddStudentDiloag> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Center(
-            child: NkImagePickerWithPlaceHolder(
+            child: NkPickerWithPlaceHolder(
               imageUrl: widget.studentListModel?.image ?? "",
-              onImagePicked: (imageBytes, imageName) {
+              onFilePicked: (imageBytes, imageName) {
                 onImagePicked = (imageBytes, imageName);
               },
+              fileType:  "image",
             ),
           ),
           const MyRegularText(label: boardStr),

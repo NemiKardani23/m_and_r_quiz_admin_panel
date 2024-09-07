@@ -171,7 +171,7 @@ class _StandardScreenState extends State<StandardScreen> {
             Expanded(
               child: Row(
                 children: [
-                  MyNetworkImage(imageUrl: standard.image ?? ""),
+                  MyNetworkImage(url: standard.image ?? ""),
                   nkExtraSmallSizedBox,
                   Flexible(
                     child: Column(
