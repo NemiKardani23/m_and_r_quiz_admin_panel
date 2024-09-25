@@ -105,46 +105,46 @@ class _AddStandardDiloagState extends State<AddStandardDiloag> {
               onPressed: () async {
                 try {
                   if (formKey.currentState!.validate()) {
-                    if (widget.standardListModel != null) {
-                      await FirebaseEditFun()
-                          .editStandardDetails(
-                        standardModel: widget.standardListModel!,
-                        newBoardId: newSelectedBoard?.boardId,
-                        image: onImagePicked?.$1,
-                        filename: onImagePicked?.$2,
-                        standardId: widget.standardListModel!.standardId!,
-                      )
-                          .then(
-                        (value) {
-                          NKToast.success(
-                              title:
-                                  "$boardStr ${SuccessStrings.addedSuccessfully}");
-                          AppRoutes.navigator.pop();
-                          widget.onBoardUpdated?.call(value);
-                        },
-                      );
-                    } else {
-                      if (newSelectedBoard != null) {
-                        await FirebaseAddFun()
-                            .addStandard(
-                                boardId: newSelectedBoard!.boardId!,
-                                standardName: standardController.text,
-                                image: onImagePicked?.$1,
-                                filename: onImagePicked?.$2)
-                            .then(
-                          (value) {
-                            NKToast.success(
-                                title:
-                                    "$boardStr ${SuccessStrings.addedSuccessfully}");
-                            Navigator.pop(context);
-                            widget.onBoardUpdated?.call(value);
-                          },
-                        );
-                      } else if (newSelectedBoard == null) {
-                        NKToast.warning(
-                            title: "${ErrorStrings.select} $boardStr");
-                      }
-                    }
+                    // if (widget.standardListModel != null) {
+                    //   await FirebaseEditFun()
+                    //       .editStandardDetails(
+                    //     standardModel: widget.standardListModel!,
+                    //     newBoardId: newSelectedBoard?.boardId,
+                    //     image: onImagePicked?.$1,
+                    //     filename: onImagePicked?.$2,
+                    //     standardId: widget.standardListModel!.standardId!,
+                    //   )
+                    //       .then(
+                    //     (value) {
+                    //       NKToast.success(
+                    //           title:
+                    //               "$boardStr ${SuccessStrings.addedSuccessfully}");
+                    //       AppRoutes.navigator.pop();
+                    //       widget.onBoardUpdated?.call(value);
+                    //     },
+                    //   );
+                    // } else {
+                    //   if (newSelectedBoard != null) {
+                    //     await FirebaseAddFun()
+                    //         .addStandard(
+                    //             boardId: newSelectedBoard!.boardId!,
+                    //             standardName: standardController.text,
+                    //             image: onImagePicked?.$1,
+                    //             filename: onImagePicked?.$2)
+                    //         .then(
+                    //       (value) {
+                    //         NKToast.success(
+                    //             title:
+                    //                 "$boardStr ${SuccessStrings.addedSuccessfully}");
+                    //         Navigator.pop(context);
+                    //         widget.onBoardUpdated?.call(value);
+                    //       },
+                    //     );
+                    //   } else if (newSelectedBoard == null) {
+                    //     NKToast.warning(
+                    //         title: "${ErrorStrings.select} $boardStr");
+                    //   }
+                    // }
                   }
                 } on Exception catch (e) {
                   nkDevLog("ADD STANDARD ERROR : ${e.toString()}");

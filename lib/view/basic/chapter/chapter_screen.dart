@@ -28,86 +28,86 @@ class _ChapterScreenState extends State<ChapterScreen> {
 
   getBoardData() async {
     boardListData.startLoading();
-    TempDataStore.boardList.then((value) {
-      if (value != null && value.isNotEmpty) {
-        setState(() {
-          boardListData.onSuccess(value);
-        });
-      } else {
-        setState(() {
-          boardListData.onEmpty(ErrorStrings.noDataFound);
-        });
-      }
-    }).catchError((error, stackTrace) {
-      setState(() {
-        boardListData.onError(error.toString());
-      });
-    });
+    // TempDataStore.boardList.then((value) {
+    //   if (value != null && value.isNotEmpty) {
+    //     setState(() {
+    //       boardListData.onSuccess(value);
+    //     });
+    //   } else {
+    //     setState(() {
+    //       boardListData.onEmpty(ErrorStrings.noDataFound);
+    //     });
+    //   }
+    // }).catchError((error, stackTrace) {
+    //   setState(() {
+    //     boardListData.onError(error.toString());
+    //   });
+    // });
   }
 
   getStandardData(String boardId) async {
     setState(() {
       standardListData.startLoading();
     });
-    TempDataStore.standardList(boardId).then((value) {
-      if (value != null && value.isNotEmpty) {
-        setState(() {
-          standardListData.onSuccess(value);
-        });
-      } else {
-        setState(() {
-          standardListData.onEmpty(ErrorStrings.noDataFound);
-        });
-      }
-    }).catchError((error, stackTrace) {
-      setState(() {
-        standardListData.onError(error.toString());
-      });
-    });
+    // TempDataStore.standardList(boardId).then((value) {
+    //   if (value != null && value.isNotEmpty) {
+    //     setState(() {
+    //       standardListData.onSuccess(value);
+    //     });
+    //   } else {
+    //     setState(() {
+    //       standardListData.onEmpty(ErrorStrings.noDataFound);
+    //     });
+    //   }
+    // }).catchError((error, stackTrace) {
+    //   setState(() {
+    //     standardListData.onError(error.toString());
+    //   });
+    // });
   }
 
   getSubjectData(String boardId, String standardId) async {
     setState(() {
       subjectListData.startLoading();
     });
-    TempDataStore.subjectList(boardId, standardId).then((value) {
-      if (value != null && value.isNotEmpty) {
-        setState(() {
-          subjectListData.onSuccess(value);
-        });
-      } else {
-        setState(() {
-          subjectListData.onEmpty(ErrorStrings.noDataFound);
-        });
-      }
-    }).catchError((error, stackTrace) {
-      setState(() {
-        subjectListData.onError(error.toString());
-      });
-    });
+    // TempDataStore.subjectList(boardId, standardId).then((value) {
+    //   if (value != null && value.isNotEmpty) {
+    //     setState(() {
+    //       subjectListData.onSuccess(value);
+    //     });
+    //   } else {
+    //     setState(() {
+    //       subjectListData.onEmpty(ErrorStrings.noDataFound);
+    //     });
+    //   }
+    // }).catchError((error, stackTrace) {
+    //   setState(() {
+    //     subjectListData.onError(error.toString());
+    //   });
+    // });
   }
 
   getChapter(String boardId, String standardId, String subjectId) async {
     setState(() {
       chapterListData.startLoading();
     });
-    FirebaseGetFun()
-        .getChapterList(boardId, standardId, subjectId)
-        .then((value) {
-      if (value != null && value.isNotEmpty) {
-        setState(() {
-          chapterListData.onSuccess(value);
-        });
-      } else {
-        setState(() {
-          chapterListData.onEmpty(ErrorStrings.noDataFound);
-        });
-      }
-    }).catchError((error, stackTrace) {
-      setState(() {
-        chapterListData.onError(error.toString());
-      });
-    });
+    // FirebaseGetFun()
+    //     .getChapterList(boardId, standardId, subjectId)
+    //     .then((value) {
+    //   if (value != null && value.isNotEmpty) {
+    //     setState(() {
+    //       chapterListData.onSuccess(value);
+    //     });
+    //   } else {
+    //     setState(() {
+    //       chapterListData.onEmpty(ErrorStrings.noDataFound);
+    //     });
+    //   }
+    // }).catchError((error, stackTrace) {
+    //   setState(() {
+    //     chapterListData.onError(error.toString());
+    //   });
+    // });
   }
 
   @override
@@ -326,6 +326,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
                             return MyDeleteDialog(
                               appBarTitle: chapter.chapterName ?? "",
                               onPressed: () async {
+<<<<<<< Updated upstream
                                 await FirebaseDeleteFun()
                                     .deleteSubject(
                                         chapter.boardId ?? "",
@@ -342,6 +343,23 @@ class _ChapterScreenState extends State<ChapterScreen> {
                                         ?.removeAt(index);
                                   });
                                 });
+=======
+                                // await FirebaseDeleteFun()
+                                //     .deleteChapter(
+                                //         chapter.boardId ?? "",
+                                //         chapter.standardId ?? "",
+                                //         chapter.subjectId ?? "",
+                                //         chapter.chapterId ?? "",
+                                //         imageUrl: chapter.image)
+                                //     .whenComplete(() {
+                                //   NKToast.success(
+                                //       title:
+                                //           "${chapter.chapterName} ${SuccessStrings.deletedSuccessfully}");
+                                //   setState(() {
+                                //     chapterListData.data?.removeAt(index);
+                                //   });
+                                // });
+>>>>>>> Stashed changes
                               },
                             );
                           }).then((value) {

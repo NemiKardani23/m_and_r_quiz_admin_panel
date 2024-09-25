@@ -26,6 +26,7 @@ class HomeScreen extends StatelessWidget {
         const Size.square(180),
       ),
       padding: nkRegularPadding,
+<<<<<<< Updated upstream
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -39,6 +40,26 @@ class HomeScreen extends StatelessWidget {
           )
         ].addSpaceEveryWidget(space: nkExtraSmallSizedBox),
       ),
+=======
+      child: FutureBuilder(
+          // future: TempDataStore.getStudentCount,
+          future:  Future.value(1),
+          builder: (context, snapshot) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                MyRegularText(
+                  label: snapshot.data?.toString() ?? "0",
+                  fontSize: NkFontSize.headingFont,
+                  fontWeight: NkGeneralSize.nkBoldFontWeight,
+                ),
+                const MyRegularText(
+                  label: totalStudentStr,
+                )
+              ].addSpaceEveryWidget(space: nkExtraSmallSizedBox),
+            );
+          }),
+>>>>>>> Stashed changes
     );
   }
 

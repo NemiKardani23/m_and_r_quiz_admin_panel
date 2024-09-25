@@ -1,16 +1,22 @@
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionhelper.dart';
-import 'package:m_and_r_quiz_admin_panel/service/firebase/firebase_init.dart';
 import 'package:toastification/toastification.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+<<<<<<< Updated upstream
   FirebaseInit.init().whenComplete(
     () {
       AppRoutes.routesData();
       runApp(const MyApp());
     },
   );
+=======
+
+  
+  AppRoutes.routesData();
+  runApp(const MyApp());
+>>>>>>> Stashed changes
 }
 
 class MyApp extends StatefulWidget {

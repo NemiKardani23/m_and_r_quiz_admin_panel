@@ -19,21 +19,21 @@ class _BordScreenState extends State<BordScreen> {
 
   getBoardData() async {
     boardListData.startLoading();
-    TempDataStore.boardList.then((value) {
-      if (value != null && value.isNotEmpty) {
-        setState(() {
-          boardListData.onSuccess(value);
-        });
-      } else {
-        setState(() {
-          boardListData.onEmpty(ErrorStrings.noDataFound);
-        });
-      }
-    }).catchError((error, stackTrace) {
-      setState(() {
-        boardListData.onError(error.toString());
-      });
-    });
+    // TempDataStore.boardList.then((value) {
+    //   if (value != null && value.isNotEmpty) {
+    //     setState(() {
+    //       boardListData.onSuccess(value);
+    //     });
+    //   } else {
+    //     setState(() {
+    //       boardListData.onEmpty(ErrorStrings.noDataFound);
+    //     });
+    //   }
+    // }).catchError((error, stackTrace) {
+    //   setState(() {
+    //     boardListData.onError(error.toString());
+    //   });
+    // });
   }
 
   @override
@@ -154,6 +154,7 @@ class _BordScreenState extends State<BordScreen> {
                             return MyDeleteDialog(
                               appBarTitle: board.boardName ?? "",
                               onPressed: () async {
+<<<<<<< Updated upstream
                                 await FirebaseDeleteFun()
                                     .deleteBoard(board.boardId ?? "",
                                         imageUrl: board.image)
@@ -167,6 +168,21 @@ class _BordScreenState extends State<BordScreen> {
                                         ?.removeAt(index);
                                   });
                                 });
+=======
+                                // await FirebaseDeleteFun()
+                                //     .deleteBoard(board.boardId ?? "",
+                                //         imageUrl: board.image)
+                                //     .whenComplete(() {
+                                //   NKToast.success(
+                                //       title:
+                                //           "${board.boardName} ${SuccessStrings.deletedSuccessfully}");
+                                //   setState(() {
+                                //     boardListData.data?.removeAt(index);
+                                //     // TempDataStore.tempBoardList.value
+                                //     //     ?.removeAt(index);
+                                //   });
+                                // });
+>>>>>>> Stashed changes
                               },
                             );
                           }).then((value) {
