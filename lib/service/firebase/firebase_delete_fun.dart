@@ -32,27 +32,6 @@
 //         .delete();
 //     return;
 //   }
-
-<<<<<<< Updated upstream
-  /// SUBJECT
-  Future<void> deleteSubject(
-      String boardId, String standardId, String subjectId,
-      {String? imageUrl}) async {
-    if (imageUrl != null) {
-      await deleteImage(imageUrl);
-    }
-    await _firebaseCloudStorage
-        .collection(board)
-        .doc(boardId)
-        .collection(standard)
-        .doc(standardId)
-        .collection(subject)
-        .doc(subjectId)
-        .delete();
-    return;
-  }
-}
-=======
 //   /// SUBJECT
 //   Future<void> deleteSubject(
 //       String boardId, String standardId, String subjectId,
@@ -131,4 +110,3 @@
 //     return;
 //   }
 // }
->>>>>>> Stashed changes

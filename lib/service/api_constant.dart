@@ -1,15 +1,3 @@
-<<<<<<< Updated upstream
-mixin class ApiConstant {
-  final String baseName = "quizadmin";
-  final String userDetails = "userDetails";
-  final String board = "board";
-  final String list = "list";
-  final String standard = "standard";
-  final String subject = "subject";
-  final String chapter = "chapter";
-=======
-// ignore_for_file: constant_identifier_names
->>>>>>> Stashed changes
 
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionhelper.dart';
 

@@ -1,9 +1,8 @@
-<<<<<<< Updated upstream
-=======
+
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:device_info_plus/device_info_plus.dart';
->>>>>>> Stashed changes
-import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
+
+import '../export/___app_file_exporter.dart';
 
 class NkCommonFunction {
 
@@ -18,8 +17,7 @@ class NkCommonFunction {
       return const Icon(Icons.visibility_off);
     }
   }
-<<<<<<< Updated upstream
-=======
+
   
 
   static Widget selectCountryCode(
@@ -39,5 +37,4 @@ class NkCommonFunction {
       alignLeft: false,
     );
   }
->>>>>>> Stashed changes
 }

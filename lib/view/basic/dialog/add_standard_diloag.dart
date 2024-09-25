@@ -63,9 +63,10 @@ class _AddStandardDiloagState extends State<AddStandardDiloag> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Center(
-            child: NkImagePickerWithPlaceHolder(
+            child: NkPickerWithPlaceHolder(
+              fileType: "image",
               imageUrl: widget.standardListModel?.image ?? "",
-              onImagePicked: (imageBytes, imageName) {
+              onFilePicked: (imageBytes, imageName) {
                 onImagePicked = (imageBytes, imageName);
               },
             ),

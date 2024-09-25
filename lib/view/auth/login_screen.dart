@@ -107,22 +107,6 @@ class _LoginScreenState extends State<LoginScreen> {
             email: emailController.text, password: passwordController.text)
         .then(
       (value) {
-<<<<<<< Updated upstream
-        nkDevLog("USER DATA CONVERTED : ${value?.toMap()}");
-        if (value == null) {
-          NKToast.warning(title: ErrorStrings.noDataFound);
-        } else if ((value.email)?.toLowerCase() !=
-                (emailController.text).toLowerCase() &&
-            value.password != passwordController.text) {
-          NKToast.warning(title: ErrorStrings.incorrectEmailOrPassword);
-        } else {
-          SessionHelper.instance.setLoginData(value).then(
-            (value) {
-              AppRoutes.navigator
-                  .pushReplacementNamed(AppRoutes.dashboardScreen);
-            },
-          );
-=======
         nkDevLog("USER DATA CONVERTED : ${value?.toJson()}");
         if (value != null && value.data != null) {
           SessionHelper.instance.setLoginData(value.data!).then(
@@ -131,7 +115,6 @@ class _LoginScreenState extends State<LoginScreen> {
              AppRoutes.navigator.goNamed(AppRoutes.dashboardScreen);
         } else {
           NKToast.warning(title: ErrorStrings.noDataFound);
->>>>>>> Stashed changes
         }
       },
     );

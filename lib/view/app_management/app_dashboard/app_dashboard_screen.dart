@@ -1,12 +1,9 @@
+
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:m_and_r_quiz_admin_panel/components/animation/common_animation/basic_animation.dart';
-import 'package:m_and_r_quiz_admin_panel/components/common_diloag/my_delete_dialog.dart';
-import 'package:m_and_r_quiz_admin_panel/components/my_network_image.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/view/app_management/app_dashboard/diloag/add_slider_diloag.dart';
 import 'package:m_and_r_quiz_admin_panel/view/app_management/model/slider_list_model.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-
 part '../app_dashboard/widget/slider_widget.dart';
 
 class AppDashboardScreen extends StatefulWidget {

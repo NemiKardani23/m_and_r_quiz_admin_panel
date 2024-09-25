@@ -95,29 +95,29 @@ class _StudentScreenState extends State<StudentScreen> {
                           return AddStudentDiloag(
                             boardList: boardListData.data ?? [],
                             onUpdated: (student) {
-                              try {
-                                AppRoutes.navigator.pop();
-                                setState(() {
-                                  if (student != null &&
-                                      studentListData.data?.isNotEmpty ==
-                                          true) {
-                                    TempDataStore.tempStudentList.value
-                                        ?.add(student);
-                                    studentListData.onSuccess(
-                                        TempDataStore.tempStudentList.value ??
-                                            []);
-                                    return;
-                                  } else if (student != null) {
-                                    studentListData.onSuccess([student]);
-                                    TempDataStore.tempStudentList.value
-                                        ?.add(student);
-                                    return;
-                                  }
-                                });
-                              } on Exception catch (e) {
-                                nkDevLog("EXCEPTION STUDENT : ${e.toString()}",
-                                    error: e.toString());
-                              }
+                              // try {
+                              //   AppRoutes.navigator.pop();
+                              //   setState(() {
+                              //     if (student != null &&
+                              //         studentListData.data?.isNotEmpty ==
+                              //             true) {
+                              //       TempDataStore.tempStudentList.value
+                              //           ?.add(student);
+                              //       studentListData.onSuccess(
+                              //           TempDataStore.tempStudentList.value ??
+                              //               []);
+                              //       return;
+                              //     } else if (student != null) {
+                              //       studentListData.onSuccess([student]);
+                              //       TempDataStore.tempStudentList.value
+                              //           ?.add(student);
+                              //       return;
+                              //     }
+                              //   });
+                              // } on Exception catch (e) {
+                              //   nkDevLog("EXCEPTION STUDENT : ${e.toString()}",
+                              //       error: e.toString());
+                              // }
                             },
                           );
                         }).then((val) {});
@@ -157,7 +157,7 @@ class _StudentScreenState extends State<StudentScreen> {
             Expanded(
               child: Row(
                 children: [
-                  MyNetworkImage(url: student.image ?? ""),
+                  MyNetworkImage(imageUrl: student.image ?? ""),
                   nkExtraSmallSizedBox,
                   Flexible(
                     child: Column(
@@ -193,13 +193,13 @@ class _StudentScreenState extends State<StudentScreen> {
                               studentListModel: student,
                               boardList: boardListData.data ?? [],
                               onUpdated: (student) {
-                                TempDataStore.tempStudentList.value![index] =
-                                    student!;
-                                setState(() {
-                                  studentListData.onSuccess(
-                                      TempDataStore.tempStudentList.value ??
-                                          []);
-                                });
+                                // TempDataStore.tempStudentList.value![index] =
+                                //     student!;
+                                // setState(() {
+                                //   studentListData.onSuccess(
+                                //       TempDataStore.tempStudentList.value ??
+                                //           []);
+                                // });
                               },
                             );
                           }).whenComplete(() => setState(() {}));

@@ -1,11 +1,3 @@
-<<<<<<< Updated upstream
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
-import 'package:m_and_r_quiz_admin_panel/view/basic/model/board_list_model.dart';
-import 'package:m_and_r_quiz_admin_panel/view/basic/model/chapter_list_model.dart';
-import 'package:m_and_r_quiz_admin_panel/view/basic/model/standard_list_model.dart';
-import 'package:m_and_r_quiz_admin_panel/view/basic/model/subject_list_model.dart';
-=======
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 // import 'package:m_and_r_quiz_admin_panel/view/app_management/model/my_learning_category_list_model.dart';
@@ -15,7 +7,6 @@ import 'package:m_and_r_quiz_admin_panel/view/basic/model/subject_list_model.dar
 // import 'package:m_and_r_quiz_admin_panel/view/basic/model/standard_list_model.dart';
 // import 'package:m_and_r_quiz_admin_panel/view/basic/model/subject_list_model.dart';
 // import 'package:m_and_r_quiz_admin_panel/view/student/model/student_list_model.dart';
->>>>>>> Stashed changes
 
 // class FirebaseGetFun extends ApiConstant {
 //   FirebaseFirestore storage = FirebaseFirestore.instance;
@@ -175,34 +166,6 @@ import 'package:m_and_r_quiz_admin_panel/view/basic/model/subject_list_model.dar
 //     }
 //   }
 
-<<<<<<< Updated upstream
-  Future<ChapterListModel?> getChapter(String boardId, String standardId,
-      String subjectId, String chapterId) async {
-    nkDevLog("--------------- GET SUBJECT CALLED");
-    try {
-      return await storage
-          .collection(board)
-          .doc(boardId)
-          .collection(standard)
-          .doc(standardId)
-          .collection(subject)
-          .doc(subjectId)
-          .collection(chapter)
-          .doc(chapterId)
-          .get()
-          .then(
-        (value) {
-          return ChapterListModel.fromJson(
-              value.data() as Map<String, dynamic>);
-        },
-      );
-    } on FirebaseException catch (e) {
-      NKToast.error(title: e.message.toString());
-      return null;
-    }
-  }
-}
-=======
 //   Future<ChapterListModel?> getChapter(String boardId, String standardId,
 //       String subjectId, String chapterId) async {
 //     nkDevLog("--------------- GET SUBJECT CALLED");
@@ -349,4 +312,3 @@ import 'package:m_and_r_quiz_admin_panel/view/basic/model/subject_list_model.dar
 //     }
 //   }
 // }
->>>>>>> Stashed changes

@@ -1,12 +1,10 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:m_and_r_quiz_admin_panel/components/app_bar/my_app_bar.dart';
-import 'package:m_and_r_quiz_admin_panel/components/nk_image_picker_with_placeholder/nk_image_picker_with_placeholder.dart';
-import 'package:m_and_r_quiz_admin_panel/components/widget/my_learning_category_mode_option_select_widget.dart';
-import 'package:m_and_r_quiz_admin_panel/components/widget/slide_mode_option_select_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
-import 'package:m_and_r_quiz_admin_panel/service/firebase/firebase_add_fun.dart';
-import 'package:m_and_r_quiz_admin_panel/service/firebase/firebase_edit_fun.dart';
 import 'package:m_and_r_quiz_admin_panel/view/app_management/model/my_learning_category_list_model.dart';
+
+import '../../../../components/nk_image_picker_with_placeholder/nk_image_picker_with_placeholder.dart';
+import '../../../../components/widget/my_learning_category_mode_option_select_widget.dart';
 
 class AddMyLearninCategoryDiloag extends StatefulWidget {
   final MyLearningCategoryListModel? categoryListModel;

@@ -32,8 +32,6 @@ const String areYouSureYouWantToDelete = "Are you sure you want to delete?";
 const String closeStr = "Close";
 const String deleteStr = "Delete";
 
-<<<<<<< Updated upstream
-=======
 /// STUDENT
 const String studentStr = "Student";
 const String nameStr = "Name";
@@ -71,7 +69,6 @@ const String statusStr = "Status";
 
 
 
->>>>>>> Stashed changes
 abstract final class ErrorStrings {
   static const String noDataFound = "No data found";
   static const String selectImage = "Select Image";

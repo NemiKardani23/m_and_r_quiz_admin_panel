@@ -1,5 +1,4 @@
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
-import 'package:m_and_r_quiz_admin_panel/service/firebase/firebase_get_fun.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/board_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/standard_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/subject_list_model.dart';
@@ -12,20 +11,7 @@ class TempDataStore {
   static ValueNotifier<List<SubjectListModel>?> tempSubjectList =
       ValueNotifier(null);
 
-<<<<<<< Updated upstream
-  static Future<List<BoardListModel>?> get boardList async {
-    if (tempBoardList.value == null || tempBoardList.value?.isEmpty == true) {
-      tempBoardList.value = await FirebaseGetFun().getBordList();
-      return tempBoardList.value;
-    } else {
-      return tempBoardList.value;
-    }
-  }
-=======
-  static ValueNotifier<List<StudentListModel>?> tempStudentList =
-      ValueNotifier(null);
 
-   
 
   // static Future<List<BoardListModel>?> get boardList async {
   //   if (tempBoardList.value == null || tempBoardList.value?.isEmpty == true) {
@@ -35,7 +21,6 @@ class TempDataStore {
   //     return tempBoardList.value;
   //   }
   // }
->>>>>>> Stashed changes
 
   // static Future<List<StandardListModel>?> standardList(String boardId) async {
   //   if (tempStandardList.value == null ||
@@ -48,22 +33,6 @@ class TempDataStore {
   //   }
   // }
 
-<<<<<<< Updated upstream
-  static Future<List<SubjectListModel>?> subjectList(
-      String boardId, String standardId) async {
-    if (tempSubjectList.value == null ||
-        tempSubjectList.value?.isEmpty == true ||
-        tempSubjectList.value?.every(
-                (e) => e.standardId == standardId && e.boardId == boardId) ==
-            false) {
-      tempSubjectList.value =
-          await FirebaseGetFun().getSubjectList(boardId, standardId);
-      return tempSubjectList.value;
-    } else {
-      return tempSubjectList.value;
-    }
-  }
-=======
   // static Future<List<SubjectListModel>?> subjectList(
   //     String boardId, String standardId) async {
   //   if (tempSubjectList.value == null ||
@@ -98,5 +67,4 @@ class TempDataStore {
   //      return null;
   //   }
   // }
->>>>>>> Stashed changes
 }

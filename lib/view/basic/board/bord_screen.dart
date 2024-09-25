@@ -154,21 +154,6 @@ class _BordScreenState extends State<BordScreen> {
                             return MyDeleteDialog(
                               appBarTitle: board.boardName ?? "",
                               onPressed: () async {
-<<<<<<< Updated upstream
-                                await FirebaseDeleteFun()
-                                    .deleteBoard(board.boardId ?? "",
-                                        imageUrl: board.image)
-                                    .whenComplete(() {
-                                  NKToast.success(
-                                      title:
-                                          "${board.boardName} ${SuccessStrings.deletedSuccessfully}");
-                                  setState(() {
-                                    boardListData.data?.removeAt(index);
-                                    TempDataStore.tempBoardList.value
-                                        ?.removeAt(index);
-                                  });
-                                });
-=======
                                 // await FirebaseDeleteFun()
                                 //     .deleteBoard(board.boardId ?? "",
                                 //         imageUrl: board.image)
@@ -182,7 +167,6 @@ class _BordScreenState extends State<BordScreen> {
                                 //     //     ?.removeAt(index);
                                 //   });
                                 // });
->>>>>>> Stashed changes
                               },
                             );
                           }).then((value) {

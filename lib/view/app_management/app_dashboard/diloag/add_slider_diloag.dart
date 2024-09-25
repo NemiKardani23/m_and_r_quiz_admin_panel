@@ -4,8 +4,6 @@ import 'package:m_and_r_quiz_admin_panel/components/nk_image_picker_with_placeho
 import 'package:m_and_r_quiz_admin_panel/components/widget/media_type_option_select_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/components/widget/slide_mode_option_select_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
-import 'package:m_and_r_quiz_admin_panel/service/firebase/firebase_add_fun.dart';
-import 'package:m_and_r_quiz_admin_panel/service/firebase/firebase_edit_fun.dart';
 import 'package:m_and_r_quiz_admin_panel/view/app_management/model/slider_list_model.dart';
 
 class AddSliderDiloag extends StatefulWidget {

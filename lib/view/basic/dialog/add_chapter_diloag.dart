@@ -3,9 +3,6 @@ import 'package:m_and_r_quiz_admin_panel/components/dropdown/nk_serchable_dropdo
 import 'package:m_and_r_quiz_admin_panel/components/nk_enable_disable_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/components/nk_image_picker_with_placeholder/nk_image_picker_with_placeholder.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
-import 'package:m_and_r_quiz_admin_panel/local_storage/temp_data_store/temp_data_store.dart';
-import 'package:m_and_r_quiz_admin_panel/service/firebase/firebase_add_fun.dart';
-import 'package:m_and_r_quiz_admin_panel/service/firebase/firebase_edit_fun.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/board_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/chapter_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/standard_list_model.dart';
@@ -124,11 +121,12 @@ class _AddChapterDiloagState extends State<AddChapterDiloag> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Center(
-            child: NkImagePickerWithPlaceHolder(
+            child: NkPickerWithPlaceHolder(
               imageUrl: widget.chapterListModel?.image ?? "",
-              onImagePicked: (imageBytes, imageName) {
+              onFilePicked: (imageBytes, imageName) {
                 onImagePicked = (imageBytes, imageName);
               },
+              fileType: "image",
             ),
           ),
           const MyRegularText(label: boardStr),

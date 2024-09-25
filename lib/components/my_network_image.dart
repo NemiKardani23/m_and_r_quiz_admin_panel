@@ -20,13 +20,13 @@ class MyNetworkImage extends ImageNetwork {
     this.appFitWeb,
     this.onTap,
   }) : super(
-          image: imageUrl,
-          width: appWidth ?? 50,
-          height: appHeight ?? 50,
-          fitAndroidIos: fit ?? BoxFit.cover,
-          fitWeb: appFitWeb ?? BoxFitWeb.cover,
-          onTap: onTap,
-        );
+            image: imageUrl,
+            width: appWidth ?? 50,
+            height: appHeight ?? 50,
+            fitAndroidIos: fit ?? BoxFit.cover,
+            fitWeb: appFitWeb ?? BoxFitWeb.cover,
+            onTap: onTap,
+            fullScreen: true);
 
   @override
   // TODO: implement onLoading

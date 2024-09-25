@@ -1,13 +1,11 @@
 import 'package:m_and_r_quiz_admin_panel/components/my_common_container.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
+import 'package:m_and_r_quiz_admin_panel/view/app_management/app_management_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/basic_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/home/home_screen.dart';
-<<<<<<< Updated upstream
-=======
 import 'package:m_and_r_quiz_admin_panel/view/questions/questions_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/student/student_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/utills_management_screen.dart';
->>>>>>> Stashed changes
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -22,14 +20,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final List<Widget> pageList = [
     const HomeScreen(),
     const BasicScreen(),
-<<<<<<< Updated upstream
-    const Placeholder(),
-=======
     const StudentScreen(),
     const QuestionsScreen(),
     const AppManagementScreen(),
     const UtillsManagementScreen(),
->>>>>>> Stashed changes
   ];
 
   @override
@@ -74,33 +68,6 @@ class _AppMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (context.isMobile) {
-<<<<<<< Updated upstream
-      return Card(
-        child: ClipOval(
-          child: BottomNavigationBar(
-              currentIndex: selectedIndex,
-              fixedColor: secondaryBackgroundColor,
-              onTap: onItemSelected,
-              unselectedLabelStyle: TextStyle(
-                color: primaryTextColor.withOpacity(0.5),
-              ),
-              landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
-              type: BottomNavigationBarType.fixed,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.category),
-                  label: basicStr,
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.settings),
-                  label: 'Settings',
-                ),
-              ]),
-=======
       return SizedBox(
         height: context.height * 0.12,
         child: PageView(
@@ -188,7 +155,6 @@ class _AppMenu extends StatelessWidget {
               ),
             ),
           ],
->>>>>>> Stashed changes
         ),
       );
     } else {
@@ -232,8 +198,6 @@ class _AppMenu extends StatelessWidget {
                     Icons.settings,
                     color: selctedIconColor(2),
                   )),
-<<<<<<< Updated upstream
-=======
               _webTabBuilder(3,
                   onItemSelected: onItemSelected,
                   tabName: "Questions",
@@ -255,12 +219,42 @@ class _AppMenu extends StatelessWidget {
                     Icons.admin_panel_settings_rounded,
                     color: selctedIconColor(5),
                   )),
->>>>>>> Stashed changes
             ].addSpaceEveryWidget(space: nkExtraSmallSizedBox),
           ),
         ),
       );
     }
+  }
+  Widget _mobileTabComponent(BuildContext context,
+      {required BottomNavigationBarItem tabItem,
+      required int index,
+      Function(int)? onSelectedItem}) {
+    return Flexible(
+      fit: FlexFit.tight,
+      child: InkResponse(
+        onTap: () {
+          onSelectedItem?.call(index);
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            tabItem.icon,
+            if (tabItem.label != null) ...[
+              MyRegularText(
+                fontSize: NkFontSize.smallFont,
+                label: tabItem.label!,
+                fontWeight: selectedIndex == index
+                    ? NkGeneralSize.nkBoldFontWeight
+                    : null,
+                color: selectedIndex == index
+                    ? primaryTextColor
+                    : primaryTextColor.withOpacity(0.5),
+              ),
+            ]
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _webTabBuilder(int index,

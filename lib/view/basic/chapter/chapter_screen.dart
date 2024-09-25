@@ -326,24 +326,6 @@ class _ChapterScreenState extends State<ChapterScreen> {
                             return MyDeleteDialog(
                               appBarTitle: chapter.chapterName ?? "",
                               onPressed: () async {
-<<<<<<< Updated upstream
-                                await FirebaseDeleteFun()
-                                    .deleteSubject(
-                                        chapter.boardId ?? "",
-                                        chapter.standardId ?? "",
-                                        chapter.subjectId ?? "",
-                                        imageUrl: chapter.image)
-                                    .whenComplete(() {
-                                  NKToast.success(
-                                      title:
-                                          "${chapter.chapterName} ${SuccessStrings.deletedSuccessfully}");
-                                  setState(() {
-                                    subjectListData.data?.removeAt(index);
-                                    TempDataStore.tempSubjectList.value
-                                        ?.removeAt(index);
-                                  });
-                                });
-=======
                                 // await FirebaseDeleteFun()
                                 //     .deleteChapter(
                                 //         chapter.boardId ?? "",
@@ -359,7 +341,6 @@ class _ChapterScreenState extends State<ChapterScreen> {
                                 //     chapterListData.data?.removeAt(index);
                                 //   });
                                 // });
->>>>>>> Stashed changes
                               },
                             );
                           }).then((value) {

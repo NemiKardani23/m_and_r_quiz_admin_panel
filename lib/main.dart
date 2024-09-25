@@ -4,19 +4,9 @@ import 'package:toastification/toastification.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-<<<<<<< Updated upstream
-  FirebaseInit.init().whenComplete(
-    () {
-      AppRoutes.routesData();
-      runApp(const MyApp());
-    },
-  );
-=======
 
-  
   AppRoutes.routesData();
   runApp(const MyApp());
->>>>>>> Stashed changes
 }
 
 class MyApp extends StatefulWidget {

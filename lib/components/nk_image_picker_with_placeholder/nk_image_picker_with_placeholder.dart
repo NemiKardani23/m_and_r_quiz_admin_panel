@@ -1,54 +1,115 @@
 import 'package:file_picker/file_picker.dart';
+import 'package:m_and_r_quiz_admin_panel/components/nk_web_video_player/nk_web_video_player.dart';
 import 'package:m_and_r_quiz_admin_panel/components/my_network_image.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/null_check_oprations.dart';
 
-class NkImagePickerWithPlaceHolder extends StatefulWidget {
+class NkPickerWithPlaceHolder extends StatefulWidget {
   final String? imageUrl;
-  final void Function(Uint8List? imageBytes, String? imageName)? onImagePicked;
-  const NkImagePickerWithPlaceHolder(
-      {super.key, this.onImagePicked, this.imageUrl});
+  final FileType? pickType;
+  final String fileType;
+  final void Function(Uint8List? imageBytes, String? imageName)? onFilePicked;
+
+  const NkPickerWithPlaceHolder({
+    super.key,
+    this.onFilePicked,
+    this.imageUrl,
+    this.pickType,
+    required this.fileType,
+  });
 
   @override
-  State<NkImagePickerWithPlaceHolder> createState() =>
-      _NkImagePickerWithPlaceHolderState();
+  State<NkPickerWithPlaceHolder> createState() =>
+      _NkPickerWithPlaceHolderState();
 }
 
-class _NkImagePickerWithPlaceHolderState
-    extends State<NkImagePickerWithPlaceHolder> {
-  Uint8List? _imageBytes;
-  String? initalImageUrl;
-  String? _imageName;
+class _NkPickerWithPlaceHolderState extends State<NkPickerWithPlaceHolder> {
+  Uint8List? _fileBytes;
+  String? _fileName;
+  String? initalFileUrl;
+  FileType _initialFileType = FileType.any;
 
   @override
   void initState() {
-    initalImageUrl = widget.imageUrl;
+    initalFileUrl = widget.imageUrl;
+    _initialFileType = widget.pickType ?? FileType.any;
     super.initState();
   }
 
-  Future<void> _pickImage() async {
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future<void> _pickFile() async {
+    _initialFileType = widget.pickType ?? FileType.any;
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
+      type: _initialFileType,
     );
 
     if (result != null && result.files.first.bytes != null) {
+      _handleFileType(result.files.first.name);
       setState(() {
-        initalImageUrl = null;
-        widget.onImagePicked
+        initalFileUrl = null;
+        widget.onFilePicked
             ?.call(result.files.first.bytes, result.files.first.name);
-        _imageBytes = result.files.first.bytes;
-        _imageName = result.files.first.name;
+        _fileBytes = result.files.first.bytes;
+        _fileName = result.files.first.name;
       });
     }
   }
 
-  void _removeImage() {
+  void _removeFile() {
     setState(() {
-      initalImageUrl = widget.imageUrl;
-      widget.onImagePicked?.call(null, null);
-      _imageBytes = null;
-      _imageName = null;
+      initalFileUrl = widget.imageUrl;
+      widget.onFilePicked?.call(null, null);
+      _fileBytes = null;
+      _fileName = null;
     });
+  }
+
+  Widget _buildFilePreview() {
+    if (_fileBytes == null) {
+      if (!CheckNullData.checkNullOrEmptyString(initalFileUrl) &&
+          widget.fileType == "image") {
+        return MyNetworkImage(
+          imageUrl: initalFileUrl ?? "",
+          appHeight: context.height * 0.2,
+          appWidth: context.height * 0.2,
+        );
+      } else if (!CheckNullData.checkNullOrEmptyString(initalFileUrl) &&
+          widget.fileType == "video") {
+        return NkWebVideoPlayer(
+          networkUrl: initalFileUrl ?? "",
+          id: UniqueKey().toString(),
+          mimeType: _fileName!.split('.').last,
+        );
+      } else {
+        return Icon(Icons.add_photo_alternate, size: context.height * 0.2);
+      }
+    } else {
+      if (_initialFileType == FileType.image) {
+        return Image.memory(
+          _fileBytes!,
+          height: context.height * 0.2,
+          width: context.height * 0.2,
+          fit: BoxFit.cover,
+        );
+      } else if (_initialFileType == FileType.video) {
+        return ConstrainedBox(
+          constraints: BoxConstraints(
+              maxHeight: context.height * 0.25, maxWidth: context.width * 0.5),
+          child: NkWebVideoPlayer(
+            bytes: _fileBytes!,
+            id: UniqueKey().toString(),
+            mimeType: _fileName!.split('.').last,
+          ),
+        );
+      } else {
+        // For other document types
+        return Icon(Icons.insert_drive_file, size: context.height * 0.2);
+      }
+    }
   }
 
   @override
@@ -57,36 +118,56 @@ class _NkImagePickerWithPlaceHolderState
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         GestureDetector(
-          onTap: _pickImage,
-          child: _imageBytes == null
-              ? CheckNullData.checkNullOrEmptyString(initalImageUrl)
-                  ? Icon(Icons.add_photo_alternate, size: context.height * 0.2)
-                  : MyNetworkImage(
-                      imageUrl: initalImageUrl ?? "",
-                      appHeight: context.height * 0.2,
-                      appWidth: context.height * 0.2,
-                    )
-              : Image.memory(
-                  _imageBytes!,
-                  height: context.height * 0.2,
-                  width: context.height * 0.2,
-                  fit: BoxFit.cover,
-                ),
+          onTap: _pickFile,
+          child: _buildFilePreview(),
         ),
-        if (_imageBytes != null) ...[
+        if (_fileBytes != null) ...[
           TextButton.icon(
-            onPressed: _removeImage,
-            label: MyRegularText(label: _imageName ?? ''),
+            onPressed: _removeFile,
+            label: MyRegularText(label: _fileName ?? ''),
             icon: const Icon(Icons.remove_circle, color: Colors.red),
           )
-        ] else if (!CheckNullData.checkNullOrEmptyString(initalImageUrl)) ...[
+        ] else if (!CheckNullData.checkNullOrEmptyString(initalFileUrl)) ...[
           TextButton.icon(
-            onPressed: _pickImage,
-            label: const MyRegularText(label: 'Edit Image'),
+            onPressed: _pickFile,
+            label: const MyRegularText(label: 'Edit File'),
             icon: const Icon(Icons.edit, color: primaryIconColor),
           )
         ]
       ],
     );
+  }
+
+  void _handleFileType(String fileName) {
+    switch (fileName.split('.').last) {
+      case "jpg" ||
+            "jpeg" ||
+            "png" ||
+            "JPG" ||
+            "JPEG" ||
+            "PNG" ||
+            "WEBp" ||
+            "webp":
+        setState(() {
+          _initialFileType = FileType.image;
+        });
+        break;
+      case "mp4" ||
+            "MP4" ||
+            "mov" ||
+            "MOV" ||
+            "mkv" ||
+            "MKV" ||
+            "webm" ||
+            "WEBM" ||
+            "avi" ||
+            "AVI":
+        setState(() {
+          _initialFileType = FileType.video;
+        });
+        break;
+      default:
+        break;
+    }
   }
 }

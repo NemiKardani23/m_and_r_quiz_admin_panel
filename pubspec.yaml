@@ -40,12 +40,18 @@ dependencies:
   #DATE FORMATTER
   intl: ^0.19.0
 
+  #Carousel Slider
+  carousel_slider: ^5.0.0
+
+  #Smooth Page Indicator
+  smooth_page_indicator: ^1.2.0+3
   ########################################## ROUTING ##########################################
   go_router: ^14.2.1
 
   ############################# PICKER ########################
   image_picker: ^1.1.2
   file_picker: ^8.0.6
+  universal_io: ^2.2.2
 
 
   ################################  ANIMATION  ################################
@@ -65,8 +71,18 @@ dependencies:
 
   #Responsive Grid
   responsive_grid_list: ^1.4.0
+  #Country Code
+  country_code_picker: ^3.0.0
 
-dev_dependencies:
+  # Country State City
+  country_state_city: ^0.1.6
+
+  
+
+  #HTTPs
+  http: ^1.2.2
+
+dependency_overrides:
   flutter_test:
     sdk: flutter
 

@@ -1,10 +1,5 @@
-<<<<<<< Updated upstream
-import 'package:flutter/material.dart';
-import 'package:m_and_r_quiz_admin_panel/components/nk_error_widget.dart';
-import 'package:m_and_r_quiz_admin_panel/components/nk_loading_widget.dart';
-=======
+
 import '../export/___app_file_exporter.dart';
->>>>>>> Stashed changes
 
 class DataHandler<T> {
   late bool _isLoading;
@@ -40,13 +35,7 @@ class DataHandler<T> {
     _error = '';
   }
 
-  void onUpdate(T newData) {
-    _isLoading = false;
-    _hasError = false;
-    _data = newData;
-    _error = '';
-  }
-
+  
   void onSuccess(T newData) {
     _isLoading = false;
     _hasError = false;
@@ -97,20 +86,12 @@ class DataHandler<T> {
       return successBuilder.call(_data as T);
     } else if (_hasEmpty) {
       return emptyBuilder?.call(_emptyError) ??
-<<<<<<< Updated upstream
-          NkErrorWidget(
-            errorMessage: _error,
-=======
           NkEmptyWidget(
-            errorMessage: _emptyError,
->>>>>>> Stashed changes
-          );
+            errorMessage: _emptyError,          );
     } else {
       return const NkErrorWidget(); // You can return a default widget for empty state
     }
   }
-<<<<<<< Updated upstream
-=======
 
   List<Widget> whenListWidget({
     required BuildContext context,
@@ -143,7 +124,6 @@ class DataHandler<T> {
       ]; // You can return a default widget for empty state
     }
   }
->>>>>>> Stashed changes
 }
 
 checkAPIDataNotNull(DataHandler handler,
