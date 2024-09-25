@@ -268,7 +268,7 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
     }
   }
 
-  Future<GlobalCrudResponse?> deleteFileyType({required String id}) async {
+  Future<GlobalCrudResponse?> deleteFileType({required String id}) async {
     final String sendingUrl = deleteFileTypeAPI;
     var data =
         FormData.fromMap({'access_key': $ApiAccessKey, 'file_type_id': id});

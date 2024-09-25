@@ -9,7 +9,8 @@ extension ResponsiveSizeExtention on BuildContext {
 
   bool get isMobile => width < 600;
   bool get isTablet => width >= 600 && width < 900;
-  bool get isDesktop => width >= 900;
+  bool get isDesktop => width >= 1900;
+  bool get isLargeDesktop => width > 1900;
 }
 
 extension ResponsiveTextExtension on num {

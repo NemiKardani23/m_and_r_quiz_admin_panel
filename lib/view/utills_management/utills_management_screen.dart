@@ -35,6 +35,7 @@ class _UtillsManagementScreenState extends State<UtillsManagementScreen>
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         MyCommnonContainer(
             isCardView: true, margin: nkRegularPadding, child: _tabView()),
@@ -43,7 +44,10 @@ class _UtillsManagementScreenState extends State<UtillsManagementScreen>
           child: TabBarView(
               physics: const NeverScrollableScrollPhysics(),
               controller: _tabController,
-              children: const [FileTypeManagementScreen(), CategoryTypeManagementScreen()]),
+              children: const [
+                FileTypeManagementScreen(),
+                CategoryTypeManagementScreen()
+              ]),
         )
       ],
     );

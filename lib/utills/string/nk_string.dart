@@ -67,6 +67,8 @@ const String categoryTypeStr = "Category Type";
 const String descriptionStr = "Description";
 const String statusStr = "Status";
 
+// Category
+const String sectionStr = "Section";
 
 
 abstract final class ErrorStrings {

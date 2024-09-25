@@ -145,7 +145,7 @@ class _FileTypeManagementScreenState extends State<FileTypeManagementScreen>
                                   appBarTitle: fileType.typeName ?? "",
                                   onPressed: () async {
                                     await ApiWorker()
-                                        .deleteCategoryType(
+                                        .deleteFileType(
                                             id: fileType.id.toString())
                                         .whenComplete(() {
                                       NKToast.success(
@@ -167,9 +167,9 @@ class _FileTypeManagementScreenState extends State<FileTypeManagementScreen>
                 CupertinoSlidingSegmentedControl<String>(
                   onValueChanged: (value) async {
                     var res = await ApiWorker()
-                        .changeCategoryTypeStatus(
+                        .changeFileTypeStatus(
                       id: fileType.id.toString(),
-                      status: value ?? fileType.status??'active',
+                      status: value ?? fileType.status ?? 'active',
                     )
                         .then((res) {
                       if (res != null && res.status) {

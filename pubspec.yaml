@@ -69,6 +69,10 @@ dependencies:
   #Cloud Firestore
   cloud_firestore: ^5.1.0
 
+  ######################################### DYNAMIC ROUTE ########################################
+  #Dynamic Routes
+  dynamic_routes: ^1.1.1
+
   #Responsive Grid
   responsive_grid_list: ^1.4.0
   #Country Code

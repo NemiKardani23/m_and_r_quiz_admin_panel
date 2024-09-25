@@ -2,6 +2,7 @@ import 'package:m_and_r_quiz_admin_panel/components/my_common_container.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/view/app_management/app_management_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/basic_screen.dart';
+import 'package:m_and_r_quiz_admin_panel/view/category/category_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/home/home_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/questions/questions_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/student/student_screen.dart';
@@ -24,6 +25,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     const QuestionsScreen(),
     const AppManagementScreen(),
     const UtillsManagementScreen(),
+    const CategoryScreen(),
   ];
 
   @override
@@ -43,9 +45,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget navigatePage() {
-    return Expanded(
-      child: pageList[selectedIndex],
-    );
+    if (context.isLargeDesktop) {
+      return Center(
+        child: SizedBox(
+          height: context.height,
+          width: context.width / 1.5,
+          child: Expanded(
+            child: pageList[selectedIndex],
+          ),
+        ),
+      );
+    } else {
+      return Expanded(
+        child: pageList[selectedIndex],
+      );
+    }
   }
 
   Widget get _bar {
@@ -151,6 +165,16 @@ class _AppMenu extends StatelessWidget {
                             ),
                             label: utilsManagementStr,
                           )),
+                      _mobileTabComponent(context,
+                          index: 6,
+                          onSelectedItem: onItemSelected,
+                          tabItem: BottomNavigationBarItem(
+                            icon: Icon(
+                              Icons.category,
+                              color: selctedIconColor(6),
+                            ),
+                            label: categoryStr,
+                          )),
                     ]),
               ),
             ),
@@ -219,12 +243,20 @@ class _AppMenu extends StatelessWidget {
                     Icons.admin_panel_settings_rounded,
                     color: selctedIconColor(5),
                   )),
+              _webTabBuilder(6,
+                  onItemSelected: onItemSelected,
+                  tabName: categoryStr,
+                  icon: Icon(
+                    Icons.category,
+                    color: selctedIconColor(6),
+                  )),
             ].addSpaceEveryWidget(space: nkExtraSmallSizedBox),
           ),
         ),
       );
     }
   }
+
   Widget _mobileTabComponent(BuildContext context,
       {required BottomNavigationBarItem tabItem,
       required int index,
