@@ -41,21 +41,21 @@ class _AddSubjectDiloagState extends State<AddSubjectDiloag> {
     setState(() {
       standardList.startLoading();
     });
-    TempDataStore.standardList(boardId).then((value) {
-      if (value != null && value.isNotEmpty) {
-        setState(() {
-          standardList.onSuccess(value);
-        });
-      } else {
-        setState(() {
-          standardList.onEmpty(ErrorStrings.noDataFound);
-        });
-      }
-    }).catchError((error, stackTrace) {
-      setState(() {
-        standardList.onError(error.toString());
-      });
-    });
+    // TempDataStore.standardList(boardId).then((value) {
+    //   if (value != null && value.isNotEmpty) {
+    //     setState(() {
+    //       standardList.onSuccess(value);
+    //     });
+    //   } else {
+    //     setState(() {
+    //       standardList.onEmpty(ErrorStrings.noDataFound);
+    //     });
+    //   }
+    // }).catchError((error, stackTrace) {
+    //   setState(() {
+    //     standardList.onError(error.toString());
+    //   });
+    // });
   }
 
   @override
@@ -163,52 +163,52 @@ class _AddSubjectDiloagState extends State<AddSubjectDiloag> {
               onPressed: () async {
                 try {
                   if (formKey.currentState!.validate()) {
-                    if (widget.subjectListModel != null) {
-                      await FirebaseEditFun()
-                          .editSubjectDetails(
-                        subjectModel: widget.subjectListModel!,
-                        newBoardId: newSelectedBoard?.boardId,
-                        newStandardId: newSelectedStandard?.standardId,
-                        image: onImagePicked?.$1,
-                        filename: onImagePicked?.$2,
-                        subjectId: widget.subjectListModel!.subjectId!,
-                      )
-                          .then(
-                        (value) {
-                          NKToast.success(
-                              title:
-                                  "$boardStr ${SuccessStrings.addedSuccessfully}");
-                          AppRoutes.navigator.pop();
-                          widget.onSubjectUpdated?.call(value);
-                        },
-                      );
-                    } else {
-                      if (newSelectedBoard != null &&
-                          newSelectedStandard != null) {
-                        await FirebaseAddFun()
-                            .addSubject(
-                                standardId: newSelectedStandard!.standardId!,
-                                boardId: newSelectedBoard!.boardId!,
-                                subjectName: subjectController.text,
-                                image: onImagePicked?.$1,
-                                filename: onImagePicked?.$2)
-                            .then(
-                          (value) {
-                            NKToast.success(
-                                title:
-                                    "$boardStr ${SuccessStrings.addedSuccessfully}");
-                            Navigator.pop(context);
-                            widget.onSubjectUpdated?.call(value);
-                          },
-                        );
-                      } else if (newSelectedBoard == null) {
-                        NKToast.warning(
-                            title: "${ErrorStrings.select} $boardStr");
-                      } else if (newSelectedStandard == null) {
-                        NKToast.warning(
-                            title: "${ErrorStrings.select} $standardStr");
-                      }
-                    }
+                    // if (widget.subjectListModel != null) {
+                    //   await FirebaseEditFun()
+                    //       .editSubjectDetails(
+                    //     subjectModel: widget.subjectListModel!,
+                    //     newBoardId: newSelectedBoard?.boardId,
+                    //     newStandardId: newSelectedStandard?.standardId,
+                    //     image: onImagePicked?.$1,
+                    //     filename: onImagePicked?.$2,
+                    //     subjectId: widget.subjectListModel!.subjectId!,
+                    //   )
+                    //       .then(
+                    //     (value) {
+                    //       NKToast.success(
+                    //           title:
+                    //               "$boardStr ${SuccessStrings.addedSuccessfully}");
+                    //       AppRoutes.navigator.pop();
+                    //       widget.onSubjectUpdated?.call(value);
+                    //     },
+                    //   );
+                    // } else {
+                    //   if (newSelectedBoard != null &&
+                    //       newSelectedStandard != null) {
+                    //     await FirebaseAddFun()
+                    //         .addSubject(
+                    //             standardId: newSelectedStandard!.standardId!,
+                    //             boardId: newSelectedBoard!.boardId!,
+                    //             subjectName: subjectController.text,
+                    //             image: onImagePicked?.$1,
+                    //             filename: onImagePicked?.$2)
+                    //         .then(
+                    //       (value) {
+                    //         NKToast.success(
+                    //             title:
+                    //                 "$boardStr ${SuccessStrings.addedSuccessfully}");
+                    //         Navigator.pop(context);
+                    //         widget.onSubjectUpdated?.call(value);
+                    //       },
+                    //     );
+                    //   } else if (newSelectedBoard == null) {
+                    //     NKToast.warning(
+                    //         title: "${ErrorStrings.select} $boardStr");
+                    //   } else if (newSelectedStandard == null) {
+                    //     NKToast.warning(
+                    //         title: "${ErrorStrings.select} $standardStr");
+                    //   }
+                    // }
                   }
                 } on Exception catch (e) {
                   nkDevLog("ADD STANDARD ERROR : ${e.toString()}");

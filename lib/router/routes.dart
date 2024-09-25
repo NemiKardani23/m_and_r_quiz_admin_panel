@@ -1,5 +1,6 @@
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionhelper.dart';
+import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionmanager.dart';
 import 'package:m_and_r_quiz_admin_panel/router/custom_page_builder.dart';
 import 'package:m_and_r_quiz_admin_panel/view/auth/login_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/dahsboard/dashboard_screen.dart';
@@ -94,7 +95,12 @@ class AuthRouteObserver extends NavigatorObserver {
       SessionHelper.instance.getLoginData().then((value) {
         if (value == null) {
           NKToast.error(title: ErrorStrings.sessionExpired);
-          AppRoutes.navigator.pushReplacementNamed(AppRoutes.loginScreen);
+          AppRoutes.navigator.goNamed(AppRoutes.loginScreen);
+        } else if (value.isAdmin == false) {
+          NKToast.error(title: ErrorStrings.unknownUserFound);
+          SessionManager.clearData();
+          AppRoutes.navigator.goNamed(AppRoutes.loginScreen);
+          return;
         }
       });
     }

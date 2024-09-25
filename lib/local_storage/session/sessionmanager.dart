@@ -1,3 +1,4 @@
+import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionhelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SessionManager {
@@ -71,6 +72,7 @@ class SessionManager {
   }
 
   static Future<bool> clearData() async {
+    SessionHelper.loginResponse = null;
     final prefs = await SharedPreferences.getInstance();
     return prefs.clear();
   }

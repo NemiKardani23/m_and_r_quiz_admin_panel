@@ -1,8 +1,6 @@
 import 'package:m_and_r_quiz_admin_panel/components/app_bar/my_app_bar.dart';
 import 'package:m_and_r_quiz_admin_panel/components/nk_image_picker_with_placeholder/nk_image_picker_with_placeholder.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
-import 'package:m_and_r_quiz_admin_panel/service/firebase/firebase_add_fun.dart';
-import 'package:m_and_r_quiz_admin_panel/service/firebase/firebase_edit_fun.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/board_list_model.dart';
 
 class AddBoardDiloag extends StatefulWidget {
@@ -79,6 +77,7 @@ class _AddBoardDiloagState extends State<AddBoardDiloag> {
                   : "$addStr $boardStr",
               onPressed: () async {
                 if (formKey.currentState!.validate()) {
+<<<<<<< Updated upstream
                   if (widget.boardListModel != null) {
                     await FirebaseEditFun()
                         .editBoardDetails(
@@ -112,6 +111,41 @@ class _AddBoardDiloagState extends State<AddBoardDiloag> {
                       },
                     );
                   }
+=======
+                  // if (widget.boardListModel != null) {
+                  //   await FirebaseEditFun()
+                  //       .editBoardDetails(
+                  //     bordModel: widget.boardListModel!,
+                  //     boardId: widget.boardListModel!.boardId!,
+                  //     image: onImagePicked?.$1,
+                  //     filename: onImagePicked?.$2,
+                  //   )
+                  //       .then(
+                  //     (value) {
+                  //       NKToast.success(
+                  //           title:
+                  //               "$boardStr ${SuccessStrings.addedSuccessfully}");
+                  //       widget.onBoardUpdated?.call(value);
+                  //       AppRoutes.navigator.pop();
+                  //     },
+                  //   );
+                  // } else {
+                  //   await FirebaseAddFun()
+                  //       .addBoard(
+                  //           boardName: boardController.text,
+                  //           image: onImagePicked?.$1,
+                  //           filename: onImagePicked?.$2)
+                  //       .then(
+                  //     (value) {
+                  //       NKToast.success(
+                  //           title:
+                  //               "$boardStr ${SuccessStrings.addedSuccessfully}");
+                  //       Navigator.pop(context);
+                  //       widget.onBoardUpdated?.call(value);
+                  //     },
+                  //   );
+                  // }
+>>>>>>> Stashed changes
                 }
               })
         ].addSpaceEveryWidget(space: nkExtraSmallSizedBox),
