@@ -25,63 +25,63 @@ class _SubjectScreenState extends State<SubjectScreen> {
 
   getBoardData() async {
     boardListData.startLoading();
-    // TempDataStore.boardList.then((value) {
-    //   if (value != null && value.isNotEmpty) {
-    //     setState(() {
-    //       boardListData.onSuccess(value);
-    //     });
-    //   } else {
-    //     setState(() {
-    //       boardListData.onEmpty(ErrorStrings.noDataFound);
-    //     });
-    //   }
-    // }).catchError((error, stackTrace) {
-    //   setState(() {
-    //     boardListData.onError(error.toString());
-    //   });
-    // });
+    TempDataStore.boardList.then((value) {
+      if (value != null && value.isNotEmpty) {
+        setState(() {
+          boardListData.onSuccess(value);
+        });
+      } else {
+        setState(() {
+          boardListData.onEmpty(ErrorStrings.noDataFound);
+        });
+      }
+    }).catchError((error, stackTrace) {
+      setState(() {
+        boardListData.onError(error.toString());
+      });
+    });
   }
 
   getStandardData(String boardId) async {
     setState(() {
       standardListData.startLoading();
     });
-    // TempDataStore.standardList(boardId).then((value) {
-    //   if (value != null && value.isNotEmpty) {
-    //     setState(() {
-    //       standardListData.onSuccess(value);
-    //     });
-    //   } else {
-    //     setState(() {
-    //       standardListData.onEmpty(ErrorStrings.noDataFound);
-    //     });
-    //   }
-    // }).catchError((error, stackTrace) {
-    //   setState(() {
-    //     standardListData.onError(error.toString());
-    //   });
-    // });
+    TempDataStore.standardList(boardId).then((value) {
+      if (value != null && value.isNotEmpty) {
+        setState(() {
+          standardListData.onSuccess(value);
+        });
+      } else {
+        setState(() {
+          standardListData.onEmpty(ErrorStrings.noDataFound);
+        });
+      }
+    }).catchError((error, stackTrace) {
+      setState(() {
+        standardListData.onError(error.toString());
+      });
+    });
   }
 
   getSubjectData(String boardId, String standardId) async {
     setState(() {
       subjectListData.startLoading();
     });
-    // TempDataStore.subjectList(boardId, standardId).then((value) {
-    //   if (value != null && value.isNotEmpty) {
-    //     setState(() {
-    //       subjectListData.onSuccess(value);
-    //     });
-    //   } else {
-    //     setState(() {
-    //       subjectListData.onEmpty(ErrorStrings.noDataFound);
-    //     });
-    //   }
-    // }).catchError((error, stackTrace) {
-    //   setState(() {
-    //     subjectListData.onError(error.toString());
-    //   });
-    // });
+    TempDataStore.subjectList(boardId, standardId).then((value) {
+      if (value != null && value.isNotEmpty) {
+        setState(() {
+          subjectListData.onSuccess(value);
+        });
+      } else {
+        setState(() {
+          subjectListData.onEmpty(ErrorStrings.noDataFound);
+        });
+      }
+    }).catchError((error, stackTrace) {
+      setState(() {
+        subjectListData.onError(error.toString());
+      });
+    });
   }
 
   @override
@@ -275,22 +275,22 @@ class _SubjectScreenState extends State<SubjectScreen> {
                             return MyDeleteDialog(
                               appBarTitle: subject.subjectName ?? "",
                               onPressed: () async {
-                                // await FirebaseDeleteFun()
-                                //     .deleteSubject(
-                                //         subject.boardId ?? "",
-                                //         subject.standardId ?? "",
-                                //         subject.subjectId ?? "",
-                                //         imageUrl: subject.image)
-                                //     .whenComplete(() {
-                                //   NKToast.success(
-                                //       title:
-                                //           "${subject.subjectName} ${SuccessStrings.deletedSuccessfully}");
-                                //   setState(() {
-                                //     subjectListData.data?.removeAt(index);
-                                //     TempDataStore.tempSubjectList.value
-                                //         ?.removeAt(index);
-                                //   });
-                                // });
+                                await FirebaseDeleteFun()
+                                    .deleteSubject(
+                                        subject.boardId ?? "",
+                                        subject.standardId ?? "",
+                                        subject.subjectId ?? "",
+                                        imageUrl: subject.image)
+                                    .whenComplete(() {
+                                  NKToast.success(
+                                      title:
+                                          "${subject.subjectName} ${SuccessStrings.deletedSuccessfully}");
+                                  setState(() {
+                                    subjectListData.data?.removeAt(index);
+                                    TempDataStore.tempSubjectList.value
+                                        ?.removeAt(index);
+                                  });
+                                });
                               },
                             );
                           }).then((value) {

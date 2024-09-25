@@ -2,12 +2,6 @@ import 'package:m_and_r_quiz_admin_panel/components/my_common_container.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/basic_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/home/home_screen.dart';
-<<<<<<< Updated upstream
-=======
-import 'package:m_and_r_quiz_admin_panel/view/questions/questions_screen.dart';
-import 'package:m_and_r_quiz_admin_panel/view/student/student_screen.dart';
-import 'package:m_and_r_quiz_admin_panel/view/utills_management/utills_management_screen.dart';
->>>>>>> Stashed changes
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -22,14 +16,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final List<Widget> pageList = [
     const HomeScreen(),
     const BasicScreen(),
-<<<<<<< Updated upstream
     const Placeholder(),
-=======
-    const StudentScreen(),
-    const QuestionsScreen(),
-    const AppManagementScreen(),
-    const UtillsManagementScreen(),
->>>>>>> Stashed changes
   ];
 
   @override
@@ -74,7 +61,6 @@ class _AppMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (context.isMobile) {
-<<<<<<< Updated upstream
       return Card(
         child: ClipOval(
           child: BottomNavigationBar(
@@ -100,95 +86,6 @@ class _AppMenu extends StatelessWidget {
                   label: 'Settings',
                 ),
               ]),
-=======
-      return SizedBox(
-        height: context.height * 0.12,
-        child: PageView(
-          clipBehavior: Clip.none,
-          children: [
-            Card(
-              margin: nkRegularPadding,
-              clipBehavior: Clip.antiAlias,
-              child: ClipRRect(
-                child: Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _mobileTabComponent(context,
-                          index: 0,
-                          onSelectedItem: onItemSelected,
-                          tabItem: BottomNavigationBarItem(
-                            icon: Icon(Icons.home, color: selctedIconColor(0)),
-                            label: 'Home',
-                          )),
-                      _mobileTabComponent(
-                        context,
-                        index: 1,
-                        onSelectedItem: onItemSelected,
-                        tabItem: BottomNavigationBarItem(
-                          icon: Icon(
-                            Icons.category,
-                            color: selctedIconColor(1),
-                          ),
-                          label: basicStr,
-                        ),
-                      ),
-                      _mobileTabComponent(
-                        context,
-                        index: 2,
-                        onSelectedItem: onItemSelected,
-                        tabItem: BottomNavigationBarItem(
-                          icon: Icon(
-                            Icons.people,
-                            color: selctedIconColor(2),
-                          ),
-                          label: "Student",
-                        ),
-                      ),
-                      _mobileTabComponent(context,
-                          index: 3,
-                          onSelectedItem: onItemSelected,
-                          tabItem: BottomNavigationBarItem(
-                            icon: Icon(
-                              Icons.people,
-                              color: selctedIconColor(3),
-                            ),
-                            label: "Questions",
-                          )),
-                    ]),
-              ),
-            ),
-            Card(
-              margin: nkRegularPadding,
-              clipBehavior: Clip.antiAlias,
-              child: ClipRRect(
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _mobileTabComponent(context,
-                          index: 4,
-                          onSelectedItem: onItemSelected,
-                          tabItem: BottomNavigationBarItem(
-                            icon: Icon(
-                              Icons.app_settings_alt,
-                              color: selctedIconColor(4),
-                            ),
-                            label: "App Management",
-                          )),
-                      _mobileTabComponent(context,
-                          index: 5,
-                          onSelectedItem: onItemSelected,
-                          tabItem: BottomNavigationBarItem(
-                            icon: Icon(
-                              Icons.admin_panel_settings_rounded,
-                              color: selctedIconColor(5),
-                            ),
-                            label: utilsManagementStr,
-                          )),
-                    ]),
-              ),
-            ),
-          ],
->>>>>>> Stashed changes
         ),
       );
     } else {
@@ -232,30 +129,6 @@ class _AppMenu extends StatelessWidget {
                     Icons.settings,
                     color: selctedIconColor(2),
                   )),
-<<<<<<< Updated upstream
-=======
-              _webTabBuilder(3,
-                  onItemSelected: onItemSelected,
-                  tabName: "Questions",
-                  icon: Icon(
-                    Icons.people,
-                    color: selctedIconColor(3),
-                  )),
-              _webTabBuilder(4,
-                  onItemSelected: onItemSelected,
-                  tabName: "App Management",
-                  icon: Icon(
-                    Icons.app_settings_alt,
-                    color: selctedIconColor(4),
-                  )),
-              _webTabBuilder(5,
-                  onItemSelected: onItemSelected,
-                  tabName: utilsManagementStr,
-                  icon: Icon(
-                    Icons.admin_panel_settings_rounded,
-                    color: selctedIconColor(5),
-                  )),
->>>>>>> Stashed changes
             ].addSpaceEveryWidget(space: nkExtraSmallSizedBox),
           ),
         ),

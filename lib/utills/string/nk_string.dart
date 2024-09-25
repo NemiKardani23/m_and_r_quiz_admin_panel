@@ -32,46 +32,6 @@ const String areYouSureYouWantToDelete = "Are you sure you want to delete?";
 const String closeStr = "Close";
 const String deleteStr = "Delete";
 
-<<<<<<< Updated upstream
-=======
-/// STUDENT
-const String studentStr = "Student";
-const String nameStr = "Name";
-const String numberStr = "Mobile Number";
-const String numberCountryCodeStr = "Country Code";
-const String cityStr = "City";
-const String stateStr = "State";
-const String countryStr = "Country";
-const String imageStr = "Image";
-const String addStudentStr = "Add Student";
-
-/// QUESTION
-const String questionStr = "Question";
-
-/// APP MANAGEMENT
-
-// App Dashboard
-const String appDashboardStr = "App Dashboard";
-const String appDashboardSliderStr = "App Dashboard Slider";
-const String sliderStr = "Slider";
-const String mediaTypeStr = "Media Type";
-const String modeTypeStr = "Mode Type";
-
-// App My Learning
-const String myLearningStr = "My Learning";
-const String categoryStr = "Category";
-
-// Utils Management
-const String utilsManagementStr = "Utils Management";
-const String fileTypeStr = "File Type";
-const String managementStr = "Management";
-const String categoryTypeStr = "Category Type";
-const String descriptionStr = "Description";
-const String statusStr = "Status";
-
-
-
->>>>>>> Stashed changes
 abstract final class ErrorStrings {
   static const String noDataFound = "No data found";
   static const String selectImage = "Select Image";
@@ -79,7 +39,6 @@ abstract final class ErrorStrings {
   static const String incorrectEmailOrPassword =
       "Email or password is incorrect";
   static const String sessionExpired = "Session Expired";
-  static const String unknownUserFound = "Unknown User Found";
   static const String oopsSomethingWentWrong = "Oops, something went wrong";
 }
 

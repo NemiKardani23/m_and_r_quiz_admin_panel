@@ -18,21 +18,21 @@ class SessionHelper {
     return this;
   }
 
-  static UserData? loginResponse;
+  static UserDetails? loginResponse;
 
-  Future<void> setLoginData(UserData loginResponce) async {
+  Future<void> setLoginData(UserDetails loginResponce) async {
     // save user values in shared pref
     await SessionManager.setStringValue(
-        SpString.spLogin, jsonEncode(loginResponce.toJson()));
+        SpString.spLogin, jsonEncode(loginResponce.toMap()));
     loginResponse = loginResponce;
   }
 
-  Future<UserData?> getLoginData() async {
+  Future<UserDetails?> getLoginData() async {
     String? response = await SessionManager.getStringValue(SpString.spLogin);
     if (CheckNullData.checkNullOrEmptyString(response ?? '')) {
       return null;
     } else {
-      final jsonOBJ = UserData.fromJson(jsonDecode(response ?? ''));
+      final jsonOBJ = UserDetails.fromJson(jsonDecode(response ?? ''));
       loginResponse = jsonOBJ;
       return jsonOBJ;
     }

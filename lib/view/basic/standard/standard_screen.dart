@@ -22,42 +22,42 @@ class _StandardScreenState extends State<StandardScreen> {
 
   getBoardData() async {
     boardListData.startLoading();
-    // TempDataStore.boardList.then((value) {
-    //   if (value != null && value.isNotEmpty) {
-    //     setState(() {
-    //       boardListData.onSuccess(value);
-    //     });
-    //   } else {
-    //     setState(() {
-    //       boardListData.onEmpty(ErrorStrings.noDataFound);
-    //     });
-    //   }
-    // }).catchError((error, stackTrace) {
-    //   setState(() {
-    //     boardListData.onError(error.toString());
-    //   });
-    // });
+    TempDataStore.boardList.then((value) {
+      if (value != null && value.isNotEmpty) {
+        setState(() {
+          boardListData.onSuccess(value);
+        });
+      } else {
+        setState(() {
+          boardListData.onEmpty(ErrorStrings.noDataFound);
+        });
+      }
+    }).catchError((error, stackTrace) {
+      setState(() {
+        boardListData.onError(error.toString());
+      });
+    });
   }
 
   getStandardData(String boardId) async {
     setState(() {
       standardListData.startLoading();
     });
-    // TempDataStore.standardList(boardId).then((value) {
-    //   if (value != null && value.isNotEmpty) {
-    //     setState(() {
-    //       standardListData.onSuccess(value);
-    //     });
-    //   } else {
-    //     setState(() {
-    //       standardListData.onEmpty(ErrorStrings.noDataFound);
-    //     });
-    //   }
-    // }).catchError((error, stackTrace) {
-    //   setState(() {
-    //     standardListData.onError(error.toString());
-    //   });
-    // });
+    TempDataStore.standardList(boardId).then((value) {
+      if (value != null && value.isNotEmpty) {
+        setState(() {
+          standardListData.onSuccess(value);
+        });
+      } else {
+        setState(() {
+          standardListData.onEmpty(ErrorStrings.noDataFound);
+        });
+      }
+    }).catchError((error, stackTrace) {
+      setState(() {
+        standardListData.onError(error.toString());
+      });
+    });
   }
 
   @override
@@ -224,20 +224,20 @@ class _StandardScreenState extends State<StandardScreen> {
                             return MyDeleteDialog(
                               appBarTitle: standard.standardName ?? "",
                               onPressed: () async {
-                                // await FirebaseDeleteFun()
-                                //     .deleteStandard(standard.boardId ?? "",
-                                //         standard.standardId ?? "",
-                                //         imageUrl: standard.image)
-                                //     .whenComplete(() {
-                                //   NKToast.success(
-                                //       title:
-                                //           "${standard.standardName} ${SuccessStrings.deletedSuccessfully}");
-                                //   setState(() {
-                                //     standardListData.data?.removeAt(index);
-                                //     TempDataStore.tempStandardList.value
-                                //         ?.removeAt(index);
-                                //   });
-                                // });
+                                await FirebaseDeleteFun()
+                                    .deleteStandard(standard.boardId ?? "",
+                                        standard.standardId ?? "",
+                                        imageUrl: standard.image)
+                                    .whenComplete(() {
+                                  NKToast.success(
+                                      title:
+                                          "${standard.standardName} ${SuccessStrings.deletedSuccessfully}");
+                                  setState(() {
+                                    standardListData.data?.removeAt(index);
+                                    TempDataStore.tempStandardList.value
+                                        ?.removeAt(index);
+                                  });
+                                });
                               },
                             );
                           }).then((value) {

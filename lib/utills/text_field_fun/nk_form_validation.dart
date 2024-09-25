@@ -1,6 +1,6 @@
 class NkFormValidation {
   static String? emailValidation(dynamic email) {
-    if (email == null && email.isEmpty == true) {
+    if (email == null || email.isEmpty) {
       return "Email is required";
     } else if (!RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")

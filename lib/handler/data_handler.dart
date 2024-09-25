@@ -1,10 +1,6 @@
-<<<<<<< Updated upstream
 import 'package:flutter/material.dart';
 import 'package:m_and_r_quiz_admin_panel/components/nk_error_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/components/nk_loading_widget.dart';
-=======
-import '../export/___app_file_exporter.dart';
->>>>>>> Stashed changes
 
 class DataHandler<T> {
   late bool _isLoading;
@@ -29,7 +25,6 @@ class DataHandler<T> {
   bool get isLoading => _isLoading;
   bool get hasError => _hasError;
   T? get data => _data;
-  set setdata(T? newData) => _data = newData;
   String get error => _error;
   String get empty => _emptyError;
 
@@ -52,16 +47,6 @@ class DataHandler<T> {
     _hasError = false;
     _data = newData;
     _error = '';
-  }
-
-  // New onUpdate method
-  void onUpdate(T updatedData) {
-    _isLoading = false;
-    _hasError = false;
-    _hasEmpty = false;
-    if (_data != null) {
-      setdata = updatedData;
-    }
   }
 
   void onError(String errorMessage) {
@@ -97,53 +82,13 @@ class DataHandler<T> {
       return successBuilder.call(_data as T);
     } else if (_hasEmpty) {
       return emptyBuilder?.call(_emptyError) ??
-<<<<<<< Updated upstream
           NkErrorWidget(
             errorMessage: _error,
-=======
-          NkEmptyWidget(
-            errorMessage: _emptyError,
->>>>>>> Stashed changes
           );
     } else {
       return const NkErrorWidget(); // You can return a default widget for empty state
     }
   }
-<<<<<<< Updated upstream
-=======
-
-  List<Widget> whenListWidget({
-    required BuildContext context,
-    Widget Function(BuildContext)? loadingBuilder,
-    required List<Widget> Function(T) successBuilder,
-    Widget Function(String)? errorBuilder,
-    Widget Function(String)? emptyBuilder,
-  }) {
-    if (_isLoading) {
-      return [loadingBuilder?.call(context) ?? const NkLoadingWidget()];
-    } else if (_hasError) {
-      return [
-        errorBuilder?.call(_error) ??
-            NkErrorWidget(
-              errorMessage: _error,
-            )
-      ];
-    } else if (_data != null) {
-      return successBuilder.call(_data as T);
-    } else if (_hasEmpty) {
-      return [
-        emptyBuilder?.call(_emptyError) ??
-            NkEmptyWidget(
-              errorMessage: _emptyError,
-            )
-      ];
-    } else {
-      return [
-        const NkErrorWidget()
-      ]; // You can return a default widget for empty state
-    }
-  }
->>>>>>> Stashed changes
 }
 
 checkAPIDataNotNull(DataHandler handler,

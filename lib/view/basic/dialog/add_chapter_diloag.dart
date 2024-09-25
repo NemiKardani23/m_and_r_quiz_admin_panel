@@ -44,42 +44,42 @@ class _AddChapterDiloagState extends State<AddChapterDiloag> {
     setState(() {
       standardList.startLoading();
     });
-    // TempDataStore.standardList(boardId).then((value) {
-    //   if (value != null && value.isNotEmpty) {
-    //     setState(() {
-    //       standardList.onSuccess(value);
-    //     });
-    //   } else {
-    //     setState(() {
-    //       standardList.onEmpty(ErrorStrings.noDataFound);
-    //     });
-    //   }
-    // }).catchError((error, stackTrace) {
-    //   setState(() {
-    //     standardList.onError(error.toString());
-    //   });
-    // });
+    TempDataStore.standardList(boardId).then((value) {
+      if (value != null && value.isNotEmpty) {
+        setState(() {
+          standardList.onSuccess(value);
+        });
+      } else {
+        setState(() {
+          standardList.onEmpty(ErrorStrings.noDataFound);
+        });
+      }
+    }).catchError((error, stackTrace) {
+      setState(() {
+        standardList.onError(error.toString());
+      });
+    });
   }
 
   getSubjectData(String boardId, String standardId) async {
     setState(() {
       subjectList.startLoading();
     });
-    // TempDataStore.subjectList(boardId, standardId).then((value) {
-    //   if (value != null && value.isNotEmpty) {
-    //     setState(() {
-    //       subjectList.onSuccess(value);
-    //     });
-    //   } else {
-    //     setState(() {
-    //       subjectList.onEmpty(ErrorStrings.noDataFound);
-    //     });
-    //   }
-    // }).catchError((error, stackTrace) {
-    //   setState(() {
-    //     subjectList.onError(error.toString());
-    //   });
-    // });
+    TempDataStore.subjectList(boardId, standardId).then((value) {
+      if (value != null && value.isNotEmpty) {
+        setState(() {
+          subjectList.onSuccess(value);
+        });
+      } else {
+        setState(() {
+          subjectList.onEmpty(ErrorStrings.noDataFound);
+        });
+      }
+    }).catchError((error, stackTrace) {
+      setState(() {
+        subjectList.onError(error.toString());
+      });
+    });
   }
 
   @override
@@ -224,60 +224,60 @@ class _AddChapterDiloagState extends State<AddChapterDiloag> {
                   : "$addStr $chapterStr",
               onPressed: () async {
                 try {
-                  // if (formKey.currentState!.validate()) {
-                  //   if (widget.chapterListModel != null) {
-                  //     await FirebaseEditFun()
-                  //         .editChapterDetails(
-                  //       chapterModel: widget.chapterListModel!,
-                  //       newBoardId: newSelectedBoard?.boardId,
-                  //       newStandardId: newSelectedStandard?.standardId,
-                  //       newSubjectId: newSelectedSubject?.subjectId,
-                  //       image: onImagePicked?.$1,
-                  //       filename: onImagePicked?.$2,
-                  //       chapterId: widget.chapterListModel!.chapterId!,
-                  //     )
-                  //         .then(
-                  //       (value) {
-                  //         NKToast.success(
-                  //             title:
-                  //                 "$boardStr ${SuccessStrings.addedSuccessfully}");
-                  //         AppRoutes.navigator.pop();
-                  //         widget.onChapterUpdated?.call(value);
-                  //       },
-                  //     );
-                  //   } else {
-                  //     if (newSelectedBoard != null &&
-                  //         newSelectedStandard != null &&
-                  //         newSelectedSubject != null) {
-                  //       await FirebaseAddFun()
-                  //           .addChapter(
-                  //               standardId: newSelectedStandard!.standardId!,
-                  //               boardId: newSelectedBoard!.boardId!,
-                  //               chapterName: chapterController.text,
-                  //               subjectId: newSelectedSubject!.subjectId!,
-                  //               image: onImagePicked?.$1,
-                  //               filename: onImagePicked?.$2)
-                  //           .then(
-                  //         (value) {
-                  //           NKToast.success(
-                  //               title:
-                  //                   "$boardStr ${SuccessStrings.addedSuccessfully}");
-                  //           Navigator.pop(context);
-                  //           widget.onChapterUpdated?.call(value);
-                  //         },
-                  //       );
-                  //     } else if (newSelectedBoard == null) {
-                  //       NKToast.warning(
-                  //           title: "${ErrorStrings.select} $boardStr");
-                  //     } else if (newSelectedStandard == null) {
-                  //       NKToast.warning(
-                  //           title: "${ErrorStrings.select} $standardStr");
-                  //     } else if (newSelectedSubject == null) {
-                  //       NKToast.warning(
-                  //           title: "${ErrorStrings.select} $subjectStr");
-                  //     }
-                  //   }
-                  // }
+                  if (formKey.currentState!.validate()) {
+                    if (widget.chapterListModel != null) {
+                      await FirebaseEditFun()
+                          .editChapterDetails(
+                        chapterModel: widget.chapterListModel!,
+                        newBoardId: newSelectedBoard?.boardId,
+                        newStandardId: newSelectedStandard?.standardId,
+                        newSubjectId: newSelectedSubject?.subjectId,
+                        image: onImagePicked?.$1,
+                        filename: onImagePicked?.$2,
+                        chapterId: widget.chapterListModel!.chapterId!,
+                      )
+                          .then(
+                        (value) {
+                          NKToast.success(
+                              title:
+                                  "$boardStr ${SuccessStrings.addedSuccessfully}");
+                          AppRoutes.navigator.pop();
+                          widget.onChapterUpdated?.call(value);
+                        },
+                      );
+                    } else {
+                      if (newSelectedBoard != null &&
+                          newSelectedStandard != null &&
+                          newSelectedSubject != null) {
+                        await FirebaseAddFun()
+                            .addChapter(
+                                standardId: newSelectedStandard!.standardId!,
+                                boardId: newSelectedBoard!.boardId!,
+                                chapterName: chapterController.text,
+                                subjectId: newSelectedSubject!.subjectId!,
+                                image: onImagePicked?.$1,
+                                filename: onImagePicked?.$2)
+                            .then(
+                          (value) {
+                            NKToast.success(
+                                title:
+                                    "$boardStr ${SuccessStrings.addedSuccessfully}");
+                            Navigator.pop(context);
+                            widget.onChapterUpdated?.call(value);
+                          },
+                        );
+                      } else if (newSelectedBoard == null) {
+                        NKToast.warning(
+                            title: "${ErrorStrings.select} $boardStr");
+                      } else if (newSelectedStandard == null) {
+                        NKToast.warning(
+                            title: "${ErrorStrings.select} $standardStr");
+                      } else if (newSelectedSubject == null) {
+                        NKToast.warning(
+                            title: "${ErrorStrings.select} $subjectStr");
+                      }
+                    }
+                  }
                 } on Exception catch (e) {
                   nkDevLog("ADD STANDARD ERROR : ${e.toString()}");
                 }

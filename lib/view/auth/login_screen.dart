@@ -1,5 +1,4 @@
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionhelper.dart';
-import 'package:m_and_r_quiz_admin_panel/service/api_worker.dart';
 
 import '../../export/___app_file_exporter.dart';
 
@@ -102,12 +101,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> login() async {
-    ApiWorker()
-        .loginAdmin(
-            email: emailController.text, password: passwordController.text)
-        .then(
+    await FirebaseAuthFun().loginUser().then(
       (value) {
-<<<<<<< Updated upstream
         nkDevLog("USER DATA CONVERTED : ${value?.toMap()}");
         if (value == null) {
           NKToast.warning(title: ErrorStrings.noDataFound);
@@ -122,16 +117,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   .pushReplacementNamed(AppRoutes.dashboardScreen);
             },
           );
-=======
-        nkDevLog("USER DATA CONVERTED : ${value?.toJson()}");
-        if (value != null && value.data != null) {
-          SessionHelper.instance.setLoginData(value.data!).then(
-                (value) {},
-              );
-             AppRoutes.navigator.goNamed(AppRoutes.dashboardScreen);
-        } else {
-          NKToast.warning(title: ErrorStrings.noDataFound);
->>>>>>> Stashed changes
         }
       },
     );

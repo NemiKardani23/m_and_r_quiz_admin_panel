@@ -12,7 +12,6 @@ class TempDataStore {
   static ValueNotifier<List<SubjectListModel>?> tempSubjectList =
       ValueNotifier(null);
 
-<<<<<<< Updated upstream
   static Future<List<BoardListModel>?> get boardList async {
     if (tempBoardList.value == null || tempBoardList.value?.isEmpty == true) {
       tempBoardList.value = await FirebaseGetFun().getBordList();
@@ -21,34 +20,18 @@ class TempDataStore {
       return tempBoardList.value;
     }
   }
-=======
-  static ValueNotifier<List<StudentListModel>?> tempStudentList =
-      ValueNotifier(null);
 
-   
+  static Future<List<StandardListModel>?> standardList(String boardId) async {
+    if (tempStandardList.value == null ||
+        tempStandardList.value?.isEmpty == true ||
+        tempStandardList.value?.every((e) => e.boardId == boardId) == false) {
+      tempStandardList.value = await FirebaseGetFun().getStandardList(boardId);
+      return tempStandardList.value;
+    } else {
+      return tempStandardList.value;
+    }
+  }
 
-  // static Future<List<BoardListModel>?> get boardList async {
-  //   if (tempBoardList.value == null || tempBoardList.value?.isEmpty == true) {
-  //     tempBoardList.value = await FirebaseGetFun().getBordList();
-  //     return tempBoardList.value;
-  //   } else {
-  //     return tempBoardList.value;
-  //   }
-  // }
->>>>>>> Stashed changes
-
-  // static Future<List<StandardListModel>?> standardList(String boardId) async {
-  //   if (tempStandardList.value == null ||
-  //       tempStandardList.value?.isEmpty == true ||
-  //       tempStandardList.value?.every((e) => e.boardId == boardId) == false) {
-  //     tempStandardList.value = await FirebaseGetFun().getStandardList(boardId);
-  //     return tempStandardList.value;
-  //   } else {
-  //     return tempStandardList.value;
-  //   }
-  // }
-
-<<<<<<< Updated upstream
   static Future<List<SubjectListModel>?> subjectList(
       String boardId, String standardId) async {
     if (tempSubjectList.value == null ||
@@ -63,40 +46,4 @@ class TempDataStore {
       return tempSubjectList.value;
     }
   }
-=======
-  // static Future<List<SubjectListModel>?> subjectList(
-  //     String boardId, String standardId) async {
-  //   if (tempSubjectList.value == null ||
-  //       tempSubjectList.value?.isEmpty == true ||
-  //       tempSubjectList.value?.every(
-  //               (e) => e.standardId == standardId && e.boardId == boardId) ==
-  //           false) {
-  //     tempSubjectList.value =
-  //         await FirebaseGetFun().getSubjectList(boardId, standardId);
-  //     return tempSubjectList.value;
-  //   } else {
-  //     return tempSubjectList.value;
-  //   }
-  // }
-  // static Future<List<StudentListModel>?> studentList({bool isRefresh = false}) async {
-  //   if (tempStudentList.value == null ||
-  //       tempStudentList.value?.isEmpty == true || isRefresh ) {
-  //     tempStudentList.value =
-  //         await FirebaseGetFun().getStudentList();
-  //     return tempStudentList.value;
-  //   } else {
-  //     return tempStudentList.value;
-  //   }
-  // }
-
-  //  static Future<int?> get getStudentCount async {
-  //   nkDevLog("--------------- GET STUDENT CALLED");
-  //   try {
-  //     return  FirebaseGetFun().storage.collection(ApiConstant().student).count().get().then((_)=> _.count);
-  //   } on FirebaseException catch (e) {
-  //     NKToast.error(title: e.message.toString());
-  //      return null;
-  //   }
-  // }
->>>>>>> Stashed changes
 }
