@@ -5,17 +5,19 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MyScrollView(
-      shrinkWrap: true,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _totalStudentCountWidget(context),
-            _totalQuizCountWidget(context),
-          ],
-        )
-      ],
+    return Center(
+      child: MyScrollView(
+        shrinkWrap: true,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _totalStudentCountWidget(context),
+              _totalQuizCountWidget(context),
+            ],
+          )
+        ],
+      ),
     );
   }
 
@@ -28,7 +30,7 @@ class HomeScreen extends StatelessWidget {
       padding: nkRegularPadding,
       child: FutureBuilder(
           // future: TempDataStore.getStudentCount,
-          future:  Future.value(1),
+          future: Future.value(1),
           builder: (context, snapshot) {
             return Column(
               mainAxisSize: MainAxisSize.min,

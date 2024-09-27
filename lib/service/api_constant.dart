@@ -23,6 +23,9 @@ mixin class ApiConstant implements APIStatusCode {
   final String updateFileTypeStatusAPI = "update_file_type_status.php";
   final String deleteFileTypeAPI = "delete_file_type.php";
   final String fileTypeListAPI = "view_file_types.php";
+
+  /// Category
+ final String categoryListAPI="view_categories.php";
 }
 
 mixin class ApiSecurity {

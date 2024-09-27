@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionhelper.dart';
 import 'package:m_and_r_quiz_admin_panel/service/api_worker.dart';
 
@@ -17,6 +18,15 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController passwordController = TextEditingController();
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    if (kDebugMode) {
+      emailController.text = "nemikardani6867@gmail.com";
+      passwordController.text = "Test@123";
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
           SessionHelper.instance.setLoginData(value.data!).then(
                 (value) {},
               );
-             AppRoutes.navigator.goNamed(AppRoutes.dashboardScreen);
+          AppRoutes.navigator.goNamed(AppRoutes.dashboardScreen);
         } else {
           NKToast.warning(title: ErrorStrings.noDataFound);
         }

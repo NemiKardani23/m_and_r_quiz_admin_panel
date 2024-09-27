@@ -21,7 +21,7 @@ class NkTheme {
         primaryColorDark: primaryColor,
         cardTheme: CardTheme(
             surfaceTintColor: primaryContainerBGColor,
-            margin: 0.all,
+            margin: 10.all,
             shadowColor: shadowColor,
             color: primaryContainerBGColor,
             elevation: NkGeneralSize.nkCommoElevation,

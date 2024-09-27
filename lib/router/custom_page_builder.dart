@@ -73,7 +73,7 @@ class CustomPageBuilder {
                 child: child,
               );
             default:
-              return FadeTransition(opacity: animation, child: child);
+              return child;
           }
         });
   }

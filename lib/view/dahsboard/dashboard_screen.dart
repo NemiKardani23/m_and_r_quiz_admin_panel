@@ -1,15 +1,8 @@
-import 'package:m_and_r_quiz_admin_panel/components/my_common_container.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
-import 'package:m_and_r_quiz_admin_panel/view/app_management/app_management_screen.dart';
-import 'package:m_and_r_quiz_admin_panel/view/basic/basic_screen.dart';
-import 'package:m_and_r_quiz_admin_panel/view/category/category_screen.dart';
-import 'package:m_and_r_quiz_admin_panel/view/home/home_screen.dart';
-import 'package:m_and_r_quiz_admin_panel/view/questions/questions_screen.dart';
-import 'package:m_and_r_quiz_admin_panel/view/student/student_screen.dart';
-import 'package:m_and_r_quiz_admin_panel/view/utills_management/utills_management_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+  final StatefulNavigationShell child;
+  const DashboardScreen({super.key, required this.child});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -18,18 +11,20 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int selectedIndex = 0;
 
-  final List<Widget> pageList = [
-    const HomeScreen(),
-    const BasicScreen(),
-    const StudentScreen(),
-    const QuestionsScreen(),
-    const AppManagementScreen(),
-    const UtillsManagementScreen(),
-    const CategoryScreen(),
-  ];
+  // final List<Widget> pageList = [
+  //   const HomeScreen(),
+  //   const BasicScreen(),
+  //   const StudentScreen(),
+  //   const QuestionsScreen(),
+  //   const AppManagementScreen(),
+  //   const UtillsManagementScreen(),
+  //   const CategoryScreen(),
+  // ];
 
   @override
   Widget build(BuildContext context) {
+    selectedIndex = widget.child.currentIndex;
+    nkDevLog("SELECTED INDEX : ${widget.child.currentIndex}");
     return MyScaffold(context: context, myBody: myBody);
   }
 
@@ -38,7 +33,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       direction: context.isMobile ? Axis.vertical : Axis.horizontal,
       children: [
         if (!context.isMobile) ...[_bar],
-        navigatePage(),
+        if (context.isLargeDesktop) ...[
+          Flexible(child: navigatePage()),
+        ] else ...[
+          navigatePage(),
+        ],
         if (context.isMobile) ...[_bar]
       ],
     );
@@ -49,16 +48,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return Center(
         child: SizedBox(
           height: context.height,
-          width: context.width / 1.5,
-          child: Expanded(
-            child: pageList[selectedIndex],
-          ),
+          width: context.width / 2,
+          child: widget.child,
         ),
       );
     } else {
-      return Expanded(
-        child: pageList[selectedIndex],
-      );
+      return Expanded(child: widget.child);
     }
   }
 
@@ -66,9 +61,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return _AppMenu(
       selectedIndex: selectedIndex,
       onItemSelected: (int index) {
-        setState(() {
-          selectedIndex = index;
-        });
+        widget.child.goBranch(index);
       },
     );
   }

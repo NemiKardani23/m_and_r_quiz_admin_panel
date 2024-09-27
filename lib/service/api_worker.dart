@@ -4,6 +4,7 @@ import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionhelper.dart';
 import 'package:m_and_r_quiz_admin_panel/service/dio_client.dart';
 import 'package:m_and_r_quiz_admin_panel/view/auth/model/refresh_token_response.dart';
+import 'package:m_and_r_quiz_admin_panel/view/category/model/category_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/category_type_management/model/category_type_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/file_type_management/model/file_type_response.dart';
 
@@ -299,6 +300,33 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
 
     if (response.statusCode == 200) {
       return FileTypeResponse.fromJson(response.data!);
+    } else {
+      return null;
+    }
+  }
+
+  // Todo: Category
+  Future<CategoryResponse?> getCategoryList(
+      {String? id, String? perentId ,String? categoryLavel}) async {
+    final String sendingUrl = categoryListAPI;
+    Map<String, dynamic> queryParameters = {'access_key': $ApiAccessKey};
+    if (id != null) {
+      queryParameters.addAll({'id': id});
+    }  if (perentId != null) {
+      queryParameters.addAll({'parent_id': perentId});
+    } if(categoryLavel != null) {
+      queryParameters.addAll({'category_level': categoryLavel});
+    }
+    var response = await getByCustom(
+      sendingUrl,
+      queryParameters: queryParameters,
+      options: Options(
+        headers: authHeader,
+      ),
+    );
+
+    if (response.statusCode == 200 && response.data != null) {
+      return CategoryResponse.fromJson(response.data!);
     } else {
       return null;
     }

@@ -12,13 +12,20 @@ class DataHandler<T> {
   DataHandler([T? data]) {
     if (data != null) {
       _data = data;
-    }
-    _hasEmpty = false;
+      _hasEmpty = false;
+    _isLoading = false;
+    _hasError = false;
+    _error = '';
+    _emptyError = '';
+    }else{
+_hasEmpty = false;
     _isLoading = true;
     _hasError = false;
     _data = null;
     _error = '';
     _emptyError = '';
+    }
+    
   }
 
   bool get isLoading => _isLoading;
