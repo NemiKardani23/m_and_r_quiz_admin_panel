@@ -69,6 +69,7 @@ const String statusStr = "Status";
 
 // Category
 const String sectionStr = "Section";
+const String folderStr = "Folder";
 
 
 abstract final class ErrorStrings {

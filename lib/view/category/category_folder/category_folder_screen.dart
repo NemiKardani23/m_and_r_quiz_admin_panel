@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/service/api_worker.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/model/category_response.dart';
@@ -73,64 +71,85 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        MyCommnonContainer(
-          isCardView: true,
-          margin: nkRegularPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Row(
+          children: [
+            MyCommnonContainer(
+              isCardView: true,
+              margin: nkRegularPadding,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  MyRegularText(
-                    label: "$categoryStr $sectionStr",
-                    fontSize: NkFontSize.headingFont,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      MyRegularText(
+                        label: "$categoryStr $sectionStr",
+                        fontSize: NkFontSize.headingFont,
+                      ),
+                    ],
                   ),
+                  Wrap(
+                    direction: Axis.horizontal,
+                    children: List.generate(
+                      childRoutesData.length,
+                      (index) {
+                        var mapData = childRoutesData[index];
+
+                        return InkWell(
+                          onTap: () {
+                            var pathUri = mapData["pathUri"]?.toString();
+                            if (pathUri?.isNotEmpty == true) {
+                              context.go(pathUri!);
+                            } else {
+                              AppRoutes.navigator.pushReplacementNamed(
+                                  AppRoutes.categoryScreen);
+                              // CategoryData categoryData = CategoryData.fromJson({});
+                              // _handleRoute(categoryData.copyWith(
+                              //   id: int.tryParse(mapData["id"].toString()),
+                              //   name: mapData["name"].toString(),
+                              //   categoryLevel:
+                              //       num.tryParse(mapData["level"].toString()),
+                              // ),isAddChild:  false);
+                            }
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              MyRegularText(label: mapData["name"].toString()),
+                              if (index != childRoutesData.length - 1) ...[
+                                Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: primaryIconColor.withOpacity(0.5),
+                                  size: 20,
+                                )
+                              ]
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  )
                 ],
               ),
-              Wrap(
-                direction: Axis.horizontal,
-                children: List.generate(
-                  childRoutesData.length,
-                  (index) {
-                    var mapData = childRoutesData[index];
-
-                    return InkWell(
-                      onTap: () {
-                        var pathUri = mapData["pathUri"]?.toString();
-                        if (pathUri?.isNotEmpty == true) {
-                          context.go(pathUri!);
-                        } else {
-                          AppRoutes.navigator
-                              .pushReplacementNamed(AppRoutes.categoryScreen);
-                          // CategoryData categoryData = CategoryData.fromJson({});
-                          // _handleRoute(categoryData.copyWith(
-                          //   id: int.tryParse(mapData["id"].toString()),
-                          //   name: mapData["name"].toString(),
-                          //   categoryLevel:
-                          //       num.tryParse(mapData["level"].toString()),
-                          // ),isAddChild:  false);
-                        }
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          MyRegularText(label: mapData["name"].toString()),
-                          if (index != childRoutesData.length - 1) ...[
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              color: primaryIconColor.withOpacity(0.5),
-                              size: 20,
-                            )
-                          ]
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              )
-            ],
-          ),
+            ),
+            PopupMenuButton(
+              tooltip: "$addStr $folderStr",
+              icon: MyCommnonContainer(
+                child: Icon(Icons.add),
+              ),
+              itemBuilder: (context) {
+                return const [
+                  PopupMenuItem(
+                    child: ListTile(
+                      leading: const Icon(Icons.folder),
+                      title:
+                          const MyRegularText(label: "${addStr} ${folderStr}"),
+                    ),
+                  )
+                ];
+              },
+            ),
+          ],
         ),
         Flexible(child: boardList())
       ].addSpaceEveryWidget(space: nkExtraSmallSizedBox),
