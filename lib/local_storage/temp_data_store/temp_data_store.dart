@@ -1,17 +1,49 @@
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
+import 'package:m_and_r_quiz_admin_panel/service/api_worker.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/board_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/standard_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/subject_list_model.dart';
+import 'package:m_and_r_quiz_admin_panel/view/utills_management/category_type_management/model/category_type_response.dart';
+import 'package:m_and_r_quiz_admin_panel/view/utills_management/file_type_management/model/file_type_response.dart';
 
 class TempDataStore {
+
+  /// !! It's temporary data store for Firebase !!
   static ValueNotifier<List<BoardListModel>?> tempBoardList =
       ValueNotifier(null);
   static ValueNotifier<List<StandardListModel>?> tempStandardList =
       ValueNotifier(null);
   static ValueNotifier<List<SubjectListModel>?> tempSubjectList =
       ValueNotifier(null);
+      
+      
+  // !! It's temporary data store for API !!
+        static ValueNotifier<List<FileTypeData>?> tempFileTypeList =
+      ValueNotifier(null);   
+      
+       static ValueNotifier<List<CategoryTypeData>?> tempCategoryTypeList =
+      ValueNotifier(null);
 
 
+     static Future<List<FileTypeData>?> get getFileTypeList async {
+    if (tempFileTypeList.value == null || tempFileTypeList.value?.isEmpty == true) {
+      tempFileTypeList.value = await ApiWorker().getFileTypeList().then((value) => value?.data,);
+      return tempFileTypeList.value;
+    } else {
+      return tempFileTypeList.value;
+    }
+  } 
+  
+     static Future<List<CategoryTypeData>?> get getCategoryTypeList async {
+    if (tempCategoryTypeList.value == null || tempCategoryTypeList.value?.isEmpty == true) {
+      tempCategoryTypeList.value = await ApiWorker().getCategoryTypeList().then((value) => value?.data,);
+      return tempCategoryTypeList.value;
+    } else {
+      return tempCategoryTypeList.value;
+    }
+  }
+
+   
 
   // static Future<List<BoardListModel>?> get boardList async {
   //   if (tempBoardList.value == null || tempBoardList.value?.isEmpty == true) {

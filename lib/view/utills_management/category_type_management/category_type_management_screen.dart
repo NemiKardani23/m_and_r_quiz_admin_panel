@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:m_and_r_quiz_admin_panel/components/common_diloag/my_delete_dialog.dart';
+import 'package:m_and_r_quiz_admin_panel/local_storage/temp_data_store/temp_data_store.dart';
 import 'package:m_and_r_quiz_admin_panel/service/api_worker.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/category_type_management/diloag/add_category_type_diloag.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/category_type_management/model/category_type_response.dart';
@@ -30,17 +31,18 @@ class _CategoryTypeManagementScreenState
     setState(() {});
     super.didChangeDependencies();
   }
-  
 
   getCategoryTypeList() {
     ApiWorker().getCategoryTypeList().then(
       (value) {
         if (value != null && value.data.isNotEmpty && value.status) {
           setState(() {
+            TempDataStore.tempCategoryTypeList.value = value.data;
             categoryTypeListData.onSuccess(value.data);
           });
         } else {
           setState(() {
+            TempDataStore.tempCategoryTypeList.value = null;
             categoryTypeListData
                 .onEmpty(value?.message ?? ErrorStrings.noDataFound);
           });
@@ -49,6 +51,7 @@ class _CategoryTypeManagementScreenState
     ).catchError(
       (e) {
         setState(() {
+          TempDataStore.tempCategoryTypeList.value = null;
           categoryTypeListData.onError(ErrorStrings.oopsSomethingWentWrong);
         });
       },
@@ -182,7 +185,8 @@ class _CategoryTypeManagementScreenState
                     if (res != null) {
                       Future.delayed(const Duration(milliseconds: 500), () {
                         setState(() {
-                          categoryTypeListData.data?[index]=catType.copyWith(status: res);
+                          categoryTypeListData.data?[index] =
+                              catType.copyWith(status: res);
                           // categoryTypeListData =
                           //     DataHandler(categoryTypeListData.data);
                         });

@@ -70,6 +70,7 @@ const String statusStr = "Status";
 // Category
 const String sectionStr = "Section";
 const String folderStr = "Folder";
+const String fileStr = "File";
 
 
 abstract final class ErrorStrings {

@@ -26,6 +26,9 @@ mixin class ApiConstant implements APIStatusCode {
 
   /// Category
  final String categoryListAPI="view_categories.php";
+  final String categoryAddAPI = "create_category.php";
+  final String categoryUpdateAPI = "update_category.php";
+  final String categoryDeleteAPI = "delete_category.php";
 }
 
 mixin class ApiSecurity {

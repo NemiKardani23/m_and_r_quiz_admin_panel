@@ -22,16 +22,16 @@ class SimpleImagePicker {
             child: Wrap(
               children: <Widget>[
                 ListTile(
-                  leading: Icon(Icons.photo_library),
-                  title: Text('Gallery'),
+                  leading: const Icon(Icons.photo_library),
+                  title: const Text('Gallery'),
                   onTap: () {
                     _pickImage(ImageSource.gallery);
                     Navigator.of(context).pop();
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.photo_camera),
-                  title: Text('Camera'),
+                  leading: const Icon(Icons.photo_camera),
+                  title: const Text('Camera'),
                   onTap: () {
                     _pickImage(ImageSource.camera);
                     Navigator.of(context).pop();
@@ -47,21 +47,21 @@ class SimpleImagePicker {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Select Image Source'),
+            title: const Text('Select Image Source'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 ListTile(
-                  leading: Icon(Icons.photo_library),
-                  title: Text('Gallery'),
+                  leading: const Icon(Icons.photo_library),
+                  title: const Text('Gallery'),
                   onTap: () {
                     _pickImage(ImageSource.gallery);
                     Navigator.of(context).pop();
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.photo_camera),
-                  title: Text('Camera'),
+                  leading: const Icon(Icons.photo_camera),
+                  title: const Text('Camera'),
                   onTap: () {
                     _pickImage(ImageSource.camera);
                     Navigator.of(context).pop();
@@ -80,11 +80,11 @@ class SimpleImagePicker {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Selected Image'),
+          title: const Text('Selected Image'),
           content: Image.file(image),
           actions: <Widget>[
             TextButton(
-              child: Text('Close'),
+              child: const Text('Close'),
               onPressed: () {
                 Navigator.of(context).pop();
               },

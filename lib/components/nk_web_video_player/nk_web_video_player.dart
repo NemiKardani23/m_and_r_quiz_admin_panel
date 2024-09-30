@@ -37,7 +37,7 @@ class _NkWebVideoPlayerState extends State<NkWebVideoPlayer> {
     super.initState();
     _videoElement = html.VideoElement();
     _videoElement.controls = true;
-    _videoElement.style.objectFit = 'contain'; // Maintain aspect ratio
+    _videoElement.style.objectFit = 'cover'; // Maintain aspect ratio
 
     if (widget.networkUrl != null) {
       // Load video from network URL
