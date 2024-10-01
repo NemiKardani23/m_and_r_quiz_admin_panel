@@ -31,11 +31,11 @@ class NkTheme {
         scaffoldBackgroundColor: backgroundColor,
         switchTheme: SwitchThemeData(
             thumbColor:
-                MaterialStateColor.resolveWith((states) => selectionColor),
-            trackColor: MaterialStateColor.resolveWith(
+                WidgetStateColor.resolveWith((states) => selectionColor),
+            trackColor: WidgetStateColor.resolveWith(
                 (states) => revenueProgressBarColor),
             trackOutlineColor:
-                MaterialStateColor.resolveWith((states) => transparent)),
+                WidgetStateColor.resolveWith((states) => transparent)),
         navigationBarTheme: NavigationBarThemeData(
             labelTextStyle: WidgetStatePropertyAll(
                 NkGetXFontStyle.primaryTextTheme(context)
@@ -65,8 +65,7 @@ class NkTheme {
           primary: primaryColor,
           error: errorColor,
           onError: errorColor,
-          background: backgroundColor,
-          onBackground: backgroundColor,
+          onSurface: backgroundColor,
           primaryContainer: primaryContainerColor,
           onSecondary: secondaryColor,
           secondaryContainer: secondaryColor,
@@ -83,7 +82,7 @@ class NkTheme {
         useMaterial3: true,
         iconButtonTheme: const IconButtonThemeData(
             style: ButtonStyle(
-                iconColor: MaterialStatePropertyAll(primaryIconColor))),
+                iconColor: WidgetStatePropertyAll(primaryIconColor))),
         primaryIconTheme: IconThemeData(
             color: primaryIconColor, size: NkGeneralSize.nkIconSize()),
         brightness: Brightness.light,
@@ -99,19 +98,19 @@ class NkTheme {
         ),
         menuButtonTheme: MenuButtonThemeData(
             style: ButtonStyle(
-          textStyle: MaterialStatePropertyAll(TextStyle(
+          textStyle: WidgetStatePropertyAll(TextStyle(
               color: primaryTextColor, fontSize: NkFontSize.regularFont)),
         )),
         menuTheme: const MenuThemeData(
             style: MenuStyle(
-                shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                     borderRadius: NkGeneralSize.nkCommonSmoothBorderRadius)),
-                padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                backgroundColor: MaterialStatePropertyAll(secondaryColor),
-                elevation: MaterialStatePropertyAll(10),
-                mouseCursor: MaterialStatePropertyAll(MouseCursor.defer))),
+                padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                backgroundColor: WidgetStatePropertyAll(secondaryColor),
+                elevation: WidgetStatePropertyAll(10),
+                mouseCursor: WidgetStatePropertyAll(MouseCursor.defer))),
         dropdownMenuTheme: DropdownMenuThemeData(
-            menuStyle: MenuStyle(
+            menuStyle: const MenuStyle(
                 backgroundColor: WidgetStatePropertyAll(primaryColor)),
             textStyle: TextStyle(
                 color: primaryTextColor, fontSize: NkFontSize.regularFont),
@@ -181,23 +180,23 @@ class NkTheme {
   static SearchBarThemeData searchBarThemeData(BuildContext context) =>
       SearchBarThemeData(
         backgroundColor:
-            const MaterialStatePropertyAll(secondaryBackgroundColor),
-        elevation: const MaterialStatePropertyAll(0),
-        shape: const MaterialStatePropertyAll(RoundedRectangleBorder(
+            const WidgetStatePropertyAll(secondaryBackgroundColor),
+        elevation: const WidgetStatePropertyAll(0),
+        shape: const WidgetStatePropertyAll(RoundedRectangleBorder(
           borderRadius: NkGeneralSize.nkCommonSmoothBorderRadius,
         )),
-        textStyle: MaterialStatePropertyAll(
+        textStyle: WidgetStatePropertyAll(
           TextStyle(
             color: primaryTextColor,
             fontSize: NkFontSize.smallFont,
           ),
         ),
-        hintStyle: MaterialStatePropertyAll(
+        hintStyle: WidgetStatePropertyAll(
           TextStyle(
               color: primaryTextColor.withOpacity(0.2),
               fontSize: NkFontSize.regularFont),
         ),
-        padding: MaterialStatePropertyAll(10.all),
+        padding: WidgetStatePropertyAll(10.all),
       );
 
   static AppBarTheme get appBarTheme => const AppBarTheme(
@@ -229,19 +228,19 @@ class NkTheme {
 
   static DatePickerThemeData datePickerThemeData(BuildContext context) =>
       DatePickerThemeData(
-          todayBackgroundColor: const MaterialStatePropertyAll(secondaryColor),
+          todayBackgroundColor: const WidgetStatePropertyAll(secondaryColor),
           todayBorder:
-              MaterialStateBorderSide.resolveWith((states) => const BorderSide(
+              WidgetStateBorderSide.resolveWith((states) => const BorderSide(
                     color: errorColor,
                   )),
           yearStyle: TextStyle(
             color: primaryTextColor,
             fontSize: NkFontSize.regularFont,
           ),
-          yearForegroundColor: const MaterialStatePropertyAll(primaryTextColor),
+          yearForegroundColor: const WidgetStatePropertyAll(primaryTextColor),
           backgroundColor: secondaryBackgroundColor,
-          dayForegroundColor: const MaterialStatePropertyAll(primaryTextColor),
-          dayOverlayColor: const MaterialStatePropertyAll(selectionColor),
+          dayForegroundColor: const WidgetStatePropertyAll(primaryTextColor),
+          dayOverlayColor: const WidgetStatePropertyAll(selectionColor),
           headerHeadlineStyle: const TextStyle(
             color: primaryTextColor,
           ),
@@ -249,7 +248,7 @@ class NkTheme {
             color: primaryTextColor,
           ),
           cancelButtonStyle: const ButtonStyle(
-              textStyle: MaterialStatePropertyAll(TextStyle(
+              textStyle: WidgetStatePropertyAll(TextStyle(
             color: primaryTextColor,
           ))),
           inputDecorationTheme: InputDecorationTheme(
@@ -331,9 +330,9 @@ class NkTheme {
         mainAxisMargin: 10,
         crossAxisMargin: 10,
         radius: const Radius.circular(10),
-        thickness: MaterialStateProperty.all(6),
-        thumbVisibility: const MaterialStatePropertyAll(true),
+        thickness: WidgetStateProperty.all(6),
+        thumbVisibility: const WidgetStatePropertyAll(true),
         thumbColor:
-            MaterialStatePropertyAll(textFieldInputTextColor.withOpacity(0.5)),
+            WidgetStatePropertyAll(textFieldInputTextColor.withOpacity(0.5)),
       );
 }

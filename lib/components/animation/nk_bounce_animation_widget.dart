@@ -5,8 +5,7 @@ class NkBouncingWidget extends StatefulWidget {
   final Widget child;
   final VoidCallback? onPress;
 
-  const NkBouncingWidget({required this.child, Key? key, this.onPress})
-      : super(key: key);
+  const NkBouncingWidget({required this.child, super.key, this.onPress});
 
   @override
   State<NkBouncingWidget> createState() => _NkBouncingWidgetState();

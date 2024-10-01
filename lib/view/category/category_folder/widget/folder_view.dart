@@ -1,5 +1,4 @@
 import 'package:dynamic_routes/dynamic_routes_navigator.dart';
-import 'package:flutter/material.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/model/category_manager_model.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';

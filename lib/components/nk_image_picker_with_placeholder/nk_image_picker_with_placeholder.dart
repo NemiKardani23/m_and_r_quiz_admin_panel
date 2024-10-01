@@ -7,12 +7,14 @@ class NkPickerWithPlaceHolder extends StatefulWidget {
   final String? imageUrl;
   final FileType? pickType;
   final String fileType;
+  final String? lableText;
   final void Function(Uint8List? imageBytes, String? imageName)? onFilePicked;
 
   const NkPickerWithPlaceHolder({
     super.key,
     this.onFilePicked,
     this.imageUrl,
+    this.lableText,
     this.pickType,
     required this.fileType,
   });
@@ -27,6 +29,7 @@ class _NkPickerWithPlaceHolderState extends State<NkPickerWithPlaceHolder> {
   String? _fileName;
   String? initalFileUrl;
   FileType _initialFileType = FileType.any;
+  List<String>? allowedExtensions;
 
   @override
   void initState() {
@@ -43,8 +46,7 @@ class _NkPickerWithPlaceHolderState extends State<NkPickerWithPlaceHolder> {
   Future<void> _pickFile() async {
     _initialFileType = widget.pickType ?? FileType.any;
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: _initialFileType,
-    );
+        type: _initialFileType, allowedExtensions: allowedExtensions);
 
     if (result != null && result.files.first.bytes != null) {
       _handleFileType(result.files.first.name);
@@ -84,7 +86,11 @@ class _NkPickerWithPlaceHolderState extends State<NkPickerWithPlaceHolder> {
           mimeType: _fileName!.split('.').last,
         );
       } else {
-        return Icon(Icons.add_photo_alternate, size: context.height * 0.2);
+        if (widget.fileType == "image") {
+          return Icon(Icons.image, size: context.height * 0.2);
+        } else {
+          return Icon(Icons.insert_drive_file, size: context.height * 0.2);
+        }
       }
     } else {
       if (_initialFileType == FileType.image) {
@@ -132,7 +138,10 @@ class _NkPickerWithPlaceHolderState extends State<NkPickerWithPlaceHolder> {
             label: const MyRegularText(label: 'Edit File'),
             icon: const Icon(Icons.edit, color: primaryIconColor),
           )
-        ]
+        ],
+        if (widget.lableText != null)
+          MyRegularText(
+              label: widget.lableText ?? '', fontSize: NkFontSize.smallFont),
       ],
     );
   }
@@ -148,6 +157,16 @@ class _NkPickerWithPlaceHolderState extends State<NkPickerWithPlaceHolder> {
             "WEBp" ||
             "webp":
         setState(() {
+          allowedExtensions = [
+            "jpg",
+            "jpeg",
+            "png",
+            "JPG",
+            "JPEG",
+            "PNG",
+            "WEBp",
+            "webp"
+          ];
           _initialFileType = FileType.image;
         });
         break;
@@ -162,7 +181,57 @@ class _NkPickerWithPlaceHolderState extends State<NkPickerWithPlaceHolder> {
             "avi" ||
             "AVI":
         setState(() {
+          allowedExtensions = [
+            "mp4",
+            "MP4",
+            "mov",
+            "MOV",
+            "mkv",
+            "MKV",
+            "webm",
+            "WEBM",
+            "avi",
+            "AVI"
+          ];
           _initialFileType = FileType.video;
+        });
+        break;
+      case "pdf" ||
+            "PDF" ||
+            "doc" ||
+            "docx" ||
+            "DOC" ||
+            "DOCX" ||
+            "ppt" ||
+            "pptx" ||
+            "PPT" ||
+            "PPTX" ||
+            "xls" ||
+            "XLS" ||
+            "xlsx" ||
+            "XLSX" ||
+            "txt" ||
+            "TXT":
+        setState(() {
+          allowedExtensions = [
+            "pdf",
+            "PDF",
+            "doc",
+            "docx",
+            "DOC",
+            "DOCX",
+            "ppt",
+            "pptx",
+            "PPT",
+            "PPTX",
+            "xls",
+            "XLS",
+            "xlsx",
+            "XLSX",
+            "txt",
+            "TXT"
+          ];
+          _initialFileType = FileType.custom;
         });
         break;
       default:

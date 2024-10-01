@@ -1,4 +1,5 @@
 ////// AUTH
+library;
 
 //Login
 const String appNameStr = "M&REducation Quiz Admin";
@@ -70,7 +71,9 @@ const String statusStr = "Status";
 // Category
 const String sectionStr = "Section";
 const String folderStr = "Folder";
+const String documentStr = "Document";
 const String fileStr = "File";
+const String thumbImageStr = "Thumb Image";
 
 
 abstract final class ErrorStrings {

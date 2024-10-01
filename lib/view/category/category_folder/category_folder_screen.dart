@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:m_and_r_quiz_admin_panel/components/document_viewer/nk_doc_viewer.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/temp_data_store/temp_data_store.dart';
 import 'package:m_and_r_quiz_admin_panel/service/api_worker.dart';
@@ -13,12 +14,14 @@ class CategoryFolderScreen extends StatefulWidget {
   final num? lavel;
   final GoRouterState? routingState;
   final String? routeChildrenPath;
+  final String? fileType;
   const CategoryFolderScreen({
     super.key,
     this.categoryId,
     this.lavel,
     this.routingState,
     this.routeChildrenPath,
+    this.fileType,
   });
 
   @override
@@ -32,13 +35,23 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
 
   List<Map<String, String>> childRoutesData = [];
 
+  CategoryTypeENUM? fileTypeENUM;
+
   @override
   initState() {
     super.initState();
-    callApi(
-      perentId: widget.categoryId?.toString(),
-      categoryLavel: widget.lavel?.toString(),
-    );
+    fileTypeENUM = convertStringToCategoryType(widget.fileType ?? "FOLDER");
+    if (fileTypeENUM == CategoryTypeENUM.folder) {
+      callApi(
+        perentId: widget.categoryId?.toString(),
+        categoryLavel: widget.lavel?.toString(),
+      );
+    } else if (fileTypeENUM == CategoryTypeENUM.document) {
+      callApi(
+        id: widget.categoryId?.toString(),
+      );
+    }
+
     getMediaTypeData();
     childRoutesData = NkCommonFunction.convertStringToListMap(
             widget.routeChildrenPath ?? "") ??
@@ -145,8 +158,10 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                MyRegularText(
-                                    label: mapData["name"].toString()),
+                                FittedBox(
+                                  child: MyRegularText(
+                                      label: mapData["name"].toString()),
+                                ),
                                 if (index != childRoutesData.length - 1) ...[
                                   Icon(
                                     Icons.arrow_forward_ios,
@@ -184,23 +199,18 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
                     showAdaptiveDialog(
                       builder: (context) {
                         return Center(
-                          child: MyScrollView(
-                            children: [
-                              AddCategoryDiloag(
-                                parentId: widget.categoryId?.toString(),
-                                fileTypeModel: catTypeList.firstWhere(
-                                    (element) =>
-                                        element.typeName?.toUpperCase() ==
-                                        value.categoryType),
-                                categoryType: value,
-                                onUpdated: (catData) {
-                                  callApi(
-                                    perentId: widget.categoryId?.toString(),
-                                    categoryLavel: widget.lavel?.toString(),
-                                  );
-                                },
-                              ),
-                            ],
+                          child: AddCategoryDiloag(
+                            parentId: widget.categoryId?.toString(),
+                            fileTypeModel: catTypeList.firstWhere((element) =>
+                                element.typeName?.toUpperCase() ==
+                                value.categoryType),
+                            categoryType: value,
+                            onUpdated: (catData) {
+                              callApi(
+                                perentId: widget.categoryId?.toString(),
+                                categoryLavel: widget.lavel?.toString(),
+                              );
+                            },
                           ),
                         );
                       },
@@ -230,18 +240,24 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
             )
           ],
         ),
-        Flexible(child: boardList())
+        Flexible(child: categoryList())
       ].addSpaceEveryWidget(space: nkExtraSmallSizedBox),
     );
   }
 
-  List<PopupMenuItem> _editDeleteViewOptions(
-      CategoryData _categoryData, int index) {
+  List<PopupMenuItem> _editDeleteViewOptions(CategoryData catData, int index) {
     var fileTypeViewData = fileTypeData.data?.firstWhere(
-      (element) => element.id == _categoryData.fileTypeId,
+      (element) => element.id == catData.fileTypeId,
+    );
+    var categoryTypeViewData = categoryTypeData.data?.firstWhere(
+      (element) => element.id == catData.typeId,
     );
     return [
       PopupMenuItem(
+        onTap: () {
+          _handleEditCategory(
+              catData, fileTypeViewData!, categoryTypeViewData!);
+        },
         child: ListTile(
           contentPadding: 0.all,
           leading: const Icon(CupertinoIcons.pencil),
@@ -255,36 +271,22 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
               builder: (builder) {
                 return MyDeleteDialog(
                   appBarTitle:
-                      "$deleteStr ${_categoryData.name} ${fileTypeViewData?.typeName}",
+                      "$deleteStr ${catData.name} ${fileTypeViewData?.typeName}",
                   onPressed: () async {
                     ApiWorker()
-                        .deleteCategory(categoryId: _categoryData.id.toString())
+                        .deleteCategory(categoryId: catData.id.toString())
                         .then(
                       (value) {
                         if (value != null && value.status == true) {
                           NKToast.success(
-                              title: "${_categoryData.name} ${SuccessStrings.deletedSuccessfully}");
+                              title:
+                                  "${catData.name} ${SuccessStrings.deletedSuccessfully}");
                           setState(() {
                             categoryData.data?.removeAt(index);
                           });
                         }
                       },
                     );
-                    // await FirebaseDeleteFun()
-                    //     .deleteChapter(
-                    //         chapter.boardId ?? "",
-                    //         chapter.standardId ?? "",
-                    //         chapter.subjectId ?? "",
-                    //         chapter.chapterId ?? "",
-                    //         imageUrl: chapter.image)
-                    //     .whenComplete(() {
-                    //   NKToast.success(
-                    //       title:
-                    //           "${chapter.chapterName} ${SuccessStrings.deletedSuccessfully}");
-                    //   setState(() {
-                    //     chapterListData.data?.removeAt(index);
-                    //   });
-                    // });
                   },
                 );
               }).then((value) {
@@ -306,7 +308,7 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
   Widget boardComponent(CategoryData categoryData, int index) {
     return MyCommnonContainer(
       isCardView: true,
-      onTap: () {
+      onDoubleTap: () {
         _handleRoute(categoryData);
       },
       padding: 10.all,
@@ -327,10 +329,7 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(
-                Icons.folder,
-                size: 1.dp,
-              ),
+              _categoryIcon(categoryData),
               MyRegularText(label: categoryData.name ?? ""),
               _detailsChips(categoryData)
             ],
@@ -338,6 +337,76 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
         ],
       ),
     );
+  }
+
+  Widget _categoryIcon(CategoryData categoryData) {
+    var fileTypeViewData = fileTypeData.data?.firstWhere(
+      (element) => element.id == categoryData.fileTypeId,
+    );
+    CategoryTypeENUM fileTypeENUM = convertStringToCategoryType(
+        (fileTypeViewData?.typeName ?? "").toUpperCase());
+
+    switch (fileTypeENUM) {
+      case CategoryTypeENUM.folder:
+        if (categoryData.image != null) {
+          return MyNetworkImage(
+            imageUrl: categoryData.image ?? "",
+            appHeight: 1.dp,
+            appWidth: 1.dp,
+          );
+        } else {
+          return Icon(
+            Icons.folder,
+            size: 1.dp,
+          );
+        }
+
+      case CategoryTypeENUM.document:
+        if (categoryData.image != null) {
+          return MyNetworkImage(
+            imageUrl: categoryData.image ?? "",
+            appHeight: 1.dp,
+            appWidth: 1.dp,
+          );
+        } else {
+          return Icon(
+            Icons.insert_drive_file,
+            size: 1.dp,
+          );
+        }
+      case CategoryTypeENUM.ePublisher:
+        if (categoryData.image != null) {
+          return MyNetworkImage(
+            imageUrl: categoryData.image ?? "",
+            appHeight: 1.dp,
+            appWidth: 1.dp,
+          );
+        } else {
+          return Icon(
+            CupertinoIcons.book_fill,
+            size: 1.dp,
+          );
+        }
+      case CategoryTypeENUM.exam:
+        if (categoryData.image != null) {
+          return MyNetworkImage(
+            imageUrl: categoryData.image ?? "",
+            appHeight: 1.dp,
+            appWidth: 1.dp,
+          );
+        } else {
+          return Icon(
+            Icons.quiz,
+            size: 1.dp,
+          );
+        }
+
+      default:
+        return Icon(
+          Icons.folder,
+          size: 1.dp,
+        );
+    }
   }
 
   Widget _detailsChips(CategoryData categoryData) {
@@ -388,10 +457,16 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
         ]);
   }
 
-  Widget boardList() {
+  Widget categoryList() {
     return categoryData.when(
       context: context,
       successBuilder: (boardList) {
+        if (fileTypeENUM == CategoryTypeENUM.document) {
+          return NkWebDocumentViewer(
+            id: "${boardList.firstOrNull?.fileUrl}",
+            networkUrl: boardList.firstOrNull?.fileUrl,
+          );
+        }
         return ResponsiveGridList(
           minItemWidth: context.isMobile ? context.width : 200,
           minItemsPerRow: 2,
@@ -404,33 +479,99 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
     );
   }
 
-  _handleRoute(CategoryData categoryData, {bool isAddChild = true}) {
-    Map<String, String> pathData = {
-      "id": categoryData.id.toString(),
-      "lavel": ((categoryData.categoryLevel ?? 0) + 1).toString(),
-    };
-    //   Map<String, String> routePathData = {
-    //   "id": categoryData.id.toString(),
-    //   "lavel": ((categoryData.categoryLevel ?? 0) + 1).toString(),
-    // };
-    // var nameData = {
-    //   "routeChildPath": jsonEncode(pathData..addAll({"name": categoryData.name ?? ""}))
-    // };
-    if (isAddChild) {
-      childRoutesData.addAll([
-        {
-          "name": categoryData.name ?? "",
-          "id": categoryData.id.toString(),
-          "lavel": ((categoryData.categoryLevel ?? 0) + 1).toString(),
-          "pathUri": widget.routingState?.uri.path.toString() ?? ""
-        }
-      ]);
-    }
-    pathData.addAll({'routeChildPath': childRoutesData.toString()});
-    nkDevLog("PATH DATA : $pathData");
-    AppRoutes.navigator.goNamed(
-      AppRoutes.subCategoryScreen,
-      pathParameters: pathData,
+  _handleRoute(CategoryData catData, {bool isAddChild = true}) {
+    var fileTypeViewData = fileTypeData.data?.firstWhere(
+      (element) => element.id == catData.fileTypeId,
     );
+    var categoryTypeViewData = categoryTypeData.data?.firstWhere(
+      (element) => element.id == catData.typeId,
+    );
+    CategoryTypeENUM fileTypeENUM = convertStringToCategoryType(
+        (fileTypeViewData?.typeName ?? "").toUpperCase());
+
+    switch (fileTypeENUM) {
+      case CategoryTypeENUM.folder:
+        Map<String, String> pathData = {
+          "id": catData.id.toString(),
+          "lavel": ((catData.categoryLevel ?? 0) + 1).toString(),
+          "fileType": fileTypeViewData?.typeName ?? "",
+        };
+        if (isAddChild) {
+          childRoutesData.addAll([
+            {
+              "name": catData.name ?? "",
+              "id": catData.id.toString(),
+              "lavel": ((catData.categoryLevel ?? 0) + 1).toString(),
+              "pathUri": widget.routingState?.uri.path.toString() ?? ""
+            }
+          ]);
+        }
+        pathData.addAll({'routeChildPath': childRoutesData.toString()});
+        nkDevLog("PATH DATA : $pathData");
+        AppRoutes.navigator.goNamed(
+          AppRoutes.subCategoryScreen,
+          pathParameters: pathData,
+        );
+        break;
+      case CategoryTypeENUM.document:
+        Map<String, String> pathData = {
+          "id": catData.id.toString(),
+          "lavel": ((catData.categoryLevel ?? 0) + 1).toString(),
+          "fileType": fileTypeViewData?.typeName ?? "",
+        };
+        if (isAddChild) {
+          childRoutesData.addAll([
+            {
+              "name": catData.name ?? "",
+              "id": catData.id.toString(),
+              "lavel": ((catData.categoryLevel ?? 0) + 1).toString(),
+              "pathUri": widget.routingState?.uri.path.toString() ?? ""
+            }
+          ]);
+        }
+        pathData.addAll({'routeChildPath': childRoutesData.toString()});
+        nkDevLog("PATH DATA : $pathData");
+        AppRoutes.navigator.goNamed(
+          AppRoutes.subCategoryScreen,
+          pathParameters: pathData,
+        );
+        break;
+      default:
+    }
+  }
+
+  _handleEditCategory(CategoryData catData, FileTypeData fileTypeData,
+      CategoryTypeData categoryTypeData) {
+    CategoryTypeENUM fileTypeENUM = convertStringToCategoryType(
+        (fileTypeData.typeName ?? "").toUpperCase());
+
+    switch (fileTypeENUM) {
+      case CategoryTypeENUM.folder:
+        showAdaptiveDialog(
+          builder: (context) {
+            return Center(
+              child: MyScrollView(
+                children: [
+                  AddCategoryDiloag(
+                    categoryDataModel: catData,
+                    parentId: widget.categoryId?.toString(),
+                    fileTypeModel: fileTypeData,
+                    categoryType: fileTypeENUM,
+                    onUpdated: (catData) {
+                      callApi(
+                        perentId: widget.categoryId?.toString(),
+                        categoryLavel: widget.lavel?.toString(),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+          context: context,
+        );
+        break;
+      default:
+    }
   }
 }

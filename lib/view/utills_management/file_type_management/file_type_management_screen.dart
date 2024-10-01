@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:m_and_r_quiz_admin_panel/components/common_diloag/my_delete_dialog.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/temp_data_store/temp_data_store.dart';
 import 'package:m_and_r_quiz_admin_panel/service/api_worker.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/file_type_management/diloag/add_file_type_diloag.dart';

@@ -1,10 +1,7 @@
-import 'package:m_and_r_quiz_admin_panel/components/common_diloag/my_delete_dialog.dart';
 import 'package:m_and_r_quiz_admin_panel/components/dropdown/nk_serchable_dropdown_menu.dart';
-import 'package:m_and_r_quiz_admin_panel/components/my_network_image.dart';
 import 'package:m_and_r_quiz_admin_panel/components/nk_enable_disable_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/temp_data_store/temp_data_store.dart';
-import 'package:m_and_r_quiz_admin_panel/service/firebase/firebase_delete_fun.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/dialog/add_subject_diloag.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/board_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/standard_list_model.dart';

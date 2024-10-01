@@ -7,7 +7,6 @@ import 'package:m_and_r_quiz_admin_panel/view/auth/login_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/basic_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/category_folder/category_folder_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/category_screen.dart';
-import 'package:m_and_r_quiz_admin_panel/view/category/model/category_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/dahsboard/dashboard_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/home/home_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/questions/questions_screen.dart';
@@ -26,7 +25,7 @@ class AppRoutes {
   static const String categoryScreen = "/category";
   static const String subCategoryScreen = "sub-category";
   static const String subCategoryPass =
-      "sub-category/:id/:lavel/:routeChildPath";
+      "sub-category/:id/:lavel/:routeChildPath/:fileType";
 
   static GlobalKey<NavigatorState>? $navigatorKey = GlobalKey<NavigatorState>();
 
@@ -208,8 +207,11 @@ class AppRoutes {
                             0;
                         var routeChildPath =
                             state.pathParameters['routeChildPath'].toString();
+                        var fileType =
+                            state.pathParameters['fileType'].toString();
                         nkDevLog("CHILD PATH : $routeChildPath");
                         return CategoryFolderScreen(
+                          fileType: fileType,
                           categoryId: categoryId,
                           routingState: state,
                           routeChildrenPath: routeChildPath,
@@ -228,9 +230,13 @@ class AppRoutes {
                             0;
                         var routeChildPath =
                             state.pathParameters['routeChildPath'].toString();
+
+                        var fileType =
+                            state.pathParameters['fileType'].toString();
                         nkDevLog("CHILD PATH : $routeChildPath");
                         return CustomPageBuilder.getTransitionPage(
                             child: CategoryFolderScreen(
+                              fileType: fileType,
                               key: UniqueKey(),
                               categoryId: categoryId,
                               routingState: state,
@@ -243,6 +249,7 @@ class AppRoutes {
                       },
                     ),
                   ]),
+              
             ]),
           ])
     ];

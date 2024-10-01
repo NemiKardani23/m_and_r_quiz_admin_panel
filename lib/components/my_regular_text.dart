@@ -9,17 +9,19 @@ class MyRegularText extends Text {
   final FontWeight? fontWeight;
   final TextAlign? align;
   final int? maxlines;
+  @override
   final TextOverflow? overflow;
   final TextDecoration? decoration;
   final double? stepGranularity;
+  @override
   final TextStyle? style;
   final TextDecorationStyle? textDecorationStyle;
   final bool isPrimaryFont;
   final bool showEmptyError;
   final String? fontFamily;
 
-  const MyRegularText({
-    Key? key,
+  const MyRegularText({super.key, 
+    
     required this.label,
     this.color,
     this.fontSize,

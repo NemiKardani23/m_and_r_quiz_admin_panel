@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:m_and_r_quiz_admin_panel/components/app_bar/my_app_bar.dart';
 import 'package:m_and_r_quiz_admin_panel/components/nk_image_picker_with_placeholder/nk_image_picker_with_placeholder.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
@@ -8,22 +9,23 @@ import 'package:m_and_r_quiz_admin_panel/view/utills_management/category_type_ma
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/category_type_management/widget/category_type_option_select_pick.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/file_type_management/model/file_type_response.dart';
 
-class AddFileDiloag extends StatefulWidget {
+class AddDocumentDiloag extends StatefulWidget {
   final CategoryData? categoryDataModel;
   final Function(CategoryData? catData)? onUpdated;
   final FileTypeData fileTypeModel;
+  final    String? parentId;
 
-  const AddFileDiloag({
+  const AddDocumentDiloag({
     super.key,
     this.categoryDataModel,
     this.onUpdated,
-    required this.fileTypeModel, 
+    required this.fileTypeModel, this.parentId,
   });
   @override
-  State<AddFileDiloag> createState() => _AddFileDiloagState();
+  State<AddDocumentDiloag> createState() => _AddDocumentDiloagState();
 }
 
-class _AddFileDiloagState extends State<AddFileDiloag> {
+class _AddDocumentDiloagState extends State<AddDocumentDiloag> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   TextEditingController folderTitleController = TextEditingController();
@@ -38,7 +40,7 @@ class _AddFileDiloagState extends State<AddFileDiloag> {
   (
     Uint8List? imageBytes,
     String? imageName,
-  )? onImagePicked;
+  )? onDocPicked;
 
   CategoryData? categoryDataModel;
 
@@ -65,10 +67,13 @@ class _AddFileDiloagState extends State<AddFileDiloag> {
             ? "$editStr ${widget.fileTypeModel.typeName}"
             : "$addStr ${widget.fileTypeModel.typeName}",
       ),
-      content: ConstrainedBox(
-        constraints: BoxConstraints(
-            minWidth: context.isMobile ? context.width : context.width * 0.35),
-        child: _body(context),
+      content: SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+              minWidth:
+                  context.isMobile ? context.width : context.width * 0.35),
+          child: _body(context),
+        ),
       ),
     );
   }
@@ -80,21 +85,32 @@ class _AddFileDiloagState extends State<AddFileDiloag> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          NkPickerWithPlaceHolder(
-            imageUrl: categoryDataModel?.image ?? "",
-            fileType: (widget.fileTypeModel.typeName ?? "image").toLowerCase(),
-            onFilePicked: (imageBytes, imageName) {
-              onThumbImagePicked = (imageBytes, imageName);
-            },
+          Center(
+            child: NkPickerWithPlaceHolder(
+              pickType: FileType.image,
+              lableText: "${widget.fileTypeModel.typeName} $thumbImageStr",
+              imageUrl: categoryDataModel?.image ?? "",
+              fileType: "image",
+              onFilePicked: (imageBytes, imageName) {
+                onThumbImagePicked = (imageBytes, imageName);
+              },
+            ),
           ),
-          NkPickerWithPlaceHolder(
-            imageUrl: categoryDataModel?.fileUrl ?? "",
-            fileType: (widget.fileTypeModel.typeName ?? "image").toLowerCase(),
-            onFilePicked: (imageBytes, imageName) {
-              onImagePicked = (imageBytes, imageName);
-            },
+          const Divider(
+            color: dividerColor,
           ),
-          const MyRegularText(label: "$folderStr $nameStr"),
+          Center(
+            child: NkPickerWithPlaceHolder(
+              pickType: FileType.any,
+              lableText: "${widget.fileTypeModel.typeName} $fileStr *",
+              imageUrl: categoryDataModel?.fileUrl ?? "",
+              fileType: "file",
+              onFilePicked: (imageBytes, imageName) {
+                onDocPicked = (imageBytes, imageName);
+              },
+            ),
+          ),
+          MyRegularText(label: "${widget.fileTypeModel.typeName} $nameStr"),
           MyFormField(
             controller: folderTitleController,
             labelText: nameStr,
@@ -103,7 +119,8 @@ class _AddFileDiloagState extends State<AddFileDiloag> {
               categoryDataModel = categoryDataModel?.copyWith(name: value);
             },
           ),
-          const MyRegularText(label: "$folderStr $descriptionStr"),
+          MyRegularText(
+              label: "${widget.fileTypeModel.typeName} $descriptionStr"),
           MyFormField(
             controller: folderDescriptionController,
             labelText: descriptionStr,
@@ -113,9 +130,10 @@ class _AddFileDiloagState extends State<AddFileDiloag> {
                   categoryDataModel?.copyWith(description: value);
             },
           ),
-          const MyRegularText(label: "$folderStr $categoryTypeStr"),
+          MyRegularText(
+              label: "${widget.fileTypeModel.typeName} $categoryTypeStr"),
           CategoryTypeOptionSelectWidget(
-            onValueChanged: ( categoryType) {
+            onValueChanged: (categoryType) {
               setState(() {
                 selectedCategoryType = categoryType;
               });
@@ -126,22 +144,35 @@ class _AddFileDiloagState extends State<AddFileDiloag> {
           MyThemeButton(
               isLoadingButton: true,
               buttonText: categoryDataModel != null
-                  ? "$updateStr $folderStr"
-                  : "$addStr $folderStr",
+                  ? "$updateStr ${widget.fileTypeModel.typeName}"
+                  : "$addStr ${widget.fileTypeModel.typeName}",
               onPressed: () async {
+                  if (onDocPicked == null) {
+                      NKToast.warning(
+                          description:
+                              "Please select ${widget.fileTypeModel.typeName} $fileStr");
+                      return;
+                    }
+                    if (selectedCategoryType == null) {
+                      NKToast.warning(
+                          description:
+                              "Please select ${widget.fileTypeModel.typeName} $categoryTypeStr");
+                      return;
+                    }
                 if (formKey.currentState!.validate()) {
                   if (widget.categoryDataModel != null) {
                   } else {
+                  
                     await ApiWorker()
                         .addCategory(
                       categoryImage: NKMultipart.getMultipartImageBytesNullable(
                           name: onThumbImagePicked?.$2 ?? "",
                           imageBytes: onThumbImagePicked?.$1),
                       file: NKMultipart.getMultipartImageBytesNullable(
-                          name: onImagePicked?.$2 ?? "",
-                          imageBytes: onImagePicked?.$1),
-                      name: folderTitleController.text,
-                      parentId: categoryDataModel?.parentId?.toString(),
+                          name: onDocPicked?.$2 ?? "",
+                          imageBytes: onDocPicked?.$1),
+                        name: folderTitleController.text,
+                      parentId: widget.parentId,
                       typeId: selectedCategoryType!.id.toString(),
                       fileTypeId: widget.fileTypeModel.id.toString(),
                       description: folderDescriptionController.text,

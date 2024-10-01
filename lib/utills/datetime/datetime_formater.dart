@@ -74,6 +74,6 @@ class DateTimeFormatter {
   bool isYesterday(DateTime date1, DateTime date2) {
     final difference = date2.difference(date1);
     return difference.inDays == 1 &&
-        isSameDay(date1, date2.subtract(Duration(days: 1)));
+        isSameDay(date1, date2.subtract(const Duration(days: 1)));
   }
 }

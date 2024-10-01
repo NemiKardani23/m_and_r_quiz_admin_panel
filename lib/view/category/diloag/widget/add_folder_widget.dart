@@ -1,4 +1,5 @@
 import 'package:m_and_r_quiz_admin_panel/components/app_bar/my_app_bar.dart';
+import 'package:m_and_r_quiz_admin_panel/components/nk_enable_disable_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/components/nk_image_picker_with_placeholder/nk_image_picker_with_placeholder.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/service/api_worker.dart';
@@ -12,12 +13,13 @@ class AddFolderDiloagWidget extends StatefulWidget {
   final CategoryData? categoryDataModel;
   final Function(CategoryData? catData)? onUpdated;
   final FileTypeData fileTypeModel;
-final String? parentId;
+  final String? parentId;
   const AddFolderDiloagWidget({
     super.key,
     this.categoryDataModel,
     this.onUpdated,
-    required this.fileTypeModel,required this.parentId,
+    required this.fileTypeModel,
+    required this.parentId,
   });
   @override
   State<AddFolderDiloagWidget> createState() => _AddFolderDiloagWidgetState();
@@ -46,6 +48,10 @@ class _AddFolderDiloagWidgetState extends State<AddFolderDiloagWidget> {
       folderTitleController.text = widget.categoryDataModel?.name ?? "";
       folderDescriptionController.text =
           widget.categoryDataModel?.description ?? "";
+
+      selectedCategoryType = CategoryTypeData.fromJson({
+        "id": widget.categoryDataModel?.typeId,
+      });
     }
     super.initState();
   }
@@ -60,10 +66,13 @@ class _AddFolderDiloagWidgetState extends State<AddFolderDiloagWidget> {
             ? "$editStr $folderStr"
             : "$addStr $folderStr",
       ),
-      content: ConstrainedBox(
-        constraints: BoxConstraints(
-            minWidth: context.isMobile ? context.width : context.width * 0.35),
-        child: _body(context),
+      content: SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+              minWidth:
+                  context.isMobile ? context.width : context.width * 0.35),
+          child: _body(context),
+        ),
       ),
     );
   }
@@ -104,13 +113,16 @@ class _AddFolderDiloagWidgetState extends State<AddFolderDiloagWidget> {
             },
           ),
           const MyRegularText(label: "$folderStr $categoryTypeStr"),
-          CategoryTypeOptionSelectWidget(
-            onValueChanged: (categoryType) {
-              setState(() {
-                selectedCategoryType = categoryType;
-              });
-            },
-            value: selectedCategoryType,
+          NkEnableDisableWidget(
+            isEnable: categoryDataModel == null,
+            child: CategoryTypeOptionSelectWidget(
+              onValueChanged: (categoryType) {
+                setState(() {
+                  selectedCategoryType = categoryType;
+                });
+              },
+              value: selectedCategoryType,
+            ),
           ),
           nkExtraSmallSizedBox,
           MyThemeButton(
@@ -121,6 +133,25 @@ class _AddFolderDiloagWidgetState extends State<AddFolderDiloagWidget> {
               onPressed: () async {
                 if (formKey.currentState!.validate()) {
                   if (widget.categoryDataModel != null) {
+                    ApiWorker()
+                        .updateCategory(
+                      categoryId: categoryDataModel!.id.toString(),
+                      categoryImage: NKMultipart.getMultipartImageBytesNullable(
+                          name: onImagePicked?.$2 ?? "",
+                          imageBytes: onImagePicked?.$1),
+                      name: categoryDataModel?.name ?? "",
+                      parentId: categoryDataModel?.parentId.toString(),
+                      description: categoryDataModel?.description ?? "",
+                    )
+                        .then((value) {
+                      if (value != null && value.status == true) {
+                        widget.onUpdated!(widget.categoryDataModel);
+                        NKToast.success(
+                            description:
+                                "${widget.fileTypeModel.typeName} ${SuccessStrings.updatedSuccessfully}");
+                        Navigator.pop(context);
+                      }
+                    });
                   } else {
                     ApiWorker()
                         .addCategory(

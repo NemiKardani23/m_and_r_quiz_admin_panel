@@ -7,7 +7,7 @@ class SimpleImagePicker {
   final ImagePicker _picker = ImagePicker();
 
   Future<void> pickImage(BuildContext context, bool useBottomSheet) async {
-    void _pickImage(ImageSource source) async {
+    void pickImage(ImageSource source) async {
       final XFile? image = await _picker.pickImage(source: source);
       if (image != null) {
         _showImagePreview(context, File(image.path));
@@ -25,7 +25,7 @@ class SimpleImagePicker {
                   leading: const Icon(Icons.photo_library),
                   title: const Text('Gallery'),
                   onTap: () {
-                    _pickImage(ImageSource.gallery);
+                    pickImage(ImageSource.gallery);
                     Navigator.of(context).pop();
                   },
                 ),
@@ -33,7 +33,7 @@ class SimpleImagePicker {
                   leading: const Icon(Icons.photo_camera),
                   title: const Text('Camera'),
                   onTap: () {
-                    _pickImage(ImageSource.camera);
+                    pickImage(ImageSource.camera);
                     Navigator.of(context).pop();
                   },
                 ),
@@ -55,7 +55,7 @@ class SimpleImagePicker {
                   leading: const Icon(Icons.photo_library),
                   title: const Text('Gallery'),
                   onTap: () {
-                    _pickImage(ImageSource.gallery);
+                    pickImage(ImageSource.gallery);
                     Navigator.of(context).pop();
                   },
                 ),
@@ -63,7 +63,7 @@ class SimpleImagePicker {
                   leading: const Icon(Icons.photo_camera),
                   title: const Text('Camera'),
                   onTap: () {
-                    _pickImage(ImageSource.camera);
+                    pickImage(ImageSource.camera);
                     Navigator.of(context).pop();
                   },
                 ),

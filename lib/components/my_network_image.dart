@@ -9,6 +9,7 @@ class MyNetworkImage extends ImageNetwork {
   final double? appHeight;
   final BoxFit? fit;
   final BoxFitWeb? appFitWeb;
+  @override
   final Function()? onTap;
 
   const MyNetworkImage({

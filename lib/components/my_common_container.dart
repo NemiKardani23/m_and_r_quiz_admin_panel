@@ -3,6 +3,7 @@ import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 class MyCommnonContainer extends StatelessWidget {
   final Widget? child;
   final GestureTapCallback? onTap;
+  final GestureTapCallback? onDoubleTap;
 
   final Color? color;
   final DecorationImage? image;
@@ -26,6 +27,7 @@ class MyCommnonContainer extends StatelessWidget {
       {super.key,
       this.child,
       this.onTap,
+      this.onDoubleTap,
       this.color,
       this.image,
       this.border,
@@ -78,6 +80,7 @@ class MyCommnonContainer extends StatelessWidget {
                       borderRadius: borderRadiusGeometry ??
                           NkGeneralSize.nkCommonBorderRadius,
                       onTap: onTap,
+                      onDoubleTap: onDoubleTap,
                       child: Padding(
                         padding: padding ?? EdgeInsets.zero,
                         child: child,

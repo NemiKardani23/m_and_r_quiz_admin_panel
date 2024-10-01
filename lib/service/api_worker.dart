@@ -371,6 +371,43 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
     }
   }
 
+  Future<GlobalCrudResponse?> updateCategory({
+    required String name,
+     String? description,
+     String? parentId,
+    required String categoryId,
+    MultipartFile? categoryImage,
+    MultipartFile? file,
+  }) async {
+    final String sendingUrl = categoryUpdateAPI;
+    Map<String,dynamic> data = {
+       'access_key': $ApiAccessKey,
+  'name': name,
+  'category_id': name,
+  'description': description,
+  'parent_id': parentId,
+    };
+    if(categoryImage != null) {
+      data.addAll({'category_image': categoryImage});
+    }
+    if(file != null) {
+      data.addAll({'file': file});
+    }
+    var response = await postByCustom(
+      sendingUrl,
+      data: FormData.fromMap(data),
+      options: Options(
+        headers: authHeader,
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      return GlobalCrudResponse.fromJson(response.data!);
+    } else {
+      return null;
+    }
+  }
+
   Future<GlobalCrudResponse?> deleteCategory({required String categoryId}) async {
     final String sendingUrl = categoryDeleteAPI;
     var data =
