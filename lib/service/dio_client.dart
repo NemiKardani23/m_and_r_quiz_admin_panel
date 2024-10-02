@@ -9,22 +9,24 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import '../export/___app_file_exporter.dart';
 
 final logger = PrettyDioLogger(
-    requestHeader: true,
-    requestBody: true,
-    responseBody: true,
-    responseHeader: false,
-    error: true,
-    compact: true,
-    maxWidth: 90,
-    enabled: kDebugMode,
-    filter: (options, args) {
-      // don't print requests with uris containing '/posts'
-      // if (options.path.contains('/posts')) {
-      //   return false;
-      // }
-      // don't print responses with unit8 list data
-      return !args.isResponse || !args.hasUint8ListData;
-    });
+  requestHeader: true,
+  requestBody: true,
+  responseBody: true,
+  responseHeader: false,
+  error: true,
+  compact: true,
+  request: true,
+  maxWidth: 90,
+  enabled: kDebugMode,
+  // filter: (options, args) {
+  //   // don't print requests with uris containing '/posts'
+  //   // if (options.path.contains('/posts')) {
+  //   //   return false;
+  //   // }
+  //   // don't print responses with unit8 list data
+  //   return !args.isResponse || !args.hasUint8ListData;
+  // }
+);
 
 class DioClient extends ApiConstant {
   DioClient()
@@ -199,7 +201,9 @@ class DioExceptionHandler implements Exception {
         break;
       case DioExceptionType.badCertificate:
         errorMessage = dioError.response?.data['message'] ?? dioError.message;
-        NKToast.error(description: errorMessage);
+        NKToast.error(
+            title: "Error Code : ${dioError.response?.statusCode}",
+            description: errorMessage);
         NkApiErrorHandler().handleUnAuthanTicateError(
             message: errorMessage, code: dioError.response?.statusCode ?? 0);
 
@@ -207,7 +211,7 @@ class DioExceptionHandler implements Exception {
 
         break;
       case DioExceptionType.connectionError:
-        errorMessage = 'Unexpected error occurred.';
+        errorMessage = dioError.response?.data['message'] ?? dioError.message;
         NKToast.error(description: errorMessage);
         NkApiErrorHandler().handleUnAuthanTicateError(
             message: errorMessage, code: dioError.response?.statusCode ?? 0);

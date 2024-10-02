@@ -1,4 +1,5 @@
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
+import 'package:m_and_r_quiz_admin_panel/view/category/diloag/quiz_add_form_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/widget/add_document_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/widget/add_folder_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/model/category_response.dart';
@@ -69,7 +70,15 @@ class AddCategoryDiloag extends StatelessWidget {
           categoryDataModel: categoryDataModel,
           onUpdated: onUpdated,
           fileTypeModel: fileTypeModel,
-          parentId:  parentId,
+          parentId: parentId,
+        );
+      case CategoryTypeENUM.exam:
+        return QuizAddFormWidget(
+          categoryDataModel: categoryDataModel,
+          onUpdated: onUpdated,
+          fileTypeModel: fileTypeModel,
+          parentId: parentId,
+          categoryType: categoryType,
         );
       default:
         return const NkEmptyWidget();

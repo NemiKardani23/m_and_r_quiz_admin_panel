@@ -307,14 +307,16 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
 
   // Todo: Category
   Future<CategoryResponse?> getCategoryList(
-      {String? id, String? perentId ,String? categoryLavel}) async {
+      {String? id, String? perentId, String? categoryLavel}) async {
     final String sendingUrl = categoryListAPI;
     Map<String, dynamic> queryParameters = {'access_key': $ApiAccessKey};
     if (id != null) {
       queryParameters.addAll({'id': id});
-    }  if (perentId != null) {
+    }
+    if (perentId != null) {
       queryParameters.addAll({'parent_id': perentId});
-    } if(categoryLavel != null) {
+    }
+    if (categoryLavel != null) {
       queryParameters.addAll({'category_level': categoryLavel});
     }
     var response = await getByCustom(
@@ -334,26 +336,28 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
 
   Future<GlobalCrudResponse?> addCategory({
     required String name,
-     String? description,
-     String? parentId,
+    String? description,
+    String? parentId,
     required String typeId,
     required String fileTypeId,
     MultipartFile? categoryImage,
     MultipartFile? file,
   }) async {
     final String sendingUrl = categoryAddAPI;
-    Map<String,dynamic> data = {
-       'access_key': $ApiAccessKey,
-  'name': name,
-  'description': description,
-  'parent_id': parentId,
-  'type_id': typeId,
-  'file_type_id': fileTypeId
+    Map<String, dynamic> data = {
+      'access_key': $ApiAccessKey,
+      'name': name,
+      'description': description,
+      'parent_id': parentId,
+      'type_id': typeId,
+      'file_type_id': fileTypeId,
+      // 'file': null,
+      'category_image': null
     };
-    if(categoryImage != null) {
+    if (categoryImage != null) {
       data.addAll({'category_image': categoryImage});
     }
-    if(file != null) {
+    if (file != null) {
       data.addAll({'file': file});
     }
     var response = await postByCustom(
@@ -373,24 +377,24 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
 
   Future<GlobalCrudResponse?> updateCategory({
     required String name,
-     String? description,
-     String? parentId,
+    String? description,
+    String? parentId,
     required String categoryId,
     MultipartFile? categoryImage,
     MultipartFile? file,
   }) async {
     final String sendingUrl = categoryUpdateAPI;
-    Map<String,dynamic> data = {
-       'access_key': $ApiAccessKey,
-  'name': name,
-  'category_id': name,
-  'description': description,
-  'parent_id': parentId,
+    Map<String, dynamic> data = {
+      'access_key': $ApiAccessKey,
+      'name': name,
+      'category_id': name,
+      'description': description,
+      'parent_id': parentId,
     };
-    if(categoryImage != null) {
+    if (categoryImage != null) {
       data.addAll({'category_image': categoryImage});
     }
-    if(file != null) {
+    if (file != null) {
       data.addAll({'file': file});
     }
     var response = await postByCustom(
@@ -408,10 +412,11 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
     }
   }
 
-  Future<GlobalCrudResponse?> deleteCategory({required String categoryId}) async {
+  Future<GlobalCrudResponse?> deleteCategory(
+      {required String categoryId}) async {
     final String sendingUrl = categoryDeleteAPI;
-    var data =
-        FormData.fromMap({'access_key': $ApiAccessKey, 'category_id': categoryId});
+    var data = FormData.fromMap(
+        {'access_key': $ApiAccessKey, 'category_id': categoryId});
     var response = await postByCustom(
       sendingUrl,
       data: data,
