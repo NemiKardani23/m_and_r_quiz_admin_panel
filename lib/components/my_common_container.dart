@@ -22,6 +22,7 @@ class MyCommnonContainer extends StatelessWidget {
   final BorderRadius? borderRadiusGeometry;
   final Gradient? gradient;
   final bool isCardView;
+  final double? elevation;
 
   const MyCommnonContainer(
       {super.key,
@@ -44,7 +45,8 @@ class MyCommnonContainer extends StatelessWidget {
       this.isShowError = false,
       this.gradient,
       this.isAnimatedContainer = false,
-      this.isCardView = false});
+      this.isCardView = false,
+      this.elevation});
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +54,7 @@ class MyCommnonContainer extends StatelessWidget {
     return isAnimatedContainer == false
         ? isCardView
             ? Card(
+                elevation: elevation,
                 child: Container(
                   width: width,
                   height: height,

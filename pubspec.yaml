@@ -62,7 +62,9 @@ dependencies:
   flutter_custom_tabs: ^2.1.0
 
   ################################ QUILL EDITOR ########################
-  # quill_html_editor: ^2.2.8
+  flutter_quill: ^10.8.2
+  vsc_quill_delta_to_html: ^1.0.5
+  flutter_quill_extensions: ^10.8.2
   html_editor_enhanced: ^2.6.0
 
   ######################################### FIREBASE ########################################
@@ -80,6 +82,8 @@ dependencies:
 
   # Country State City
   country_state_city: ^0.1.6
+
+  
 
   
 

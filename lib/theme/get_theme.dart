@@ -12,166 +12,133 @@ import 'color/colors.dart';
 
 class NkTheme {
   static ThemeData lightTheme(BuildContext context) => ThemeData(
-        shadowColor: shadowColor,
-        highlightColor: transparent,
-        splashColor: transparent,
-        splashFactory: NoSplash.splashFactory,
-        primaryColor: primaryColor,
-        primaryColorLight: primaryColor,
-        primaryColorDark: primaryColor,
-        cardTheme: CardTheme(
-            surfaceTintColor: primaryContainerBGColor,
-            margin: 10.all,
-            shadowColor: shadowColor,
-            color: primaryContainerBGColor,
-            elevation: NkGeneralSize.nkCommoElevation,
-            shape: RoundedRectangleBorder(
-              borderRadius: NkGeneralSize.nkCommonBorderRadius,
-            )),
-        scaffoldBackgroundColor: backgroundColor,
-        switchTheme: SwitchThemeData(
-            thumbColor:
-                WidgetStateColor.resolveWith((states) => selectionColor),
-            trackColor: WidgetStateColor.resolveWith(
-                (states) => revenueProgressBarColor),
-            trackOutlineColor:
-                WidgetStateColor.resolveWith((states) => transparent)),
-        navigationBarTheme: NavigationBarThemeData(
-            labelTextStyle: WidgetStatePropertyAll(
-                NkGetXFontStyle.primaryTextTheme(context)
-                    .labelMedium
-                    ?.copyWith(fontSize: 14)),
-            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-            backgroundColor: secondaryColor),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          showSelectedLabels: true,
-          showUnselectedLabels: true,
-        ),
-        appBarTheme: appBarTheme,
-        textTheme: NkGetXFontStyle.primaryTextTheme(context),
-        primaryTextTheme: NkGetXFontStyle.primaryTextTheme(context),
-        dividerColor: dividerColor,
-        listTileTheme: listTileThemeData(context),
-        expansionTileTheme: const ExpansionTileThemeData(
-            iconColor: primaryIconColor,
-            collapsedIconColor: primaryIconColor,
-            textColor: primaryTextColor,
-            collapsedTextColor: primaryTextColor,
-            backgroundColor: Color(0xFF0F172A),
-            clipBehavior: Clip.antiAlias,
-            tilePadding: EdgeInsets.zero,
-            childrenPadding: nkSmallPadding),
-        colorScheme: const ColorScheme.light(
-          primary: primaryColor,
-          error: errorColor,
-          onError: errorColor,
-          onSurface: backgroundColor,
-          primaryContainer: primaryContainerColor,
-          onSecondary: secondaryColor,
-          secondaryContainer: secondaryColor,
-          surface: backgroundColor,
-          secondary: secondaryColor,
-        ),
-        iconTheme: IconThemeData(
-            color: primaryIconColor, size: NkGeneralSize.nkIconSize()),
-        textSelectionTheme: const TextSelectionThemeData(
-          cursorColor: secondaryTextColor,
-          selectionColor: cursorColor,
-          selectionHandleColor: primaryButtonColor,
-        ),
-        useMaterial3: true,
-        iconButtonTheme: const IconButtonThemeData(
-            style: ButtonStyle(
-                iconColor: WidgetStatePropertyAll(primaryIconColor))),
-        primaryIconTheme: IconThemeData(
-            color: primaryIconColor, size: NkGeneralSize.nkIconSize()),
-        brightness: Brightness.light,
-        popupMenuTheme: PopupMenuThemeData(
-          textStyle: TextStyle(
-              color: primaryTextColor, fontSize: NkFontSize.regularFont),
-          color: primaryColor,
-          shape: const RoundedRectangleBorder(
-              borderRadius: NkGeneralSize.nkCommonSmoothBorderRadius),
-          elevation: 10,
-          position: PopupMenuPosition.under,
+      shadowColor: shadowColor,
+      highlightColor: transparent,
+      splashColor: transparent,
+      splashFactory: NoSplash.splashFactory,
+      primaryColor: primaryColor,
+      primaryColorLight: primaryColor,
+      primaryColorDark: primaryColor,
+      cardTheme: CardTheme(
+          surfaceTintColor: primaryContainerBGColor,
+          margin: 10.all,
           shadowColor: shadowColor,
+          color: primaryContainerBGColor,
+          elevation: NkGeneralSize.nkCommoElevation,
+          shape: RoundedRectangleBorder(
+            borderRadius: NkGeneralSize.nkCommonBorderRadius,
+          )),
+      scaffoldBackgroundColor: backgroundColor,
+      switchTheme: SwitchThemeData(
+          thumbColor: WidgetStateColor.resolveWith((states) => selectionColor),
+          trackColor:
+              WidgetStateColor.resolveWith((states) => revenueProgressBarColor),
+          trackOutlineColor:
+              WidgetStateColor.resolveWith((states) => transparent)),
+      navigationBarTheme: NavigationBarThemeData(
+          labelTextStyle: WidgetStatePropertyAll(
+              NkGetXFontStyle.primaryTextTheme(context)
+                  .labelMedium
+                  ?.copyWith(fontSize: 14)),
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          backgroundColor: secondaryColor),
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+      ),
+      appBarTheme: appBarTheme,
+      textTheme: NkGetXFontStyle.primaryTextTheme(context),
+      primaryTextTheme: NkGetXFontStyle.primaryTextTheme(context),
+      dividerColor: dividerColor,
+      listTileTheme: listTileThemeData(context),
+      expansionTileTheme: const ExpansionTileThemeData(
+          iconColor: primaryIconColor,
+          collapsedIconColor: primaryIconColor,
+          textColor: primaryTextColor,
+          collapsedTextColor: primaryTextColor,
+          backgroundColor: Color(0xFF0F172A),
+          clipBehavior: Clip.antiAlias,
+          tilePadding: EdgeInsets.zero,
+          childrenPadding: nkSmallPadding),
+      colorScheme: const ColorScheme.light(
+        primary: primaryColor,
+        error: errorColor,
+        onError: errorColor,
+        onSurface: backgroundColor,
+        primaryContainer: primaryContainerColor,
+        onSecondary: secondaryColor,
+        secondaryContainer: secondaryColor,
+        surface: backgroundColor,
+        secondary: secondaryColor,
+      ),
+      iconTheme: IconThemeData(
+          color: primaryIconColor, size: NkGeneralSize.nkIconSize()),
+      textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: secondaryTextColor,
+        selectionColor: cursorColor,
+        selectionHandleColor: primaryButtonColor,
+      ),
+      useMaterial3: true,
+      iconButtonTheme: const IconButtonThemeData(
+          style:
+              ButtonStyle(iconColor: WidgetStatePropertyAll(primaryIconColor))),
+      primaryIconTheme: IconThemeData(
+          color: primaryIconColor, size: NkGeneralSize.nkIconSize()),
+      brightness: Brightness.light,
+      popupMenuTheme: PopupMenuThemeData(
+        textStyle: TextStyle(
+            color: primaryTextColor, fontSize: NkFontSize.regularFont),
+        color: primaryColor,
+        shape: const RoundedRectangleBorder(
+            borderRadius: NkGeneralSize.nkCommonSmoothBorderRadius),
+        elevation: 10,
+        position: PopupMenuPosition.under,
+        shadowColor: shadowColor,
+      ),
+      menuButtonTheme: MenuButtonThemeData(
+          style: ButtonStyle(
+        textStyle: WidgetStatePropertyAll(TextStyle(
+            color: primaryTextColor, fontSize: NkFontSize.regularFont)),
+      )),
+      menuTheme: const MenuThemeData(
+          style: MenuStyle(
+              shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+                  borderRadius: NkGeneralSize.nkCommonSmoothBorderRadius)),
+              padding: WidgetStatePropertyAll(EdgeInsets.zero),
+              backgroundColor: WidgetStatePropertyAll(secondaryColor),
+              elevation: WidgetStatePropertyAll(10),
+              mouseCursor: WidgetStatePropertyAll(MouseCursor.defer))),
+      dropdownMenuTheme:
+          DropdownMenuThemeData(menuStyle: const MenuStyle(backgroundColor: WidgetStatePropertyAll(primaryColor)), textStyle: TextStyle(color: primaryTextColor, fontSize: NkFontSize.regularFont), inputDecorationTheme: InputDecorationTheme(suffixIconColor: primaryIconColor, focusColor: DecorationUtils(context).getUnderlineInputDecoration().focusColor, focusedBorder: DecorationUtils(context).getUnderlineInputDecoration().focusedBorder, counterStyle: DecorationUtils(context).getUnderlineInputDecoration().counterStyle, contentPadding: DecorationUtils(context).getUnderlineInputDecoration().contentPadding, errorBorder: DecorationUtils(context).getUnderlineInputDecoration().errorBorder, enabledBorder: DecorationUtils(context).getUnderlineInputDecoration().enabledBorder, disabledBorder: DecorationUtils(context).getUnderlineInputDecoration().disabledBorder, errorStyle: DecorationUtils(context).getUnderlineInputDecoration().errorStyle, hintStyle: DecorationUtils(context).getUnderlineInputDecoration().hintStyle, errorMaxLines: DecorationUtils(context).getUnderlineInputDecoration().errorMaxLines, fillColor: DecorationUtils(context).getUnderlineInputDecoration().fillColor, focusedErrorBorder: DecorationUtils(context).getUnderlineInputDecoration().focusedErrorBorder, border: DecorationUtils(context).getUnderlineInputDecoration().border)),
+      searchBarTheme: searchBarThemeData(context),
+      tabBarTheme: tabBarTheme,
+      dialogTheme: dialogTheme,
+      buttonTheme: ButtonThemeData(
+          buttonColor: primaryButtonColor,
+          textTheme: ButtonTextTheme.normal,
+          padding: nkRegularPadding,
+          height: context.height * 0.06,
+          disabledColor: primaryButtonColor,
+          focusColor: primaryButtonColor,
+          layoutBehavior: ButtonBarLayoutBehavior.padded,
+          shape: RoundedRectangleBorder(
+            borderRadius: NkGeneralSize.nkCommonBorderRadius,
+          )),
+      datePickerTheme: datePickerThemeData(context),
+      scrollbarTheme: scrollbarTheme,
+      checkboxTheme: CheckboxThemeData(
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: primaryButtonColor),
         ),
-        menuButtonTheme: MenuButtonThemeData(
-            style: ButtonStyle(
-          textStyle: WidgetStatePropertyAll(TextStyle(
-              color: primaryTextColor, fontSize: NkFontSize.regularFont)),
-        )),
-        menuTheme: const MenuThemeData(
-            style: MenuStyle(
-                shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                    borderRadius: NkGeneralSize.nkCommonSmoothBorderRadius)),
-                padding: WidgetStatePropertyAll(EdgeInsets.zero),
-                backgroundColor: WidgetStatePropertyAll(secondaryColor),
-                elevation: WidgetStatePropertyAll(10),
-                mouseCursor: WidgetStatePropertyAll(MouseCursor.defer))),
-        dropdownMenuTheme: DropdownMenuThemeData(
-            menuStyle: const MenuStyle(
-                backgroundColor: WidgetStatePropertyAll(primaryColor)),
-            textStyle: TextStyle(
-                color: primaryTextColor, fontSize: NkFontSize.regularFont),
-            inputDecorationTheme: InputDecorationTheme(
-                suffixIconColor: primaryIconColor,
-                focusColor: DecorationUtils(context)
-                    .getUnderlineInputDecoration()
-                    .focusColor,
-                focusedBorder: DecorationUtils(context)
-                    .getUnderlineInputDecoration()
-                    .focusedBorder,
-                counterStyle: DecorationUtils(context)
-                    .getUnderlineInputDecoration()
-                    .counterStyle,
-                contentPadding: DecorationUtils(context)
-                    .getUnderlineInputDecoration()
-                    .contentPadding,
-                errorBorder: DecorationUtils(context)
-                    .getUnderlineInputDecoration()
-                    .errorBorder,
-                enabledBorder: DecorationUtils(context)
-                    .getUnderlineInputDecoration()
-                    .enabledBorder,
-                disabledBorder: DecorationUtils(context)
-                    .getUnderlineInputDecoration()
-                    .disabledBorder,
-                errorStyle: DecorationUtils(context)
-                    .getUnderlineInputDecoration()
-                    .errorStyle,
-                hintStyle: DecorationUtils(context)
-                    .getUnderlineInputDecoration()
-                    .hintStyle,
-                errorMaxLines: DecorationUtils(context)
-                    .getUnderlineInputDecoration()
-                    .errorMaxLines,
-                fillColor: DecorationUtils(context)
-                    .getUnderlineInputDecoration()
-                    .fillColor,
-                focusedErrorBorder: DecorationUtils(context)
-                    .getUnderlineInputDecoration()
-                    .focusedErrorBorder,
-                border: DecorationUtils(context)
-                    .getUnderlineInputDecoration()
-                    .border)),
-        searchBarTheme: searchBarThemeData(context),
-        tabBarTheme: tabBarTheme,
-        dialogTheme: dialogTheme,
-        buttonTheme: ButtonThemeData(
-            buttonColor: primaryButtonColor,
-            textTheme: ButtonTextTheme.normal,
-            padding: nkRegularPadding,
-            height: context.height * 0.06,
-            disabledColor: primaryButtonColor,
-            focusColor: primaryButtonColor,
-            layoutBehavior: ButtonBarLayoutBehavior.padded,
-            shape: RoundedRectangleBorder(
-              borderRadius: NkGeneralSize.nkCommonBorderRadius,
-            )),
-        datePickerTheme: datePickerThemeData(context),
-        scrollbarTheme: scrollbarTheme,
-      );
+       side: BorderSide(color: primaryButtonColor),
+        fillColor: WidgetStateProperty.resolveWith<Color?>((states) {
+          if (states.contains(WidgetState.selected)) {
+            return primaryButtonColor;
+          } else {
+            return transparent;
+          }
+        }),
+      ));
 
   static ListTileThemeData listTileThemeData(BuildContext context) =>
       const ListTileThemeData(
@@ -179,8 +146,7 @@ class NkTheme {
 
   static SearchBarThemeData searchBarThemeData(BuildContext context) =>
       SearchBarThemeData(
-        backgroundColor:
-            const WidgetStatePropertyAll(secondaryBackgroundColor),
+        backgroundColor: const WidgetStatePropertyAll(secondaryBackgroundColor),
         elevation: const WidgetStatePropertyAll(0),
         shape: const WidgetStatePropertyAll(RoundedRectangleBorder(
           borderRadius: NkGeneralSize.nkCommonSmoothBorderRadius,

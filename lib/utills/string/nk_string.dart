@@ -46,6 +46,7 @@ const String addStudentStr = "Add Student";
 
 /// QUESTION
 const String questionStr = "Question";
+const String optionStr = "Option";
 
 /// APP MANAGEMENT
 
@@ -74,7 +75,9 @@ const String folderStr = "Folder";
 const String documentStr = "Document";
 const String fileStr = "File";
 const String thumbImageStr = "Thumb Image";
-
+const String headingImageStr = "Heading Image";
+const String titleStr = "Title";
+const String subTitleStr = "Sub Title";
 
 abstract final class ErrorStrings {
   static const String noDataFound = "No data found";
