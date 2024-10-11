@@ -3,6 +3,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:m_and_r_quiz_admin_panel/components/app_bar/my_app_bar.dart';
 import 'package:m_and_r_quiz_admin_panel/components/html_editor/nk_quill_editor.dart';
 import 'package:m_and_r_quiz_admin_panel/components/nk_image_picker_with_placeholder/nk_image_picker_with_placeholder.dart';
+import 'package:m_and_r_quiz_admin_panel/components/nk_number_counter/nk_number_counter_field.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/add_category_diloag.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/quiz_add_editor_model.dart';
@@ -42,86 +43,48 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return AlertDialog(
       backgroundColor: transparent,
-      child: Flex(
-        //alignment: WrapAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        // runAlignment: WrapAlignment.center,
-        direction: context.isTablet || context.isMobile
-            ? Axis.vertical
-            : Axis.horizontal,
+      alignment: Alignment.center,
+      title: Column(
         children: [
-          Flexible(
-            child: AlertDialog(
-              backgroundColor: transparent,
-              contentPadding: 0.all,
-              titlePadding: 0.all.copyWith(bottom: nkRegularPadding.bottom),
-              title: MyCommnonContainer(
-                padding: 16.horizontal,
-                child: MyAppBar(
-                  heading: widget.categoryDataModel != null
-                      ? "$editStr ${widget.fileTypeModel.typeName}"
-                      : "$addStr ${widget.fileTypeModel.typeName}",
-                ),
-              ),
-              content: SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                      minWidth: context.isMobile
-                          ? context.width
-                          : context.width * 0.35),
-                  child: _body(context),
-                ),
-              ),
+          MyCommnonContainer(
+            padding: 16.horizontal,
+            child: MyAppBar(
+              heading: widget.categoryDataModel != null
+                  ? "$editStr ${widget.fileTypeModel.typeName}"
+                  : "$addStr ${widget.fileTypeModel.typeName}",
             ),
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (focusedController != null) ...[
-                MyCommnonContainer(
-                  height: context.isTablet || context.isMobile ? 180 : 180,
-                  width: context.isLargeDesktop
-                      ? context.width / 5.0
-                      : context.isTablet || context.isMobile
-                          ? context.width
-                          : context.width / 2.6,
-                  padding: 0.all,
-                  child: NkQuillToolbar(
-                    controller: focusedController,
-                  ),
-                ),
-              ],
-              MyThemeButton(
-                padding: 10.horizontal,
-                leadingIcon: const Icon(
-                  Icons.add,
-                  color: secondaryIconColor,
-                ),
-                buttonText: "$addStr $questionStr",
-                onPressed: onAddQuestion,
-              )
-            ].addSpaceEveryWidget(space: nkExtraSmallSizedBox),
-          )
-          // AlertDialog(
-          //   elevation: NkGeneralSize.nkCommoElevation,
-          //   backgroundColor: primaryColor,
-          //   contentPadding: 0.all,
-          //   titlePadding: 0.all,
-          //   insetPadding: 0.all,
-          //   content: ConstrainedBox(
-          //     constraints: BoxConstraints(
-          //         maxWidth: 20,
-          //         minWidth: context.isMobile ? context.width : 10),
-          //     child: NkQuillToolbar(
-          //       controller:
-          //           quizAddEditorModelList[focusedWidgetIndex].controller,
-          //     ),
-          //   ),
-          // ),
+          10.space,
+          if (focusedController != null) ...[
+            MyCommnonContainer(
+              height: context.isTablet || context.isMobile ? 180 : null,
+              width: context.isLargeDesktop
+                  ? null
+                  : context.isTablet || context.isMobile
+                      ? context.width
+                      : null,
+              padding: 0.all,
+              child: NkQuillToolbar(
+                controller: focusedController,
+              ),
+            ),
+          ],
         ],
+      ),
+      content: AlertDialog(
+        backgroundColor: transparent,
+        contentPadding: 0.all,
+        titlePadding: 0.all.copyWith(bottom: nkRegularPadding.bottom),
+        content: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+                minWidth:
+                    context.isMobile ? context.width : context.width * 0.45),
+            child: _body(context),
+          ),
+        ),
       ),
     );
   }
@@ -152,6 +115,21 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
               focusedController = quillController;
             });
           },
+        ),
+        nkSmallSizedBox,
+        Align(
+          alignment: Alignment.bottomRight,
+          child: FittedBox(
+            child: MyThemeButton(
+              padding: 10.horizontal,
+              leadingIcon: const Icon(
+                Icons.add,
+                color: secondaryIconColor,
+              ),
+              buttonText: "$addStr $questionStr",
+              onPressed: onAddQuestion,
+            ),
+          ),
         )
       ],
     );
@@ -283,10 +261,33 @@ class _QuestionListWidgetState extends State<_QuestionListWidget> {
       padding: 10.all,
       child: Column(
         children: [
+          _showOtherOption(quizAddQustionEditorModel, index),
           _questionTitle(quizAddQustionEditorModel.questionController, index),
-          _optionList(quizAddQustionEditorModel),
+          _optionList(quizAddQustionEditorModel, index),
         ].addSpaceEveryWidget(space: 5.space),
       ),
+    );
+  }
+
+  Widget _showOtherOption(
+      QuizAddQustionEditorModel quizAddQustionEditorModel, int index) {
+    return Align(
+      alignment: Alignment.topRight,
+      child: PopupMenuButton(itemBuilder: (context) {
+        return [
+          PopupMenuItem(
+            onTap: () {
+              setState(() {
+                questionList.removeAt(index);
+              });
+            },
+            child: const MyRegularText(
+              label: removeStr,
+              color: errorColor,
+            ),
+          ),
+        ];
+      }),
     );
   }
 
@@ -312,7 +313,8 @@ class _QuestionListWidgetState extends State<_QuestionListWidget> {
     );
   }
 
-  Widget _optionList(QuizAddQustionEditorModel quizAddQustionEditorModel) {
+  Widget _optionList(
+      QuizAddQustionEditorModel quizAddQustionEditorModel, int perentIndex) {
     if (quizAddQustionEditorModel.options != null &&
         quizAddQustionEditorModel.options?.isNotEmpty == true) {
       return Column(
@@ -321,36 +323,68 @@ class _QuestionListWidgetState extends State<_QuestionListWidget> {
             children: List.generate(
               quizAddQustionEditorModel.options?.length ?? 0,
               (index) {
-                return _optionWidget(quizAddQustionEditorModel.options![index]);
+                return _optionWidget(quizAddQustionEditorModel.options![index],
+                    perentIndex, index);
               },
             ),
           ),
-          TextButton.icon(
-              onPressed: () {
-                onAddOption(quizAddQustionEditorModel);
-              },
-              label: const MyRegularText(label: "$addStr $optionStr"),
-              icon: const Icon(Icons.add))
+          Align(
+            alignment: Alignment.bottomRight,
+            child: TextButton.icon(
+                style: const ButtonStyle(
+                  iconColor: WidgetStatePropertyAll(primaryIconColor),
+                ),
+                onPressed: () {
+                  onAddOption(quizAddQustionEditorModel);
+                },
+                label: MyRegularText(
+                  label: "$addStr $optionStr",
+                  fontSize: NkFontSize.smallFont,
+                ),
+                icon: const Icon(
+                  Icons.add,
+                  color: primaryIconColor,
+                )),
+          ),
+          nkExtraSmallSizedBox,
+          if (quizAddQustionEditorModel.ansOption != null) ...[
+            _answerWidget(quizAddQustionEditorModel
+                .ansOption!.optionController.controller)
+          ],
+          _durationWidget(),
         ],
       );
     } else {
       return TextButton.icon(
+          style: const ButtonStyle(
+            iconColor: WidgetStatePropertyAll(primaryIconColor),
+          ),
           onPressed: () {
             onAddOption(quizAddQustionEditorModel);
           },
-          label: const MyRegularText(label: "$addStr $optionStr"),
-          icon: const Icon(Icons.add));
+          label: MyRegularText(
+            label: "$addStr $optionStr",
+            fontSize: NkFontSize.smallFont,
+          ),
+          icon: const Icon(
+            Icons.add,
+            color: primaryIconColor,
+          ));
     }
   }
 
-  Widget _optionWidget(QuizQuestionOptionsEditorModel model) {
+  Widget _optionWidget(
+      QuizQuestionOptionsEditorModel model, int perentIndex, int index) {
     return CheckboxListTile.adaptive(
+      hoverColor: transparent,
+      tileColor: transparent,
       controlAffinity: ListTileControlAffinity.leading,
       contentPadding: 0.all,
-      value: currectAnswer == model,
+      value: questionList[perentIndex].ansOption == model,
       onChanged: (value) {
         setState(() {
-          currectAnswer = model;
+          questionList[perentIndex].ansOption = model;
+          // currectAnswer = model;
         });
       },
       title: Listener(
@@ -365,6 +399,46 @@ class _QuestionListWidgetState extends State<_QuestionListWidget> {
           // controller: QuillEditorController(),
         ),
       ),
+      secondary: IconButton(
+          onPressed: () {
+            setState(() {
+              questionList[perentIndex].options?.removeAt(index);
+            });
+          },
+          icon: const Icon(
+            Icons.remove,
+            color: errorColor,
+          )),
+    );
+  }
+
+  Widget _answerWidget(QuillController controller) {
+    return Row(
+      // crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const MyRegularText(
+          label: "$ansStr.",
+          fontWeight: NkGeneralSize.nkBoldFontWeight,
+        ),
+        Flexible(
+          child: NkQuillEditor(
+            isReaDOnly: true,
+            border: Border.all(color: transparent),
+
+            controller: controller,
+            // controller: QuillEditorController(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _durationWidget() {
+    return Row(
+      children: [
+        MyCommnonContainer(
+            padding: 4.all, color: lightGreyColor, child: NkTimeCounterField()),
+      ],
     );
   }
 }

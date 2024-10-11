@@ -14,8 +14,8 @@ class QuizAddQustionEditorModel  {
   final int questionType;
    Duration? qustionCompletionTime;
   List<QuizQuestionOptionsEditorModel>? options;
-  QuizQuestionOptionsEditorModel? currentOption;
-  QuizAddQustionEditorModel( {required this.questionController,  this.questionType=1,this.qustionCompletionTime, this.options, this.currentOption});
+  QuizQuestionOptionsEditorModel? ansOption;
+  QuizAddQustionEditorModel( {required this.questionController,  this.questionType=1,this.qustionCompletionTime, this.options, this.ansOption});
 }
 
 class QuizQuestionOptionsEditorModel  {

@@ -5,20 +5,36 @@ import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart'; // Your app imports
 
-class NkQuillEditor extends StatelessWidget {
+class NkQuillEditor extends StatefulWidget {
   final quill.QuillController controller;
   final Function(bool unSelected)? unSelect;
   final String? hint;
   final bool isSelected;
+  final bool isReaDOnly;
   final BoxBorder? border;
   const NkQuillEditor({
     this.isSelected = false,
+    this.isReaDOnly = false,
     this.unSelect,
     super.key,
     required this.controller,
     this.hint,
     this.border,
   });
+
+  @override
+  State<NkQuillEditor> createState() => _NkQuillEditorState();
+}
+
+class _NkQuillEditorState extends State<NkQuillEditor> {
+  @override
+  void initState() {
+    if (widget.isReaDOnly) {
+      widget.controller.readOnly = true;
+  
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,41 +75,42 @@ class NkQuillEditor extends StatelessWidget {
             primaryColor: secondaryColor,
             applyThemeToAll: true,
             primaryContrastingColor: secondaryColor),
-        child: Column(
-          children: [
-            MyCommnonContainer(
-              // padding: 10.all.copyWith(left: 0),
-              border: border ??
-                  Border.all(
-                      color: isSelected ? selectionColor : textFieldBorderColor,
-                      width: 1),
-              // borderRadiusGeometry: BorderRadius.zero,
-              child: quill.QuillEditor.basic(
-                controller: controller,
-                configurations: quill.QuillEditorConfigurations(
-                    padding: 10.all,
-                    placeholder: hint ?? "Write something...",
-                    paintCursorAboveText: true,
-                    embedBuilders: kIsWeb
-                        ? FlutterQuillEmbeds.editorWebBuilders()
-                        : FlutterQuillEmbeds.editorBuilders(),
-                    maxHeight: 300,
-                    dialogTheme: const quill.QuillDialogTheme(
-                      dialogBackgroundColor: primaryColor,
-                      isWrappable: true,
-                      buttonTextStyle: TextStyle(color: primaryTextColor),
-                    )),
-              ),
-            ),
-          ],
+        child: MyCommnonContainer(
+          // padding: 10.all.copyWith(left: 0),
+          border: widget.border ??
+              Border.all(
+                  color:
+                      widget.isSelected ? selectionColor : textFieldBorderColor,
+                  width: 1),
+          // borderRadiusGeometry: BorderRadius.zero,
+          child: quill.QuillEditor.basic(
+            controller: widget.controller,
+            configurations: quill.QuillEditorConfigurations(
+                padding: 10.all,
+                showCursor: !widget.isReaDOnly,
+                autoFocus: !widget.isReaDOnly,
+                floatingCursorDisabled: true,
+                placeholder: widget.hint ?? "Write something...",
+                embedBuilders: kIsWeb
+                    ? FlutterQuillEmbeds.editorWebBuilders()
+                    : FlutterQuillEmbeds.editorBuilders(),
+                maxHeight: 300,
+                dialogTheme: const quill.QuillDialogTheme(
+                  dialogBackgroundColor: primaryColor,
+                  isWrappable: true,
+                  buttonTextStyle: TextStyle(color: primaryTextColor),
+                )),
+          ),
         ),
       ),
     );
   }
 
+  
+
   /// Method to get the HTML content from the editor
   String? getHtmlText() {
-    var jsonDelta = controller.document.toDelta().toJson();
+    var jsonDelta = widget.controller.document.toDelta().toJson();
     var htmlText = quillDeltaToHtml(jsonDelta);
     debugPrint(htmlText);
     return htmlText;
@@ -101,17 +118,17 @@ class NkQuillEditor extends StatelessWidget {
 
   /// Method to insert a network image
   void insertNetworkImage(String url) async {
-    controller.document.insert(0, quill.BlockEmbed.image(url));
+    widget.controller.document.insert(0, quill.BlockEmbed.image(url));
   }
 
   /// Method to insert a video URL
   void insertVideoURL(String url) async {
-    controller.document.insert(0, quill.BlockEmbed.video(url));
+    widget.controller.document.insert(0, quill.BlockEmbed.video(url));
   }
 
   /// Method to clear the editor content
   void clearEditor() {
-    controller.clear();
+    widget.controller.clear();
   }
 
   /// Method to remove focus from the editor
@@ -143,25 +160,496 @@ class NkQuillToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return quill.QuillToolbar.simple(
-      controller: controller,
-      configurations: quill.QuillSimpleToolbarConfigurations(
-        multiRowsDisplay: true,
-        sectionDividerColor: black,
-        axis: Axis.horizontal,
-        dialogTheme: const quill.QuillDialogTheme(
-          dialogBackgroundColor: primaryColor,
-          isWrappable: true,
-          buttonTextStyle: TextStyle(color: primaryTextColor),
+    var themeData = Theme.of(context).copyWith(
+      cardTheme: const CardTheme(color: transparent, elevation: 0),
+      bottomSheetTheme:
+          const BottomSheetThemeData(backgroundColor: secondaryColor),
+      sliderTheme: const SliderThemeData(
+          thumbColor: Colors.green,
+          activeTrackColor: secondaryColor,
+          inactiveTrackColor: secondaryColor,
+          thumbShape: RoundSliderThumbShape(enabledThumbRadius: 20)),
+      dialogBackgroundColor: primaryColor,
+      textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+        foregroundColor: primaryTextColor,
+        textStyle: const TextStyle(color: primaryTextColor),
+      )),
+      dialogTheme: const DialogTheme(
+          iconColor: primaryIconColor,
+          backgroundColor: primaryColor,
+          surfaceTintColor: primaryColor,
+          contentTextStyle: TextStyle(color: primaryTextColor),
+          titleTextStyle: TextStyle(color: primaryTextColor)),
+      checkboxTheme: const CheckboxThemeData(
+          checkColor: WidgetStatePropertyAll(secondaryColor),
+          fillColor: WidgetStatePropertyAll(selectionColor)),
+    );
+
+    return Theme(
+      data: themeData,
+      child: quill.QuillToolbar.simple(
+        controller: controller,
+        configurations: quill.QuillSimpleToolbarConfigurations(
+          multiRowsDisplay: true,
+          sectionDividerColor: black,
+          toolbarIconAlignment: WrapAlignment.start,
+          toolbarIconCrossAlignment: WrapCrossAlignment.start,
+          axis: Axis.horizontal,
+          buttonOptions: const _NkQuillToolbarButtonOptions(),
+          dialogTheme: const quill.QuillDialogTheme(
+            dialogBackgroundColor: primaryColor,
+            isWrappable: true,
+            buttonTextStyle: TextStyle(color: primaryTextColor),
+          ),
+          embedButtons: FlutterQuillEmbeds.toolbarButtons(
+              imageButtonOptions: const QuillToolbarImageButtonOptions(
+                  dialogTheme: quill.QuillDialogTheme(
+            dialogBackgroundColor: primaryColor,
+            isWrappable: true,
+            buttonTextStyle: TextStyle(color: primaryTextColor),
+          ))),
         ),
-        embedButtons: FlutterQuillEmbeds.toolbarButtons(
-            imageButtonOptions: const QuillToolbarImageButtonOptions(
-                dialogTheme: quill.QuillDialogTheme(
-          dialogBackgroundColor: primaryColor,
-          isWrappable: true,
-          buttonTextStyle: TextStyle(color: primaryTextColor),
-        ))),
       ),
     );
   }
+}
+
+class _NkQuillToolbarButtonOptions
+    extends quill.QuillSimpleToolbarButtonOptions {
+  const _NkQuillToolbarButtonOptions()
+      : super(
+          base: const quill.QuillToolbarBaseButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          undoHistory: const quill.QuillToolbarHistoryButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          redoHistory: const quill.QuillToolbarHistoryButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          fontFamily: const quill.QuillToolbarFontFamilyButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          // fontSize: const quill.QuillToolbarFontSizeButtonOptions(
+
+          //   iconTheme: quill.QuillIconTheme(
+          //     iconButtonSelectedData: quill.IconButtonData(
+          //       color: selectionColor,
+          //       highlightColor: selectionColor,
+          //     ),
+          //     iconButtonUnselectedData: quill.IconButtonData(
+          //       color: primaryIconColor,
+          //     ),
+          //   ),
+          // ),
+          bold: const quill.QuillToolbarToggleStyleButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          italic: const quill.QuillToolbarToggleStyleButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          subscript: const quill.QuillToolbarToggleStyleButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          superscript: const quill.QuillToolbarToggleStyleButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          small: const quill.QuillToolbarToggleStyleButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          underLine: const quill.QuillToolbarToggleStyleButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          strikeThrough: const quill.QuillToolbarToggleStyleButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          inlineCode: const quill.QuillToolbarToggleStyleButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          direction: const quill.QuillToolbarToggleStyleButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          listNumbers: const quill.QuillToolbarToggleStyleButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          listBullets: const quill.QuillToolbarToggleStyleButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          codeBlock: const quill.QuillToolbarToggleStyleButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          quote: const quill.QuillToolbarToggleStyleButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          toggleCheckList: const quill.QuillToolbarToggleCheckListButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          indentIncrease: const quill.QuillToolbarIndentButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          indentDecrease: const quill.QuillToolbarIndentButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          color: const quill.QuillToolbarColorButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          backgroundColor: const quill.QuillToolbarColorButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          clearFormat: const quill.QuillToolbarClearFormatButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          selectAlignmentButtons:
+              const quill.QuillToolbarSelectAlignmentButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          search: const quill.QuillToolbarSearchButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          selectHeaderStyleButtons:
+              const quill.QuillToolbarSelectHeaderStyleButtonsOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          selectHeaderStyleDropdownButton:
+              const quill.QuillToolbarSelectHeaderStyleDropdownButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          linkStyle: const quill.QuillToolbarLinkStyleButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          linkStyle2: const quill.QuillToolbarLinkStyleButton2Options(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          customButtons: const quill.QuillToolbarCustomButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          clipboardCut: const quill.QuillToolbarToggleStyleButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          clipboardCopy: const quill.QuillToolbarToggleStyleButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+          clipboardPaste: const quill.QuillToolbarToggleStyleButtonOptions(
+            iconTheme: quill.QuillIconTheme(
+              iconButtonSelectedData: quill.IconButtonData(
+                color: selectionColor,
+                highlightColor: selectionColor,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(selectionColor),
+                ),
+              ),
+              iconButtonUnselectedData: quill.IconButtonData(
+                color: primaryIconColor,
+              ),
+            ),
+          ),
+        );
 }

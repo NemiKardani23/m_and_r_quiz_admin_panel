@@ -47,6 +47,8 @@ const String addStudentStr = "Add Student";
 /// QUESTION
 const String questionStr = "Question";
 const String optionStr = "Option";
+const String removeStr = "Remove";
+const String ansStr = "Ans";
 
 /// APP MANAGEMENT
 
