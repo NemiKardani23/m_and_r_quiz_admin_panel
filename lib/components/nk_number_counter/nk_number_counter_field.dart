@@ -8,13 +8,18 @@ class NkTimeCounterField extends StatefulWidget {
 
   final ValueChanged<Duration>? onChanged;
 
-  const NkTimeCounterField(
-      {super.key,
-      this.minValueMinutes = 0,
-      this.maxValueMinutes = 59,
-      this.minValueSeconds = 0,
-      this.maxValueSeconds = 59,
-      this.onChanged});
+  // Make initialDuration nullable
+  final Duration? initialDuration;
+
+  const NkTimeCounterField({
+    super.key,
+    this.minValueMinutes = 0,
+    this.maxValueMinutes = 59,
+    this.minValueSeconds = 0,
+    this.maxValueSeconds = 59,
+    this.onChanged,
+    this.initialDuration, // Nullable initial duration
+  });
 
   @override
   State<NkTimeCounterField> createState() {
@@ -23,11 +28,24 @@ class NkTimeCounterField extends StatefulWidget {
 }
 
 class _NkTimeCounterFieldState extends State<NkTimeCounterField> {
-  int minutes = 0;
-  int seconds = 0;
+  late int minutes;
+  late int seconds;
 
-  TextEditingController minutesController = TextEditingController(text: "0");
-  TextEditingController secondsController = TextEditingController(text: "0");
+  late TextEditingController minutesController;
+  late TextEditingController secondsController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // If initialDuration is provided, use its values, otherwise default to 0
+    minutes = widget.initialDuration?.inMinutes ?? 0;
+    seconds = (widget.initialDuration?.inSeconds??0) % 60 ;
+
+    // Initialize the text controllers with the initial values
+    minutesController = TextEditingController(text: "$minutes");
+    secondsController = TextEditingController(text: "$seconds");
+  }
 
   @override
   Widget build(BuildContext context) {

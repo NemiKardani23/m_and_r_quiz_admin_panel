@@ -1,14 +1,45 @@
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:m_and_r_quiz_admin_panel/components/app_bar/my_app_bar.dart';
+import 'package:m_and_r_quiz_admin_panel/components/dropdown/nk_serchable_dropdown_menu.dart';
 import 'package:m_and_r_quiz_admin_panel/components/html_editor/nk_quill_editor.dart';
 import 'package:m_and_r_quiz_admin_panel/components/nk_image_picker_with_placeholder/nk_image_picker_with_placeholder.dart';
 import 'package:m_and_r_quiz_admin_panel/components/nk_number_counter/nk_number_counter_field.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
+import 'package:m_and_r_quiz_admin_panel/local_storage/temp_data_store/temp_data_store.dart';
+import 'package:m_and_r_quiz_admin_panel/theme/font_style.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/add_category_diloag.dart';
+import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/question_type_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/quiz_add_editor_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/model/category_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/file_type_management/model/file_type_response.dart';
+
+enum QuestionENUM { multiple, trueFalse }
+
+extension QuestionExtension on QuestionENUM {
+  String get questionType {
+    switch (this) {
+      case QuestionENUM.multiple:
+        return "Multiple Choice";
+      case QuestionENUM.trueFalse:
+        return "True/False";
+      default:
+        return "Multiple Choice";
+    }
+  }
+}
+
+QuestionENUM stringToQuestionENUM(String? type) {
+  switch (type) {
+    case "Multiple Choice":
+      return QuestionENUM.multiple;
+    case "True/False":
+      return QuestionENUM.trueFalse;
+    default:
+      return QuestionENUM.multiple;
+  }
+}
 
 class QuizAddFormWidget extends StatefulWidget {
   final CategoryData? categoryDataModel;
@@ -40,6 +71,20 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
   QuillController? focusedController;
 
   List<QuizAddQustionEditorModel> questionList = [];
+
+  DataHandler<List<QuestionTypeData>> questionTypeDataHandler = DataHandler();
+  @override
+  void initState() {
+    questionTypeDataHandler.startLoading();
+    TempDataStore.getQuestionTypeList.then(
+      (value) {
+        setState(() {
+          questionTypeDataHandler.onSuccess(value ?? []);
+        });
+      },
+    );
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,6 +154,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
         ),
         nkSmallSizedBox,
         _QuestionListWidget(
+          questionTypeList: questionTypeDataHandler.data ?? [],
           questionList: questionList,
           onQuestionChanged: (quillController) {
             setState(() {
@@ -176,6 +222,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
         },
         isSelected: focusedController == quizAddEditorModel.controller,
         hint: quizAddEditorModel.hint,
+        editorKey: quizAddEditorModel.editorKey,
         controller: quizAddEditorModel.controller,
         // controller: QuillEditorController(),
       ),
@@ -200,6 +247,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
         },
         isSelected: focusedController == quizAddEditorModel.controller,
         hint: quizAddEditorModel.hint,
+        editorKey: quizAddEditorModel.editorKey,
         controller: quizAddEditorModel.controller,
       ),
     );
@@ -208,9 +256,12 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
 
 class _QuestionListWidget extends StatefulWidget {
   final List<QuizAddQustionEditorModel> questionList;
+  final List<QuestionTypeData> questionTypeList;
   final Function(QuillController? quillController)? onQuestionChanged;
   const _QuestionListWidget(
-      {required this.questionList, this.onQuestionChanged});
+      {required this.questionList,
+      this.onQuestionChanged,
+      required this.questionTypeList});
 
   @override
   State<_QuestionListWidget> createState() => _QuestionListWidgetState();
@@ -261,10 +312,40 @@ class _QuestionListWidgetState extends State<_QuestionListWidget> {
       padding: 10.all,
       child: Column(
         children: [
-          _showOtherOption(quizAddQustionEditorModel, index),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _questionMarks(quizAddQustionEditorModel),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  _showQuestionType(quizAddQustionEditorModel, index),
+                  _showOtherOption(quizAddQustionEditorModel, index),
+                ],
+              ),
+            ],
+          ),
           _questionTitle(quizAddQustionEditorModel.questionController, index),
           _optionList(quizAddQustionEditorModel, index),
         ].addSpaceEveryWidget(space: 5.space),
+      ),
+    );
+  }
+
+  Widget _questionMarks(QuizAddQustionEditorModel quizAddQustionEditorModel) {
+    return SizedBox(
+      width: 60,
+      child: MyFormField(
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        textAlign: TextAlign.center,
+        autofillHints: const [],
+        controller: TextEditingController(),
+        labelText: marksStr,
+        inputFormatters: [
+          LengthLimitingTextInputFormatter(2),
+          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+        ],
+        textInputType: const TextInputType.numberWithOptions(signed: false),
       ),
     );
   }
@@ -289,6 +370,42 @@ class _QuestionListWidgetState extends State<_QuestionListWidget> {
         ];
       }),
     );
+  }
+
+  Widget _showQuestionType(
+      QuizAddQustionEditorModel quizAddQustionEditorModel, int index) {
+    return NkSearchableDropDownMenu<QuestionTypeData>(
+        enableSearch: false,
+        initialSelection: quizAddQustionEditorModel.questionType,
+        hintText: "$questionStr $typeStr",
+        onSelected: (value) {
+          if (value != null) {
+            setState(() {
+              quizAddQustionEditorModel.options = null;
+              quizAddQustionEditorModel.questionType = value;
+            });
+          }
+        },
+        dropdownMenuEntries: List.generate(
+          widget.questionTypeList.length,
+          (index) {
+            QuestionTypeData questionType = widget.questionTypeList[index];
+            return DropdownMenuEntry(
+              style: ButtonStyle(
+                  textStyle: WidgetStatePropertyAll(
+                NkGetXFontStyle.primaryTextTheme(context)
+                    .labelMedium
+                    ?.copyWith(fontSize: 14),
+              )),
+              value: questionType,
+              labelWidget: MyRegularText(
+                label: questionType.name ?? "",
+                align: TextAlign.start,
+              ),
+              label: questionType.name ?? "",
+            );
+          },
+        ).toList());
   }
 
   Widget _questionTitle(QuizAddEditorModel quizAddEditorModel, int index) {
@@ -328,28 +445,35 @@ class _QuestionListWidgetState extends State<_QuestionListWidget> {
               },
             ),
           ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: TextButton.icon(
-                style: const ButtonStyle(
-                  iconColor: WidgetStatePropertyAll(primaryIconColor),
-                ),
-                onPressed: () {
-                  onAddOption(quizAddQustionEditorModel);
-                },
-                label: MyRegularText(
-                  label: "$addStr $optionStr",
-                  fontSize: NkFontSize.smallFont,
-                ),
-                icon: const Icon(
-                  Icons.add,
-                  color: primaryIconColor,
-                )),
-          ),
+          if (stringToQuestionENUM(
+                  quizAddQustionEditorModel.questionType?.name) ==
+              QuestionENUM.multiple) ...[
+            Align(
+              alignment: Alignment.bottomRight,
+              child: TextButton.icon(
+                  style: const ButtonStyle(
+                    iconColor: WidgetStatePropertyAll(primaryIconColor),
+                  ),
+                  onPressed: () {
+                    onAddOption(quizAddQustionEditorModel);
+                  },
+                  label: MyRegularText(
+                    label: "$addStr $optionStr",
+                    fontSize: NkFontSize.smallFont,
+                  ),
+                  icon: const Icon(
+                    Icons.add,
+                    color: primaryIconColor,
+                  )),
+            ),
+          ],
           nkExtraSmallSizedBox,
           if (quizAddQustionEditorModel.ansOption != null) ...[
-            _answerWidget(quizAddQustionEditorModel
-                .ansOption!.optionController.controller)
+            _answerWidget(
+                quizAddQustionEditorModel.ansOption!.optionController),
+            nkExtraSmallSizedBox,
+            _descriptionWidget(quizAddQustionEditorModel),
+            nkExtraSmallSizedBox,
           ],
           _durationWidget(),
         ],
@@ -360,7 +484,14 @@ class _QuestionListWidgetState extends State<_QuestionListWidget> {
             iconColor: WidgetStatePropertyAll(primaryIconColor),
           ),
           onPressed: () {
-            onAddOption(quizAddQustionEditorModel);
+            if (stringToQuestionENUM(
+                    quizAddQustionEditorModel.questionType?.name) ==
+                QuestionENUM.multiple) {
+              onAddOption(quizAddQustionEditorModel);
+            } else {
+              onAddOption(quizAddQustionEditorModel);
+              onAddOption(quizAddQustionEditorModel);
+            }
           },
           label: MyRegularText(
             label: "$addStr $optionStr",
@@ -403,6 +534,7 @@ class _QuestionListWidgetState extends State<_QuestionListWidget> {
           onPressed: () {
             setState(() {
               questionList[perentIndex].options?.removeAt(index);
+              questionList[perentIndex].ansOption = null;
             });
           },
           icon: const Icon(
@@ -412,7 +544,7 @@ class _QuestionListWidgetState extends State<_QuestionListWidget> {
     );
   }
 
-  Widget _answerWidget(QuillController controller) {
+  Widget _answerWidget(QuizAddEditorModel model) {
     return Row(
       // crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -423,21 +555,78 @@ class _QuestionListWidgetState extends State<_QuestionListWidget> {
         Flexible(
           child: NkQuillEditor(
             isReaDOnly: true,
+            editorKey: model.editorKey,
             border: Border.all(color: transparent),
-
-            controller: controller,
-            // controller: QuillEditorController(),
+            controller: model.controller,
           ),
         ),
       ],
     );
   }
 
+  Widget _descriptionWidget(QuizAddQustionEditorModel model) {
+    if (model.description == null) {
+      return TextButton.icon(
+          style: const ButtonStyle(
+            iconColor: WidgetStatePropertyAll(primaryIconColor),
+          ),
+          onPressed: () {
+            setState(() {
+              model.description = QuizQuestionOptionsEditorModel(
+                  optionController: QuizAddEditorModel(
+                      controller: QuillController.basic(),
+                      hint: "Enter Description"));
+
+              widget.onQuestionChanged
+                  ?.call(model.description!.optionController.controller);
+            });
+          },
+          label: MyRegularText(
+            label: "$addStr $descriptionStr",
+            fontSize: NkFontSize.smallFont,
+          ),
+          icon: const Icon(
+            Icons.add,
+            color: primaryIconColor,
+          ));
+    } else {
+      return Row(
+        // crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const MyRegularText(
+            label: "$descriptionStr. ",
+            fontWeight: NkGeneralSize.nkBoldFontWeight,
+          ),
+          Flexible(
+            child: NkQuillEditor(
+              hint: model.description!.optionController.hint,
+              editorKey: model.description!.optionController.editorKey,
+              controller: model.description!.optionController.controller,
+            ),
+          ),
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  model.description = null;
+                  widget.onQuestionChanged?.call(null);
+                });
+              },
+              icon: const Icon(
+                Icons.remove,
+                color: errorColor,
+              ))
+        ],
+      );
+    }
+  }
+
   Widget _durationWidget() {
     return Row(
       children: [
         MyCommnonContainer(
-            padding: 4.all, color: lightGreyColor, child: NkTimeCounterField()),
+            padding: 4.all,
+            color: lightGreyColor,
+            child: const NkTimeCounterField()),
       ],
     );
   }

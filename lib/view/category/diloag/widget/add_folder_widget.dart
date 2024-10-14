@@ -135,6 +135,8 @@ class _AddFolderDiloagWidgetState extends State<AddFolderDiloagWidget> {
                   if (widget.categoryDataModel != null) {
                     ApiWorker()
                         .updateCategory(
+                          fileTypeId: categoryDataModel!.fileTypeId.toString(),
+                          typeId: categoryDataModel!.typeId.toString(),
                       categoryId: categoryDataModel!.id.toString(),
                       categoryImage: NKMultipart.getMultipartImageBytesNullable(
                           name: onImagePicked?.$2 ?? "",

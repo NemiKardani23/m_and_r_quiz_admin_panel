@@ -4,6 +4,7 @@ import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionhelper.dart';
 import 'package:m_and_r_quiz_admin_panel/service/dio_client.dart';
 import 'package:m_and_r_quiz_admin_panel/view/auth/model/refresh_token_response.dart';
+import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/question_type_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/model/category_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/category_type_management/model/category_type_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/file_type_management/model/file_type_response.dart';
@@ -382,14 +383,18 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
     required String categoryId,
     MultipartFile? categoryImage,
     MultipartFile? file,
+    required String typeId,
+    required String fileTypeId,
   }) async {
     final String sendingUrl = categoryUpdateAPI;
     Map<String, dynamic> data = {
       'access_key': $ApiAccessKey,
       'name': name,
-      'category_id': name,
+      'category_id': categoryId,
       'description': description,
       'parent_id': parentId,
+      'type_id': typeId,
+      'file_type_id': fileTypeId,
     };
     if (categoryImage != null) {
       data.addAll({'category_image': categoryImage});
@@ -427,6 +432,25 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
 
     if (response.statusCode == 200) {
       return GlobalCrudResponse.fromJson(response.data!);
+    } else {
+      return null;
+    }
+  }
+
+  /// Todo: Question Type
+
+    Future<QuestionTypeResponse?> getQuestionTypeList() async {
+    final String sendingUrl = questionTypeAPI;
+    var response = await getByCustom(
+      sendingUrl,
+      queryParameters: {'access_key': $ApiAccessKey},
+      options: Options(
+        headers: authHeader,
+      ),
+    );
+
+    if (response.statusCode == 200 && response.data != null) {
+      return QuestionTypeResponse.fromJson(response.data!);
     } else {
       return null;
     }

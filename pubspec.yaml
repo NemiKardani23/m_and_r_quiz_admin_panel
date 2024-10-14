@@ -83,6 +83,12 @@ dependencies:
   # Country State City
   country_state_city: ^0.1.6
 
+  #HTML View
+  flutter_widget_from_html: ^0.15.2
+  fwfh_cached_network_image: ^0.14.3
+  fwfh_url_launcher: ^0.9.1
+  fwfh_chewie: ^0.14.8
+
   
 
   

@@ -130,7 +130,7 @@ class NkTheme {
         shape: RoundedRectangleBorder(
           side: BorderSide(color: primaryButtonColor),
         ),
-       side: BorderSide(color: primaryButtonColor),
+        side: BorderSide(color: primaryButtonColor),
         fillColor: WidgetStateProperty.resolveWith<Color?>((states) {
           if (states.contains(WidgetState.selected)) {
             return primaryButtonColor;

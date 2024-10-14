@@ -2,8 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:m_and_r_quiz_admin_panel/components/nk_html_viewer/nk_html_viewer_web.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart'; // Your app imports
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart'
+    as core show HtmlWidget;
 
 class NkQuillEditor extends StatefulWidget {
   final quill.QuillController controller;
@@ -12,11 +16,13 @@ class NkQuillEditor extends StatefulWidget {
   final bool isSelected;
   final bool isReaDOnly;
   final BoxBorder? border;
+  final GlobalKey<quill.EditorState>? editorKey;
   const NkQuillEditor({
     this.isSelected = false,
     this.isReaDOnly = false,
     this.unSelect,
     super.key,
+    this.editorKey,
     required this.controller,
     this.hint,
     this.border,
@@ -31,14 +37,29 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
   void initState() {
     if (widget.isReaDOnly) {
       widget.controller.readOnly = true;
-  
+      widget.controller.editorFocusNode?.unfocus();
     }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return quillEditor(context);
+    if (widget.isReaDOnly) {
+      return core.HtmlWidget(
+        quillDeltaToHtml(widget.controller.document.toDelta().toJson()),
+        factoryBuilder: () => NkHtmlViewerWEB(),
+        customWidgetBuilder: (element) {
+          if (element.localName == 'img') {
+            return MyNetworkImage(imageUrl: element.attributes['src'] ?? "",appHeight: (context.size?.longestSide??0)* 0.2,
+              appWidth: (context.size?.longestSide??0)* 0.2,);
+          }
+          return null;
+        },
+        renderMode: RenderMode.column,
+      );
+    } else {
+      return quillEditor(context);
+    }
   }
 
   Widget quillEditor(BuildContext context) {
@@ -86,6 +107,7 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
           child: quill.QuillEditor.basic(
             controller: widget.controller,
             configurations: quill.QuillEditorConfigurations(
+                editorKey: widget.editorKey,
                 padding: 10.all,
                 showCursor: !widget.isReaDOnly,
                 autoFocus: !widget.isReaDOnly,
@@ -105,8 +127,6 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
       ),
     );
   }
-
-  
 
   /// Method to get the HTML content from the editor
   String? getHtmlText() {
