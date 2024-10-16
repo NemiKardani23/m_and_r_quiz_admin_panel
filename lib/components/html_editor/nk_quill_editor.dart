@@ -1,13 +1,17 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'package:flutter_quill/quill_delta.dart';
+import 'package:flutter_quill_delta_from_html/flutter_quill_delta_from_html.dart';
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:m_and_r_quiz_admin_panel/components/nk_html_viewer/nk_html_viewer_web.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart'; // Your app imports
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart'
-    as core show HtmlWidget;
+// ignore: implementation_imports, library_prefixes
+import 'package:flutter_quill_extensions/src/editor_toolbar_shared/image_picker/image_options.dart'
+    as $IMG; // Your app imports
+// ignore: depend_on_referenced_packages
 
 class NkQuillEditor extends StatefulWidget {
   final quill.QuillController controller;
@@ -45,18 +49,7 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
   @override
   Widget build(BuildContext context) {
     if (widget.isReaDOnly) {
-      return core.HtmlWidget(
-        quillDeltaToHtml(widget.controller.document.toDelta().toJson()),
-        factoryBuilder: () => NkHtmlViewerWEB(),
-        customWidgetBuilder: (element) {
-          if (element.localName == 'img') {
-            return MyNetworkImage(imageUrl: element.attributes['src'] ?? "",appHeight: (context.size?.longestSide??0)* 0.2,
-              appWidth: (context.size?.longestSide??0)* 0.2,);
-          }
-          return null;
-        },
-        renderMode: RenderMode.column,
-      );
+      return NkHtmlViewerWEB(htmlContent:  getHtmlText()??"",);
     } else {
       return quillEditor(context);
     }
@@ -64,6 +57,13 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
 
   Widget quillEditor(BuildContext context) {
     var themeData = Theme.of(context).copyWith(
+      cupertinoOverrideTheme: const CupertinoThemeData(
+            brightness: Brightness.dark,
+            primaryColor: secondaryColor,
+            scaffoldBackgroundColor: black,
+            barBackgroundColor: black,
+            applyThemeToAll: true,
+            primaryContrastingColor: secondaryColor),
       cardTheme: const CardTheme(color: transparent, elevation: 0),
       bottomSheetTheme:
           const BottomSheetThemeData(backgroundColor: secondaryColor),
@@ -94,6 +94,8 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
         data: const CupertinoThemeData(
             brightness: Brightness.light,
             primaryColor: secondaryColor,
+            scaffoldBackgroundColor: black,
+            barBackgroundColor: black,
             applyThemeToAll: true,
             primaryContrastingColor: secondaryColor),
         child: MyCommnonContainer(
@@ -158,7 +160,13 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
 }
 
 /// Helper function to convert Quill Delta to HTML
-String quillDeltaToHtml(List<Map<String, dynamic>> delta) {
+String? quillDeltaToHtml(List<Map<String, dynamic>>? delta) {
+  if (delta == null) {
+    return null;
+  }
+
+  nkDevLog("DELTA DATA : ${delta.map((x) => x.toString())}");
+
   final converter = QuillDeltaToHtmlConverter(
     delta,
     ConverterOptions.forEmail(),
@@ -168,6 +176,15 @@ String quillDeltaToHtml(List<Map<String, dynamic>> delta) {
   nkDevLog("HTML CODEEEE \n$html");
 
   return html;
+}
+
+Delta? htmlToQuillDelta(String? html) {
+  if (html == null) {
+    return null;
+  }
+  final converter = HtmlToDelta().convert(html);
+ 
+  return converter;
 }
 
 class NkQuillToolbar extends StatelessWidget {
@@ -223,12 +240,24 @@ class NkQuillToolbar extends StatelessWidget {
             buttonTextStyle: TextStyle(color: primaryTextColor),
           ),
           embedButtons: FlutterQuillEmbeds.toolbarButtons(
-              imageButtonOptions: const QuillToolbarImageButtonOptions(
-                  dialogTheme: quill.QuillDialogTheme(
-            dialogBackgroundColor: primaryColor,
-            isWrappable: true,
-            buttonTextStyle: TextStyle(color: primaryTextColor),
-          ))),
+              imageButtonOptions: QuillToolbarImageButtonOptions(
+                  imageButtonConfigurations: QuillToolbarImageConfigurations(
+                    onRequestPickImage: (context, imagePickerService) async {
+                      return await imagePickerService
+                          .pickImage(
+                              source: $IMG.ImageSource.gallery,
+                              maxHeight: 500,
+                              maxWidth: 500)
+                          .then(
+                            (value) => value?.path,
+                          );
+                    },
+                  ),
+                  dialogTheme: const quill.QuillDialogTheme(
+                    dialogBackgroundColor: primaryColor,
+                    isWrappable: true,
+                    buttonTextStyle: TextStyle(color: primaryTextColor),
+                  ))),
         ),
       ),
     );

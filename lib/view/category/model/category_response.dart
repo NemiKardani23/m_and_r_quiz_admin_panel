@@ -83,6 +83,7 @@ class CategoryData {
     final DateTime? createdAt;
     final DateTime? updatedAt;
     final List<CategoryData> subcategories;
+    
 
     CategoryData copyWith({
         int? id,

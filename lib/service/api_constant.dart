@@ -33,6 +33,12 @@ mixin class ApiConstant implements APIStatusCode {
   /// Question Type
     final String questionTypeAPI = "view_question_types.php";
 
+  /// Quiz
+  final String quizListAPI = "view_practice_tests.php";
+  final String createQuizAPI = "create_practice_test.php";
+  final String updateQuizAPI = "update_practice_test.php";
+  final String deleteQuizAPI = "delete_practice_test.php";
+
 }
 
 mixin class ApiSecurity {

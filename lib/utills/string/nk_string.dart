@@ -19,6 +19,7 @@ const String totalQuizStr = "Total Quiz";
 const String basicStr = "Basic";
 const String addStr = "Add";
 const String editStr = "Edit";
+const String cancleStr = "Cancle";
 const String updateStr = "Update";
 const String okStr = "Ok";
 const String boardStr = "Board";
@@ -53,6 +54,7 @@ const String ansStr = "Ans";
 const String marksStr = "Marks";
 const String createStr = "Create";
 const String examStr = "Exam";
+const String quizStr = "Quiz";
 
 /// APP MANAGEMENT
 

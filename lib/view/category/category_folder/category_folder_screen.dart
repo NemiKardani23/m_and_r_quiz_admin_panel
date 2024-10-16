@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:m_and_r_quiz_admin_panel/components/document_viewer/nk_doc_viewer.dart';
+import 'package:m_and_r_quiz_admin_panel/components/nk_html_viewer/nk_html_viewer_web.dart';
+import 'package:m_and_r_quiz_admin_panel/components/nk_toggle_button.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/temp_data_store/temp_data_store.dart';
 import 'package:m_and_r_quiz_admin_panel/service/api_worker.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/add_category_diloag.dart';
+import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/quiz_create_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/model/category_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/category_type_management/model/category_type_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/file_type_management/model/file_type_response.dart';
@@ -32,10 +35,13 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
   DataHandler<List<CategoryData>> categoryData = DataHandler();
   DataHandler<List<FileTypeData>> fileTypeData = DataHandler();
   DataHandler<List<CategoryTypeData>> categoryTypeData = DataHandler();
+  DataHandler<List<QuizCreateData>> quizDataList = DataHandler();
 
   List<Map<String, String>> childRoutesData = [];
 
   CategoryTypeENUM? fileTypeENUM;
+
+  FileTypeData? selectedToggleType;
 
   @override
   initState() {
@@ -84,11 +90,20 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
     String? id,
     String? perentId,
     String? categoryLavel,
+    String? fileTypeId,
   }) {
-    categoryData.startLoading();
+    if (mounted) {
+      setState(() {
+        categoryData.startLoading();
+      });
+    }
+
     ApiWorker()
         .getCategoryList(
-            id: id, perentId: perentId, categoryLavel: categoryLavel)
+            id: id,
+            perentId: perentId,
+            categoryLavel: categoryLavel,
+            fileTypeId: fileTypeId)
         .then(
       (value) {
         if (value != null &&
@@ -110,9 +125,37 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
     });
   }
 
+  callQuizApi({required String categoryId}) {
+    if (mounted) {
+      setState(() {
+        quizDataList.startLoading();
+      });
+    }
+    ApiWorker().getQuizList(categoryId: categoryId).then(
+      (value) {
+        if (value != null &&
+            value.status == true &&
+            value.data.isNotEmpty == true) {
+          setState(() {
+            quizDataList.onSuccess(value.data);
+          });
+        } else {
+          setState(() {
+            quizDataList.onEmpty(value?.message ?? ErrorStrings.noDataFound);
+          });
+        }
+      },
+    ).catchError((value) {
+      setState(() {
+        quizDataList.onError(ErrorStrings.oopsSomethingWentWrong);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
@@ -240,6 +283,9 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
             )
           ],
         ),
+        if (!isPerentCategory) ...[
+          _fileTypeTab(),
+        ],
         Flexible(child: categoryList())
       ].addSpaceEveryWidget(space: nkExtraSmallSizedBox),
     );
@@ -332,6 +378,72 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
               _categoryIcon(categoryData),
               MyRegularText(label: categoryData.name ?? ""),
               _detailsChips(categoryData)
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget quizComponent(QuizCreateData quizzzzData, int index) {
+    var fileData = fileTypeData.data?.firstWhere(
+      (element) => element.id == quizzzzData.fileTypeId,
+    );
+    return MyCommnonContainer(
+      isCardView: true,
+      onDoubleTap: () {
+        showAdaptiveDialog(
+          builder: (context) {
+            return Center(
+              child: AddCategoryDiloag(
+                parentId: widget.categoryId?.toString(),
+                fileTypeModel: fileData!,
+                categoryType: CategoryTypeENUM.exam,
+                onUpdated: (catData) {
+                  callApi(
+                    perentId: widget.categoryId?.toString(),
+                    categoryLavel: widget.lavel?.toString(),
+                  );
+                },
+              ),
+            );
+          },
+          context: context,
+        );
+      },
+      padding: 10.all,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned(
+              right: 2,
+              top: 0,
+              child: PopupMenuButton(
+                tooltip: "More",
+                child: const Icon(Icons.more_vert),
+                itemBuilder: (context) {
+                  return [];
+                },
+              )),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (quizzzzData.thumbnail != null) ...[
+                MyNetworkImage(
+                  imageUrl: quizzzzData.thumbnail ?? "",
+                  appHeight: 1.dp,
+                  appWidth: 1.dp,
+                )
+              ] else ...[
+                Icon(
+                  Icons.quiz,
+                  size: 1.dp,
+                )
+              ],
+              NkHtmlViewerWEB(
+                htmlContent: quizzzzData.title ?? "",
+              )
             ],
           )
         ],
@@ -458,34 +570,117 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
   }
 
   Widget categoryList() {
+    var fileType = convertStringToCategoryType(
+        (selectedToggleType?.typeName ?? "").toUpperCase());
+    if (fileType == CategoryTypeENUM.exam) {
+      return quizDataList.when(
+        context: context,
+        successBuilder: (quizzzzList) {
+          return ResponsiveGridList(
+            minItemWidth: context.isMobile ? context.width : 200,
+            minItemsPerRow: 2,
+            maxItemsPerRow: 4,
+            children: List.generate(quizzzzList.length, (index) {
+              return quizComponent(quizzzzList[index], index);
+            }).toList(),
+          );
+        },
+      );
+    }
     return categoryData.when(
       context: context,
       successBuilder: (boardList) {
+        CategoryTypeENUM fileType = convertStringToCategoryType(
+            (selectedToggleType?.typeName ?? "").toUpperCase());
+
         if (fileTypeENUM == CategoryTypeENUM.document) {
           return NkWebDocumentViewer(
             id: "${boardList.firstOrNull?.fileUrl}",
             networkUrl: boardList.firstOrNull?.fileUrl,
           );
         }
-        return ResponsiveGridList(
-          minItemWidth: context.isMobile ? context.width : 200,
-          minItemsPerRow: 2,
-          maxItemsPerRow: 4,
-          children: List.generate(boardList.length, (index) {
-            return boardComponent(boardList[index], index);
-          }).toList(),
+        if (fileType == CategoryTypeENUM.folder) {
+          return ResponsiveGridList(
+            minItemWidth: context.isMobile ? context.width : 200,
+            minItemsPerRow: 2,
+            maxItemsPerRow: 4,
+            children: List.generate(boardList.length, (index) {
+              return boardComponent(boardList[index], index);
+            }).toList(),
+          );
+        } else if (fileType == CategoryTypeENUM.document) {
+          return ResponsiveGridList(
+            minItemWidth: context.isMobile ? context.width : 200,
+            minItemsPerRow: 2,
+            maxItemsPerRow: 4,
+            children: List.generate(boardList.length, (index) {
+              return boardComponent(boardList[index], index);
+            }).toList(),
+          );
+        } else if (fileType == CategoryTypeENUM.ePublisher) {
+          return const SizedBox();
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
+  }
+
+  Widget _fileTypeTab() {
+    return fileTypeData.when(
+      context: context,
+      successBuilder: (p0) {
+        var selectedIndex =
+            p0.indexWhere((element) => element.id == selectedToggleType?.id);
+        return MyCommnonContainer(
+          isCardView: true,
+          child: NkToggleButton(
+            initialIndex: selectedIndex.isNegative ? 0 : selectedIndex,
+            options: p0.map((e) => e.typeName ?? "").toList()..insert(0, "All"),
+            onToggle: (int val) {
+              if (val == 0) {
+                selectedToggleType = null;
+                callApi(
+                  perentId: widget.categoryId?.toString(),
+                  categoryLavel: widget.lavel?.toString(),
+                );
+              } else {
+                selectedToggleType = p0[val - 1];
+
+                if (convertStringToCategoryType(
+                        selectedToggleType?.typeName ?? '') ==
+                    CategoryTypeENUM.exam) {
+                  callQuizApi(categoryId: widget.categoryId!.toString());
+                } else {
+                  callApi(
+                    id: widget.categoryId?.toString(),
+                    categoryLavel: widget.lavel?.toString(),
+                    fileTypeId: p0[val - 1].id?.toString(),
+                  );
+                }
+              }
+            },
+          ),
         );
       },
     );
+  }
+
+  bool get isPerentCategory {
+    if (widget.categoryId == null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   _handleRoute(CategoryData catData, {bool isAddChild = true}) {
     var fileTypeViewData = fileTypeData.data?.firstWhere(
       (element) => element.id == catData.fileTypeId,
     );
-    var categoryTypeViewData = categoryTypeData.data?.firstWhere(
-      (element) => element.id == catData.typeId,
-    );
+    // var categoryTypeViewData = categoryTypeData.data?.firstWhere(
+    //   (element) => element.id == catData.typeId,
+    // );
     CategoryTypeENUM fileTypeENUM = convertStringToCategoryType(
         (fileTypeViewData?.typeName ?? "").toUpperCase());
 
@@ -536,6 +731,7 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
           pathParameters: pathData,
         );
         break;
+     
       default:
     }
   }

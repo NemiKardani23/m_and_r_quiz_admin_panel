@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:http/http.dart' as http;
 
 import '../export/___app_file_exporter.dart';
 
@@ -10,6 +11,14 @@ class NkCommonFunction {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     return await deviceInfo.webBrowserInfo;
   }
+
+ static Future<String?> networkImageToBase64(String imageUrl) async {
+    http.Response response = await http.get(Uri.parse(imageUrl));
+    final bytes = response.bodyBytes;
+    return (bytes.isNotEmpty  ? base64Encode(bytes) : null);
+}
+
+
 
   static Widget passwordIcon(bool isShow) {
     if (isShow) {
@@ -71,18 +80,7 @@ class NkCommonFunction {
     }
   }
 
-//  static List<Map<String, String>>? convertStringToListMap(String input) {
-//     if(input.isEmpty) {
-//       return null;
-//     }
-//   // Replace unquoted keys with valid JSON format by adding quotes
-//   input = input
-//       .replaceAllMapped(RegExp(r"(\w+):"), (match) => '"${match[1]}":')
-//       .replaceAll("'", '"');
 
-//   // Parse the string as JSON
-//   return List<Map<String, String>>.from(json.decode(input));
-// }
 
   static List<Map<String, String>>? convertStringToListMap(String input) {
     if (input.isEmpty) {

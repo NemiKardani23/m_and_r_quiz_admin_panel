@@ -44,4 +44,6 @@ class MyNetworkImage extends ImageNetwork {
         Icons.error,
         color: errorColor,
       );
+
+   
 }

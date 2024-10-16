@@ -6,11 +6,15 @@ import 'package:m_and_r_quiz_admin_panel/components/html_editor/nk_quill_editor.
 import 'package:m_and_r_quiz_admin_panel/components/nk_image_picker_with_placeholder/nk_image_picker_with_placeholder.dart';
 import 'package:m_and_r_quiz_admin_panel/components/nk_number_counter/nk_number_counter_field.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
+import 'package:m_and_r_quiz_admin_panel/local_storage/session/null_check_oprations.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/temp_data_store/temp_data_store.dart';
+import 'package:m_and_r_quiz_admin_panel/service/api_worker.dart';
 import 'package:m_and_r_quiz_admin_panel/theme/font_style.dart';
+import 'package:m_and_r_quiz_admin_panel/utills/image_upload/nk_multipart.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/add_category_diloag.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/question_type_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/quiz_add_editor_model.dart';
+import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/quiz_create_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/model/category_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/file_type_management/model/file_type_response.dart';
 
@@ -62,7 +66,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
   final List<QuizAddEditorModel> quizAddEditorModelList = [
     QuizAddEditorModel(
         controller: QuillController.basic(editorFocusNode: FocusNode()),
-        hint: "Title"),
+        hint: "Title*"),
     QuizAddEditorModel(
         controller: QuillController.basic(editorFocusNode: FocusNode()),
         hint: "Sub Title"),
@@ -73,6 +77,13 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
 
   DataHandler<List<QuestionTypeData>> questionTypeDataHandler = DataHandler();
   bool isCreateQuestion = true;
+  bool isCreateExamEditable = false;
+  QuizCreateData? quizCreateData;
+
+  (
+    Uint8List? imageBytes,
+    String? imageName,
+  )? onImagePicked;
   @override
   void initState() {
     questionTypeDataHandler.startLoading();
@@ -145,7 +156,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(child: _examThumbnail()),
-              const MyRegularText(label: titleStr),
+              const MyRegularText(label: "$titleStr*"),
               _quizTitle(quizAddEditorModelList.first),
               const MyRegularText(label: subTitleStr),
               _quizSubTitle(quizAddEditorModelList[1]),
@@ -164,15 +175,42 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
                     ),
                   ),
                 )
-              ] else ...[
+              ] else if (isCreateExamEditable && quizCreateData != null) ...[
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            isCreateExamEditable = false;
+                          });
+                        },
+                        child: const MyRegularText(
+                          label: cancleStr,
+                          color: errorColor,
+                        ),
+                      ),
+                      FittedBox(
+                        child: MyThemeButton(
+                          padding: 10.horizontal,
+                          leadingIcon: const Icon(
+                            Icons.add,
+                            color: secondaryIconColor,
+                          ),
+                          buttonText: "$updateStr $examStr",
+                          onPressed: onUpdateQuiz,
+                        ),
+                      )
+                    ].addSpaceEveryWidget(space: 5.space),
+                  ),
+                )
+              ] else if (!isCreateExamEditable && quizCreateData != null) ...[
                 Align(
                   alignment: Alignment.bottomRight,
                   child: TextButton.icon(
-                      onPressed: () {
-                        setState(() {
-                          isCreateQuestion = true;
-                        });
-                      },
+                      onPressed: onEditQuiz,
                       label: const MyRegularText(label: editStr),
                       icon: const Icon(
                         Icons.edit,
@@ -194,7 +232,9 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
           },
         ),
         nkSmallSizedBox,
-        if (!isCreateQuestion) ...[
+        if (!isCreateQuestion &&
+            !isCreateExamEditable &&
+            quizCreateData != null) ...[
           Align(
             alignment: Alignment.bottomRight,
             child: FittedBox(
@@ -209,15 +249,117 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
               ),
             ),
           )
-        ]
+        ] else if (isCreateQuestion && quizCreateData != null)
+          ...[]
       ],
     );
   }
 
   onCreateExam() {
+    var titleData = quizAddEditorModelList.first.controller;
+    var description = quizAddEditorModelList.last.controller;
+    nkDevLog("Plaintext : ${titleData.plainTextEditingValue.text}");
+    nkDevLog("PlainDES : ${description.plainTextEditingValue.text}");
+    if (CheckNullData.checkNullOrEmptyString(
+        titleData.plainTextEditingValue.text.toString())) {
+      NKToast.error(title: "Title can't be empty");
+      return;
+    } else if (CheckNullData.checkNullOrEmptyString(
+        description.plainTextEditingValue.text.toString())) {
+      var convertedTitle =
+          quillDeltaToHtml(titleData.document.toDelta().toJson());
+      ApiWorker()
+          .createQuiz(
+        fileTypeId: widget.fileTypeModel.id.toString(),
+        title: convertedTitle!,
+        categoryId: widget.parentId!,
+      )
+          .then((value) {
+        if (value != null) {
+          setState(() {
+            quizCreateData = value;
+            isCreateQuestion = false;
+            quizAddEditorModelList.first.controller
+                .setContents(htmlToQuillDelta(value.title!)!);
+            if (value.description != null) {
+              quizAddEditorModelList.last.controller
+                  .setContents(htmlToQuillDelta(value.description!)!);
+            }
+          });
+        }
+      });
+      return;
+    } else {
+      var convertedTitle =
+          quillDeltaToHtml(titleData.document.toDelta().toJson());
+      var convertedDescription =
+          quillDeltaToHtml(description.document.toDelta().toJson());
+      ApiWorker()
+          .createQuiz(
+              fileTypeId: widget.fileTypeModel.id.toString(),
+              title: convertedTitle!,
+              categoryId: widget.parentId!,
+              description: convertedDescription)
+          .then((value) {
+        if (value != null) {
+          setState(() {
+            quizCreateData = value;
+            isCreateQuestion = false;
+            quizAddEditorModelList.first.controller
+                .setContents(htmlToQuillDelta(value.title!)!);
+            if (value.description != null) {
+              quizAddEditorModelList.last.controller
+                  .setContents(htmlToQuillDelta(value.description!)!);
+            }
+          });
+        }
+      });
+    }
+  }
+
+  onEditQuiz() {
     setState(() {
-      isCreateQuestion = false;
+      isCreateExamEditable = true;
     });
+  }
+
+  onUpdateQuiz() {
+    var titleData = quizAddEditorModelList.first.controller;
+    var description = quizAddEditorModelList.last.controller;
+    nkDevLog("Plaintext : ${titleData.plainTextEditingValue.text}");
+    nkDevLog("PlainDES : ${description.plainTextEditingValue.text}");
+    var convertedTitle =
+        quillDeltaToHtml(titleData.document.toDelta().toJson());
+    var convertedDescription =
+        quillDeltaToHtml(description.document.toDelta().toJson());
+    ApiWorker()
+        .updateQuiz(
+      quizId: quizCreateData!.testId.toString(),
+      title: convertedTitle!,
+      description: convertedDescription,
+      thumbnail: NKMultipart.getMultipartImageBytesNullable(
+          name: onImagePicked?.$2 ?? "", imageBytes: onImagePicked?.$1),
+      categoryId: widget.parentId!,
+    )
+        .then((value) {
+      if (value != null) {
+        setState(() {
+          quizCreateData = value;
+          isCreateExamEditable = false;
+          quizAddEditorModelList.first.controller
+              .setContents(htmlToQuillDelta(value.title!)!);
+          if (value.description != null) {
+            quizAddEditorModelList.last.controller
+                .setContents(htmlToQuillDelta(value.description!)!);
+          }
+        });
+      }
+    });
+    return;
+
+    // setState(() {
+    //   isCreateQuestion = true;
+    // });
   }
 
   onAddQuestion() {
@@ -234,10 +376,12 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
   }
 
   Widget _examThumbnail() {
-    return const NkPickerWithPlaceHolder(
+    return NkPickerWithPlaceHolder(
       fileType: "image",
+      imageUrl: quizCreateData?.thumbnail,
       pickType: FileType.image,
       lableText: headingImageStr,
+      onFilePicked: (imageBytes, imageName) {},
     );
   }
 
@@ -263,7 +407,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
         hint: quizAddEditorModel.hint,
         editorKey: quizAddEditorModel.editorKey,
         controller: quizAddEditorModel.controller,
-        isReaDOnly: !isCreateQuestion,
+        isReaDOnly: !isCreateQuestion && !isCreateExamEditable,
         // controller: QuillEditorController(),
       ),
     );
@@ -289,7 +433,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
         hint: quizAddEditorModel.hint,
         editorKey: quizAddEditorModel.editorKey,
         controller: quizAddEditorModel.controller,
-        isReaDOnly: !isCreateQuestion,
+        isReaDOnly: !isCreateQuestion && !isCreateExamEditable,
       ),
     );
   }
