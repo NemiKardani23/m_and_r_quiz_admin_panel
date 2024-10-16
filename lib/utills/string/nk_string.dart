@@ -51,6 +51,8 @@ const String optionStr = "Option";
 const String removeStr = "Remove";
 const String ansStr = "Ans";
 const String marksStr = "Marks";
+const String createStr = "Create";
+const String examStr = "Exam";
 
 /// APP MANAGEMENT
 

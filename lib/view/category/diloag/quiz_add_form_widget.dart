@@ -1,4 +1,3 @@
-import 'package:country_code_picker/country_code_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:m_and_r_quiz_admin_panel/components/app_bar/my_app_bar.dart';
@@ -73,6 +72,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
   List<QuizAddQustionEditorModel> questionList = [];
 
   DataHandler<List<QuestionTypeData>> questionTypeDataHandler = DataHandler();
+  bool isCreateQuestion = true;
   @override
   void initState() {
     questionTypeDataHandler.startLoading();
@@ -149,6 +149,37 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
               _quizTitle(quizAddEditorModelList.first),
               const MyRegularText(label: subTitleStr),
               _quizSubTitle(quizAddEditorModelList[1]),
+              if (isCreateQuestion) ...[
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: FittedBox(
+                    child: MyThemeButton(
+                      padding: 10.horizontal,
+                      leadingIcon: const Icon(
+                        Icons.add,
+                        color: secondaryIconColor,
+                      ),
+                      buttonText: "$createStr $examStr",
+                      onPressed: onCreateExam,
+                    ),
+                  ),
+                )
+              ] else ...[
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: TextButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          isCreateQuestion = true;
+                        });
+                      },
+                      label: const MyRegularText(label: editStr),
+                      icon: const Icon(
+                        Icons.edit,
+                        color: primaryIconColor,
+                      )),
+                )
+              ],
             ].addSpaceEveryWidget(space: nkExtraSmallSizedBox),
           ),
         ),
@@ -163,22 +194,30 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
           },
         ),
         nkSmallSizedBox,
-        Align(
-          alignment: Alignment.bottomRight,
-          child: FittedBox(
-            child: MyThemeButton(
-              padding: 10.horizontal,
-              leadingIcon: const Icon(
-                Icons.add,
-                color: secondaryIconColor,
+        if (!isCreateQuestion) ...[
+          Align(
+            alignment: Alignment.bottomRight,
+            child: FittedBox(
+              child: MyThemeButton(
+                padding: 10.horizontal,
+                leadingIcon: const Icon(
+                  Icons.add,
+                  color: secondaryIconColor,
+                ),
+                buttonText: "$addStr $questionStr",
+                onPressed: onAddQuestion,
               ),
-              buttonText: "$addStr $questionStr",
-              onPressed: onAddQuestion,
             ),
-          ),
-        )
+          )
+        ]
       ],
     );
+  }
+
+  onCreateExam() {
+    setState(() {
+      isCreateQuestion = false;
+    });
   }
 
   onAddQuestion() {
@@ -224,6 +263,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
         hint: quizAddEditorModel.hint,
         editorKey: quizAddEditorModel.editorKey,
         controller: quizAddEditorModel.controller,
+        isReaDOnly: !isCreateQuestion,
         // controller: QuillEditorController(),
       ),
     );
@@ -249,6 +289,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
         hint: quizAddEditorModel.hint,
         editorKey: quizAddEditorModel.editorKey,
         controller: quizAddEditorModel.controller,
+        isReaDOnly: !isCreateQuestion,
       ),
     );
   }
