@@ -52,9 +52,12 @@ const String optionStr = "Option";
 const String removeStr = "Remove";
 const String ansStr = "Ans";
 const String marksStr = "Marks";
+const String totalStr = "Total";
+const String durationStr = "Duration";
 const String createStr = "Create";
 const String examStr = "Exam";
 const String quizStr = "Quiz";
+const String saveStr = "Save";
 
 /// APP MANAGEMENT
 

@@ -27,6 +27,12 @@ class NKDateUtils {
 
   static String fullDayFormat(DateTime d) => _fullDayFormat.format(d);
 
+  static String formatDuration(Duration d) => d.toString(); /// show Like "2:30:00" 
+
+  static String formatDurationHHMMSS(Duration d) {
+    return d.toString().split('.').first;
+  }
+
   static String customFormatDate(DateTime d, {required String formatDate}) =>
       DateFormat(formatDate).format(d);
 
@@ -251,3 +257,35 @@ class NKDateUtils {
 extension StringDateToDate on String {
   DateTime get toDate => DateTime.parse(this);
 }
+
+extension StringToDuration on String {
+  /// Converts a string in the format of "HH:mm:ss" or "mm:ss" or "ss" into a Duration.
+  Duration get toDuration {
+    // Split the string into parts by the colon (":")
+    List<String> parts = split(':');
+    
+    int hours = 0;
+    int minutes = 0;
+    int seconds = 0;
+
+    // Determine which parts are available (HH:mm:ss, mm:ss, ss)
+    if (parts.length == 3) {
+      // If string contains hours, minutes, and seconds
+      hours = int.tryParse(parts[0]) ?? 0;
+      minutes = int.tryParse(parts[1]) ?? 0;
+      seconds = int.tryParse(parts[2]) ?? 0;
+    } else if (parts.length == 2) {
+      // If string contains minutes and seconds
+      minutes = int.tryParse(parts[0]) ?? 0;
+      seconds = int.tryParse(parts[1]) ?? 0;
+    } else if (parts.length == 1) {
+      // If string contains only seconds
+      seconds = int.tryParse(parts[0]) ?? 0;
+    }
+
+    // Return a Duration based on the parsed values
+    return Duration(hours: hours, minutes: minutes, seconds: seconds);
+  }
+}
+
+

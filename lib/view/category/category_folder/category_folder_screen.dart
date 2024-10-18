@@ -396,6 +396,7 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
           builder: (context) {
             return Center(
               child: AddCategoryDiloag(
+                quizCreateData: quizzzzData,
                 parentId: widget.categoryId?.toString(),
                 fileTypeModel: fileData!,
                 categoryType: CategoryTypeENUM.exam,
@@ -422,7 +423,47 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
                 tooltip: "More",
                 child: const Icon(Icons.more_vert),
                 itemBuilder: (context) {
-                  return [];
+                  return [
+                    PopupMenuItem(
+                      onTap: () {
+                        showAdaptiveDialog(
+                            context: context,
+                            builder: (builder) {
+                              return MyDeleteDialog(
+                                appBarTitle: "$deleteStr ${fileData?.typeName}",
+                                onPressed: () async {
+                                  ApiWorker()
+                                      .deleteQuiz(
+                                          quizId: quizzzzData.testId.toString())
+                                      .then(
+                                    (value) {
+                                      if (value != null &&
+                                          value.status == true) {
+                                        NKToast.success(
+                                            title: SuccessStrings
+                                                .deletedSuccessfully);
+                                        setState(() {
+                                          quizDataList.data?.removeAt(index);
+                                        });
+                                      }
+                                    },
+                                  );
+                                },
+                              );
+                            }).then((value) {
+                          setState(() {});
+                        });
+                      },
+                      child: ListTile(
+                        contentPadding: 0.all,
+                        leading: const Icon(
+                          CupertinoIcons.trash,
+                          color: errorColor,
+                        ),
+                        title: const MyRegularText(label: deleteStr),
+                      ),
+                    )
+                  ];
                 },
               )),
           Column(
@@ -653,7 +694,7 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
                   callQuizApi(categoryId: widget.categoryId!.toString());
                 } else {
                   callApi(
-                    id: widget.categoryId?.toString(),
+                    perentId: widget.categoryId?.toString(),
                     categoryLavel: widget.lavel?.toString(),
                     fileTypeId: p0[val - 1].id?.toString(),
                   );
@@ -731,7 +772,7 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
           pathParameters: pathData,
         );
         break;
-     
+
       default:
     }
   }

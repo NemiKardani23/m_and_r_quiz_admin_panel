@@ -6,6 +6,7 @@ import 'package:m_and_r_quiz_admin_panel/service/dio_client.dart';
 import 'package:m_and_r_quiz_admin_panel/view/auth/model/refresh_token_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/question_type_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/quiz_create_response.dart';
+import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/quiz_question_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/model/category_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/category_type_management/model/category_type_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/file_type_management/model/file_type_response.dart';
@@ -309,7 +310,10 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
 
   // Todo: Category
   Future<CategoryResponse?> getCategoryList(
-      {String? id, String? perentId, String? categoryLavel,String? fileTypeId}) async {
+      {String? id,
+      String? perentId,
+      String? categoryLavel,
+      String? fileTypeId}) async {
     final String sendingUrl = categoryListAPI;
     Map<String, dynamic> queryParameters = {'access_key': $ApiAccessKey};
     if (id != null) {
@@ -320,7 +324,8 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
     }
     if (categoryLavel != null) {
       queryParameters.addAll({'category_level': categoryLavel});
-    }if (categoryLavel != null) {
+    }
+    if (categoryLavel != null) {
       queryParameters.addAll({'file_type_id': fileTypeId});
     }
     var response = await getByCustom(
@@ -460,11 +465,13 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
   }
 
   /// Todo: Create Exam
-Future<QuizCreateResponse?> getQuizList({required String categoryId}
-      ) async {
+  Future<QuizCreateResponse?> getQuizList({required String categoryId}) async {
     final String sendingUrl = quizListAPI;
-    Map<String, dynamic> queryParameters = {'access_key': $ApiAccessKey,'category_id':categoryId};
-    
+    Map<String, dynamic> queryParameters = {
+      'access_key': $ApiAccessKey,
+      'category_id': categoryId
+    };
+
     var response = await getByCustom(
       sendingUrl,
       queryParameters: queryParameters,
@@ -479,6 +486,7 @@ Future<QuizCreateResponse?> getQuizList({required String categoryId}
       return null;
     }
   }
+
   Future<QuizCreateData?> createQuiz(
       {required String title,
       String? description,
@@ -486,12 +494,12 @@ Future<QuizCreateResponse?> getQuizList({required String categoryId}
       MultipartFile? thumbnail,
       required String categoryId}) async {
     final String sendingUrl = createQuizAPI;
-    Map<String,dynamic> data = {
+    Map<String, dynamic> data = {
       'access_key': $ApiAccessKey,
       'title': title,
       'description': description,
       'category_id': categoryId,
-      'file_type_id':fileTypeId
+      'file_type_id': fileTypeId
     };
     if (thumbnail != null) {
       data.addAll({'thumbnail': thumbnail});
@@ -510,15 +518,15 @@ Future<QuizCreateResponse?> getQuizList({required String categoryId}
       return null;
     }
   }
-  
-   Future<QuizCreateData?> updateQuiz(
-      { String? title,
+
+  Future<QuizCreateData?> updateQuiz(
+      {String? title,
       required String quizId,
       String? description,
-       MultipartFile? thumbnail,
-       String? categoryId}) async {
+      MultipartFile? thumbnail,
+      String? categoryId}) async {
     final String sendingUrl = updateQuizAPI;
-     Map<String,dynamic> data = {
+    Map<String, dynamic> data = {
       'access_key': $ApiAccessKey,
       'title': title,
       'description': description,
@@ -543,12 +551,93 @@ Future<QuizCreateResponse?> getQuizList({required String categoryId}
     }
   }
 
-   Future<GlobalCrudResponse?> deleteQuiz(
-      {required String quizId}) async {
-       
+  Future<GlobalCrudResponse?> deleteQuiz({required String quizId}) async {
     final String sendingUrl = deleteQuizAPI;
-    var data = FormData.fromMap(
-        {'access_key': $ApiAccessKey, 'test_id': quizId});
+    var data =
+        FormData.fromMap({'access_key': $ApiAccessKey, 'test_id': quizId});
+    var response = await postByCustom(
+      sendingUrl,
+      data: data,
+      options: Options(
+        headers: authHeader,
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      return GlobalCrudResponse.fromJson(response.data!);
+    } else {
+      return null;
+    }
+  }
+
+  // Todo: Quiz Question
+  Future<QuizQuestionResponse?> getQuizQuestionList(
+      {required String quizId}) async {
+    final String sendingUrl = questionListAPI;
+    Map<String, dynamic> queryParameters = {
+      'access_key': $ApiAccessKey,
+      'test_id': quizId
+    };
+
+    var response = await getByCustom(
+      sendingUrl,
+      queryParameters: queryParameters,
+      options: Options(
+        headers: authHeader,
+      ),
+    );
+
+    if (response.statusCode == 200 && response.data != null) {
+      return QuizQuestionResponse.fromJson(response.data!);
+    } else {
+      return null;
+    }
+  }
+
+  Future<QuizQuestionData?> setQuestion(
+      {required String quizId,
+      required String questionTypeId,
+      required String questionText,
+      required String marks,
+      required String duration,
+      required String correctAnswer,
+      required String? answerDescription,
+      required List<String> optionsList}) async {
+    final String sendingUrl = createQuestionAPI;
+    Map<String, dynamic> data = {
+      'access_key': $ApiAccessKey,
+      'test_id': quizId,
+      'question_type_id': questionTypeId,
+      'question_text': questionText,
+      'marks': marks,
+      'duration': duration,
+      'correct_answer': correctAnswer,
+      'answer_description': answerDescription
+    };
+
+    for (int i = 0; i < optionsList.length; i++) {
+      data.addAll({'options_list[$i]': optionsList[i]});
+    }
+
+    var response = await postByCustom(
+      sendingUrl,
+      data: FormData.fromMap(data),
+      options: Options(
+        headers: authHeader,
+      ),
+    );
+
+    if (response.statusCode == 200 && response.data != null) {
+      return QuizQuestionData.fromJson(response.data['data']);
+    } else {
+      return null;
+    }
+  }
+
+   Future<GlobalCrudResponse?> deleteQuestion({required String questionId}) async {
+    final String sendingUrl = deleteQuestionAPI;
+    var data =
+        FormData.fromMap({'access_key': $ApiAccessKey, 'question_id': questionId});
     var response = await postByCustom(
       sendingUrl,
       data: data,

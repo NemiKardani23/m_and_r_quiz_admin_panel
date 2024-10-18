@@ -1,5 +1,6 @@
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
-import 'package:m_and_r_quiz_admin_panel/view/category/diloag/quiz_add_form_widget.dart';
+import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/quiz_create_response.dart';
+import 'package:m_and_r_quiz_admin_panel/view/category/diloag/quiz/quiz_add_form_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/widget/add_document_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/widget/add_folder_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/model/category_response.dart';
@@ -45,13 +46,14 @@ class AddCategoryDiloag extends StatelessWidget {
   final CategoryTypeENUM categoryType;
   final FileTypeData fileTypeModel;
   final String? parentId;
+   final QuizCreateData? quizCreateData; // FOR QUIZ
   const AddCategoryDiloag({
     super.key,
     this.categoryDataModel,
     this.onUpdated,
     required this.categoryType,
     required this.fileTypeModel,
-    required this.parentId,
+    required this.parentId, this.quizCreateData,
   });
 
   @override
@@ -74,6 +76,7 @@ class AddCategoryDiloag extends StatelessWidget {
         );
       case CategoryTypeENUM.exam:
         return QuizAddFormWidget(
+          quizCreateData:  quizCreateData,
           categoryDataModel: categoryDataModel,
           onUpdated: onUpdated,
           fileTypeModel: fileTypeModel,

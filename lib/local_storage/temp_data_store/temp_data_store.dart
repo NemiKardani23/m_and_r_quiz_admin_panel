@@ -4,6 +4,7 @@ import 'package:m_and_r_quiz_admin_panel/view/basic/model/board_list_model.dart'
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/standard_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/basic/model/subject_list_model.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/question_type_response.dart';
+import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/quiz_question_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/category_type_management/model/category_type_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/file_type_management/model/file_type_response.dart';
 

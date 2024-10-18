@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
@@ -17,11 +16,13 @@ class NkQuillEditor extends StatefulWidget {
   final quill.QuillController controller;
   final Function(bool unSelected)? unSelect;
   final String? hint;
+  final String? initalContent;
   final bool isSelected;
   final bool isReaDOnly;
   final BoxBorder? border;
   final GlobalKey<quill.EditorState>? editorKey;
   const NkQuillEditor({
+    this.initalContent,
     this.isSelected = false,
     this.isReaDOnly = false,
     this.unSelect,
@@ -39,6 +40,7 @@ class NkQuillEditor extends StatefulWidget {
 class _NkQuillEditorState extends State<NkQuillEditor> {
   @override
   void initState() {
+    _setInitialContent();
     if (widget.isReaDOnly) {
       widget.controller.readOnly = true;
       widget.controller.editorFocusNode?.unfocus();
@@ -49,7 +51,9 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
   @override
   Widget build(BuildContext context) {
     if (widget.isReaDOnly) {
-      return NkHtmlViewerWEB(htmlContent:  getHtmlText()??"",);
+      return NkHtmlViewerWEB(
+        htmlContent: widget.initalContent ?? getHtmlText() ?? "",
+      );
     } else {
       return quillEditor(context);
     }
@@ -58,12 +62,12 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
   Widget quillEditor(BuildContext context) {
     var themeData = Theme.of(context).copyWith(
       cupertinoOverrideTheme: const CupertinoThemeData(
-            brightness: Brightness.dark,
-            primaryColor: secondaryColor,
-            scaffoldBackgroundColor: black,
-            barBackgroundColor: black,
-            applyThemeToAll: true,
-            primaryContrastingColor: secondaryColor),
+          brightness: Brightness.dark,
+          primaryColor: secondaryColor,
+          scaffoldBackgroundColor: black,
+          barBackgroundColor: black,
+          applyThemeToAll: true,
+          primaryContrastingColor: secondaryColor),
       cardTheme: const CardTheme(color: transparent, elevation: 0),
       bottomSheetTheme:
           const BottomSheetThemeData(backgroundColor: secondaryColor),
@@ -130,6 +134,12 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
     );
   }
 
+  _setInitialContent() {
+    if (widget.initalContent != null) {
+      widget.controller.setContents(htmlToQuillDelta(widget.initalContent)!);
+    }
+  }
+
   /// Method to get the HTML content from the editor
   String? getHtmlText() {
     var jsonDelta = widget.controller.document.toDelta().toJson();
@@ -161,7 +171,12 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
 
 /// Helper function to convert Quill Delta to HTML
 String? quillDeltaToHtml(List<Map<String, dynamic>>? delta) {
-  if (delta == null) {
+  delta?.forEach(
+    (element) {
+      element.entries.toString().$PRINT;
+    },
+  );
+  if (delta == null || delta.every((x) => x["insert"]=="")) {
     return null;
   }
 
@@ -174,7 +189,10 @@ String? quillDeltaToHtml(List<Map<String, dynamic>>? delta) {
 
   final html = converter.convert();
   nkDevLog("HTML CODEEEE \n$html");
-
+    
+    if(html =="<p><br/></p>"){
+      return null;
+    }
   return html;
 }
 
@@ -183,7 +201,7 @@ Delta? htmlToQuillDelta(String? html) {
     return null;
   }
   final converter = HtmlToDelta().convert(html);
- 
+
   return converter;
 }
 

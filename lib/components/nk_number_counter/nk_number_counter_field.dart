@@ -11,6 +11,9 @@ class NkTimeCounterField extends StatefulWidget {
   // Make initialDuration nullable
   final Duration? initialDuration;
 
+  // Add readOnly property
+  final bool readOnly;
+
   const NkTimeCounterField({
     super.key,
     this.minValueMinutes = 0,
@@ -19,6 +22,7 @@ class NkTimeCounterField extends StatefulWidget {
     this.maxValueSeconds = 59,
     this.onChanged,
     this.initialDuration, // Nullable initial duration
+    this.readOnly = false, // Default to not read-only
   });
 
   @override
@@ -40,7 +44,7 @@ class _NkTimeCounterFieldState extends State<NkTimeCounterField> {
 
     // If initialDuration is provided, use its values, otherwise default to 0
     minutes = widget.initialDuration?.inMinutes ?? 0;
-    seconds = (widget.initialDuration?.inSeconds??0) % 60 ;
+    seconds = (widget.initialDuration?.inSeconds ?? 0) % 60;
 
     // Initialize the text controllers with the initial values
     minutesController = TextEditingController(text: "$minutes");
@@ -58,18 +62,20 @@ class _NkTimeCounterFieldState extends State<NkTimeCounterField> {
             const Text("Minutes"),
             Row(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_drop_up),
-                  onPressed: () {
-                    setState(() {
-                      if (minutes < widget.maxValueMinutes) {
-                        minutes++;
-                      }
-                      minutesController.text = "$minutes";
-                      widget.onChanged?.call(Duration(minutes: minutes, seconds: seconds));
-                    });
-                  },
-                ),
+                // Hide arrows when readOnly is true
+                if (!widget.readOnly) 
+                  IconButton(
+                    icon: const Icon(Icons.arrow_drop_up),
+                    onPressed: () {
+                      setState(() {
+                        if (minutes < widget.maxValueMinutes) {
+                          minutes++;
+                        }
+                        minutesController.text = "$minutes";
+                        widget.onChanged?.call(Duration(minutes: minutes, seconds: seconds));
+                      });
+                    },
+                  ),
                 SizedBox(
                   width: 40,
                   child: TextField(
@@ -77,27 +83,31 @@ class _NkTimeCounterFieldState extends State<NkTimeCounterField> {
                     controller: minutesController,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    onChanged: (value) {
-                      setState(() {
-                        minutes = int.tryParse(value) ?? minutes;
-                        widget.onChanged?.call(Duration(minutes: minutes, seconds: seconds));
-                      });
-                    },
+                    readOnly: widget.readOnly, // Make TextField read-only if required
+                    onChanged: widget.readOnly
+                        ? null // Prevent changes if readOnly is true
+                        : (value) {
+                            setState(() {
+                              minutes = int.tryParse(value) ?? minutes;
+                              widget.onChanged?.call(Duration(minutes: minutes, seconds: seconds));
+                            });
+                          },
                     decoration: const InputDecoration(border: InputBorder.none),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.arrow_drop_down),
-                  onPressed: () {
-                    setState(() {
-                      if (minutes > widget.minValueMinutes) {
-                        minutes--;
-                      }
-                      minutesController.text = "$minutes";
-                      widget.onChanged?.call(Duration(minutes: minutes, seconds: seconds));
-                    });
-                  },
-                ),
+                if (!widget.readOnly) 
+                  IconButton(
+                    icon: const Icon(Icons.arrow_drop_down),
+                    onPressed: () {
+                      setState(() {
+                        if (minutes > widget.minValueMinutes) {
+                          minutes--;
+                        }
+                        minutesController.text = "$minutes";
+                        widget.onChanged?.call(Duration(minutes: minutes, seconds: seconds));
+                      });
+                    },
+                  ),
               ],
             ),
           ],
@@ -109,25 +119,26 @@ class _NkTimeCounterFieldState extends State<NkTimeCounterField> {
             const Text("Seconds"),
             Row(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_drop_up),
-                  onPressed: () {
-                    setState(() {
-                      if (seconds < widget.maxValueSeconds) {
-                        seconds++;
-                      } else {
-                        // Increment minutes if seconds exceed 59
-                        if (minutes < widget.maxValueMinutes) {
-                          minutes++;
-                          seconds = 0;
+                if (!widget.readOnly) 
+                  IconButton(
+                    icon: const Icon(Icons.arrow_drop_up),
+                    onPressed: () {
+                      setState(() {
+                        if (seconds < widget.maxValueSeconds) {
+                          seconds++;
+                        } else {
+                          // Increment minutes if seconds exceed 59
+                          if (minutes < widget.maxValueMinutes) {
+                            minutes++;
+                            seconds = 0;
+                          }
                         }
-                      }
-                      secondsController.text = "$seconds";
-                      minutesController.text = "$minutes";
-                      widget.onChanged?.call(Duration(minutes: minutes, seconds: seconds));
-                    });
-                  },
-                ),
+                        secondsController.text = "$seconds";
+                        minutesController.text = "$minutes";
+                        widget.onChanged?.call(Duration(minutes: minutes, seconds: seconds));
+                      });
+                    },
+                  ),
                 SizedBox(
                   width: 40,
                   child: TextField(
@@ -135,40 +146,44 @@ class _NkTimeCounterFieldState extends State<NkTimeCounterField> {
                     controller: secondsController,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    onChanged: (value) {
-                      setState(() {
-                        int totalSeconds = int.tryParse(value) ?? seconds;
-                        // Convert total seconds into minutes and seconds
-                        minutes = totalSeconds ~/ 60;
-                        seconds = totalSeconds % 60;
+                    readOnly: widget.readOnly, // Make TextField read-only if required
+                    onChanged: widget.readOnly
+                        ? null // Prevent changes if readOnly is true
+                        : (value) {
+                            setState(() {
+                              int totalSeconds = int.tryParse(value) ?? seconds;
+                              // Convert total seconds into minutes and seconds
+                              minutes = totalSeconds ~/ 60;
+                              seconds = totalSeconds % 60;
 
-                        minutesController.text = "$minutes";
-                        secondsController.text = "$seconds";
-                        widget.onChanged?.call(Duration(minutes: minutes, seconds: seconds));
-                      });
-                    },
+                              minutesController.text = "$minutes";
+                              secondsController.text = "$seconds";
+                              widget.onChanged?.call(Duration(minutes: minutes, seconds: seconds));
+                            });
+                          },
                     decoration: const InputDecoration(border: InputBorder.none),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.arrow_drop_down),
-                  onPressed: () {
-                    setState(() {
-                      if (seconds > widget.minValueSeconds) {
-                        seconds--;
-                      } else {
-                        // Decrease minutes if seconds go below 0
-                        if (minutes > widget.minValueMinutes) {
-                          minutes--;
-                          seconds = 59;
+                if (!widget.readOnly) 
+                  IconButton(
+                    icon: const Icon(Icons.arrow_drop_down),
+                    onPressed: () {
+                      setState(() {
+                        if (seconds > widget.minValueSeconds) {
+                          seconds--;
+                        } else {
+                          // Decrease minutes if seconds go below 0
+                          if (minutes > widget.minValueMinutes) {
+                            minutes--;
+                            seconds = 59;
+                          }
                         }
-                      }
-                      secondsController.text = "$seconds";
-                      minutesController.text = "$minutes";
-                      widget.onChanged?.call(Duration(minutes: minutes, seconds: seconds));
-                    });
-                  },
-                ),
+                        secondsController.text = "$seconds";
+                        minutesController.text = "$minutes";
+                        widget.onChanged?.call(Duration(minutes: minutes, seconds: seconds));
+                      });
+                    },
+                  ),
               ],
             ),
           ],

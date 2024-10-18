@@ -30,3 +30,9 @@ nkDevPrint(message) {
     print(message);
   }
 }
+
+extension DebugLog on Object {
+  void get $PRINT {
+    log("LOG DATA ERRROR EROOOR EROOOR", error: this);
+  }
+}
