@@ -47,6 +47,7 @@ const String addStudentStr = "Add Student";
 
 /// QUESTION
 const String questionStr = "Question";
+const String multipleStr = "Multiple";
 const String typeStr = "Type";
 const String optionStr = "Option";
 const String removeStr = "Remove";
@@ -58,6 +59,8 @@ const String createStr = "Create";
 const String examStr = "Exam";
 const String quizStr = "Quiz";
 const String saveStr = "Save";
+const String scrollDownStr = "Scroll Down";
+const String scrollUpStr = "Scroll Up";
 
 /// APP MANAGEMENT
 

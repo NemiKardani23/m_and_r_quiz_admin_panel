@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:m_and_r_quiz_admin_panel/components/app_bar/my_app_bar.dart';
 import 'package:m_and_r_quiz_admin_panel/components/html_editor/nk_quill_editor.dart';
+import 'package:m_and_r_quiz_admin_panel/components/mouse_hover/nk_hover_change_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/components/nk_image_picker_with_placeholder/nk_image_picker_with_placeholder.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/null_check_oprations.dart';
@@ -64,6 +65,7 @@ class QuizAddFormWidget extends StatefulWidget {
 }
 
 class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
+  final ScrollController _scrollController = ScrollController();
   List<QuizAddEditorModel> quizAddEditorModelList = [
     QuizAddEditorModel(
         controller: QuillController.basic(editorFocusNode: FocusNode()),
@@ -136,6 +138,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
         contentPadding: 0.all,
         titlePadding: 0.all.copyWith(bottom: nkRegularPadding.bottom),
         content: SingleChildScrollView(
+          controller: _scrollController,
           child: ConstrainedBox(
             constraints: BoxConstraints(
                 minWidth:
@@ -143,6 +146,94 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
             child: _body(context),
           ),
         ),
+        actionsPadding: 10.onlyTop,
+        actions: [
+          if (_scrollController.hasClients)
+            ValueListenableBuilder(
+              valueListenable: _scrollController.position.isScrollingNotifier,
+              builder: (context, _, __) {
+                return _scrollDownButton();
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _scrollDownButton() {
+    if (!_scrollController.hasClients) {
+      return const SizedBox();
+    }
+
+    // Hide the widget entirely when at the top (minScrollExtent)
+    bool hideWidget =
+        _scrollController.offset == _scrollController.position.minScrollExtent;
+
+    // Show the scroll down button when the user is not at the bottom
+    bool showScrollDownButton =
+        _scrollController.offset < _scrollController.position.maxScrollExtent;
+
+    if (hideWidget) {
+      return const SizedBox(); // Hide the entire widget
+    }
+
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: NkHoverChangeWidget.hoverCrossFadeWidget(
+        alignmentry: Alignment.centerRight,
+        firstChild: showScrollDownButton
+            ? InkWell(
+                onTap: () {
+                  _scrollController.animateTo(
+                    _scrollController.position.maxScrollExtent,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOutCubicEmphasized,
+                  );
+                },
+                child: const Icon(
+                    Icons.arrow_downward_rounded), // Filled arrow down
+              )
+            : InkWell(
+                onTap: () {
+                  _scrollController.animateTo(
+                    0,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOutCubicEmphasized,
+                  );
+                },
+                child:
+                    const Icon(Icons.arrow_upward_rounded), // Filled arrow up
+              ),
+        secondChild: showScrollDownButton
+            ? TextButton.icon(
+                onPressed: () {
+                  _scrollController.animateTo(
+                    _scrollController.position.maxScrollExtent,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOutCubicEmphasized,
+                  );
+                },
+                icon: const Icon(
+                    Icons.arrow_downward_rounded), // Filled arrow down
+                label: const MyRegularText(
+                  label: scrollDownStr,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            : TextButton.icon(
+                onPressed: () {
+                  _scrollController.animateTo(
+                    0,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOutCubicEmphasized,
+                  );
+                },
+                icon: const Icon(Icons.arrow_upward_rounded), // Filled arrow up
+                label: const MyRegularText(
+                  label: scrollUpStr,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
       ),
     );
   }

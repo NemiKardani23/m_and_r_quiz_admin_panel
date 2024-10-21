@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 import '../export/___app_file_exporter.dart';
 
@@ -10,6 +11,14 @@ class NkCommonFunction {
   static Future<WebBrowserInfo> get webBrowserInfo async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     return await deviceInfo.webBrowserInfo;
+  }
+
+  static Future lunchURL(Uri? url) async {
+    if (url != null) {
+        await launchUrl(url,webViewConfiguration: WebViewConfiguration(
+          headers: ApiSecurity().authHeader
+        ),);
+    }
   }
 
  static Future<String?> networkImageToBase64(String imageUrl) async {

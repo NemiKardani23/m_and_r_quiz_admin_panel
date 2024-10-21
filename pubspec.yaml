@@ -91,11 +91,11 @@ dependencies:
   fwfh_chewie: ^0.14.8
 
   
-
   
 
   #HTTPs
   http: ^1.2.2
+  http_downloader: ^0.0.2
 
 dependency_overrides:
   flutter_test:

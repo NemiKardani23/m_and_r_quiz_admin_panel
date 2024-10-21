@@ -12,33 +12,8 @@ import 'package:m_and_r_quiz_admin_panel/view/utills_management/category_type_ma
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/file_type_management/model/file_type_response.dart';
 
 class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
+  DioClient get dioClient => getInstance();
   //Todo: AUTH
-  // Future<GenrateOtpResponse?> genrateOtpUser({
-  //   required String phoneNumber,
-  //   required String dialCode,
-  //   required bool isPandit,
-  // }) async {
-  //   final String sendingUrl = generateOTP;
-  //   var data = FormData.fromMap({
-  //     'phone': phoneNumber,
-  //     'dialCode': dialCode,
-  //     'role': isPandit ? 'pandit' : 'user',
-  //     // 'walletPassword': "2000"
-  //   });
-  //   var response = await postByCustom(
-  //     sendingUrl,
-  //     data: data,
-  //     options: Options(
-  //       headers: authHeader,
-  //     ),
-  //   );
-
-  //   if (response.statusCode == 200) {
-  //     return GenrateOtpResponse.fromJson(response.data!);
-  //   } else {
-  //     return null;
-  //   }
-  // }
 
   Future<UserDetails?> loginAdmin({
     required String email,
@@ -570,6 +545,63 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
     }
   }
 
+  // Todo: Question Multiple
+  // Future<String?> getQuestionDownloadDemo({required String testId}) async {
+  //   final String sendingUrl = baseUrl + downloadSampleQuestionAPI;
+  //   Map<String, dynamic> queryParameters = {
+  //     'access_key': $ApiAccessKey,
+  //     'test_id': testId
+  //   };
+
+  //   // var response = await FileSaver.instance.saveFile(
+  //   //   name: '',
+  //   //   link: LinkDetails(
+  //   //       link: sendingUrl,
+  //   //       headers: authHeader,
+  //   //       method: 'GET',
+  //   //       queryParameters: queryParameters),
+  //   //   mimeType: MimeType.microsoftExcel,
+  //   // );
+
+  //   var response = DownloadManager(dio: getdio()).downloadFile(baseUrl);
+
+  //   if (response.toString().isNotEmpty) {
+  //     return "${response}";
+  //   } else {
+  //     return null;
+  //   }
+  // }
+
+
+  Future<QuizQuestionUpdatedTest?> setMultipleQuestion(
+      {required String testID,
+      required MultipartFile file
+      }) async {
+    final String sendingUrl = importQuestionAPI;
+    Map<String, dynamic> data = {
+      'access_key': $ApiAccessKey,
+      'test_id': testID,
+      'question_file': file
+    };
+
+   
+    var response = await postByCustom(
+      sendingUrl,
+      data: FormData.fromMap(data),
+      options: Options(
+        headers: authHeader,
+      ),
+    );
+
+    if (response.statusCode == 200 && response.data != null) {
+      return QuizQuestionUpdatedTest.fromJson(response.data['data']);
+    } else {
+      return null;
+    }
+  }
+
+
+
   // Todo: Quiz Question
   Future<QuizQuestionResponse?> getQuizQuestionList(
       {required String quizId}) async {
@@ -634,10 +666,11 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
     }
   }
 
-   Future<GlobalCrudResponse?> deleteQuestion({required String questionId}) async {
+  Future<GlobalCrudResponse?> deleteQuestion(
+      {required String questionId}) async {
     final String sendingUrl = deleteQuestionAPI;
-    var data =
-        FormData.fromMap({'access_key': $ApiAccessKey, 'question_id': questionId});
+    var data = FormData.fromMap(
+        {'access_key': $ApiAccessKey, 'question_id': questionId});
     var response = await postByCustom(
       sendingUrl,
       data: data,

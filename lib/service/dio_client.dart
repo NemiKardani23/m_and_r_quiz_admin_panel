@@ -3,10 +3,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:m_and_r_quiz_admin_panel/exception/nk_api_error_handler.dart';
+import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionhelper.dart';
 // ignore: depend_on_referenced_packages
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../export/___app_file_exporter.dart';
+import 'dart:typed_data';
+import 'dart:html' as HTML;
 
 final logger = PrettyDioLogger(
   requestHeader: true,
@@ -32,6 +35,9 @@ class DioClient extends ApiConstant {
   DioClient()
       : _dio = Dio(
           BaseOptions(
+            headers: SessionHelper.loginResponse?.accessToken != null
+                ? ApiSecurity().authHeader
+                : null,
             baseUrl: ApiConstant().baseUrl,
             connectTimeout: const Duration(minutes: 5),
             receiveTimeout: const Duration(minutes: 5),
@@ -44,6 +50,10 @@ class DioClient extends ApiConstant {
 
   Dio getdio() {
     return _dio;
+  }
+
+  DioClient getInstance() {
+    return this;
   }
 
   // HTTP request methods will go here
@@ -144,6 +154,93 @@ class DioClient extends ApiConstant {
     } catch (e) {
       throw e.toString();
     }
+  }
+
+  Future<bool> downloadByCustom<T>(
+    String urlPath, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    try {
+      // final response = await _dio.get(urlPath,
+      //     queryParameters: queryParameters,
+      //     options: options,
+      //     cancelToken: cancelToken,
+      //     onReceiveProgress: onReceiveProgress);
+      final response = downloadFile(urlPath, headers: options?.headers);
+
+      return response;
+    } on DioException catch (err) {
+      final errorMessage = DioExceptionHandler.fromDioError(err).toString();
+      throw errorMessage;
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  Future<bool> downloadFile(String url, {Map<String, dynamic>? headers}) async {
+    try {
+      // Create an HttpRequest to fetch the file data
+      final request = HTML.HttpRequest();
+      request.open('GET', url);
+
+      // If headers are provided, set them
+      if (headers != null) {
+        headers.forEach((key, value) {
+          request.setRequestHeader(key, value);
+        });
+      }
+
+      // Send the request and wait for the response
+      request.responseType = 'blob'; // Set the response type to 'blob'
+      request.send();
+
+      // Return a future that resolves when the request completes
+      return await Future<bool>.delayed(Duration.zero, () {
+        // Listen for the load end event
+        request.onLoadEnd.listen((event) {
+          if (request.status == 200) {
+            // Create a Blob from the response
+            final blob = request.response as HTML.Blob;
+            final downloadUrl = HTML.Url.createObjectUrl(blob);
+
+            // Create an anchor element to download the file
+            final anchorElement = HTML.AnchorElement(href: downloadUrl);
+            anchorElement.download =
+                'downloaded_file'; // Set the default file name
+            anchorElement.click();
+
+            // Clean up the object URL
+            HTML.Url.revokeObjectUrl(downloadUrl);
+
+            // Return true indicating success
+            return;
+          } else {
+            nkDevLog('Error downloading file: ${request.status}');
+            return; // Return false indicating failure
+          }
+        });
+        return false; // Return false by default if the download is not initiated
+      });
+    } catch (e) {
+      nkDevLog('An error occurred: $e');
+      return false; // Return false indicating failure
+    }
+  }
+
+// Helper function to extract file name from the URL
+  String extractFileName(String url) {
+    final uri = Uri.parse(url);
+    final pathSegments = uri.pathSegments;
+
+    if (pathSegments.isNotEmpty) {
+      return pathSegments
+          .last; // Return the last segment, which is usually the file name
+    }
+
+    return 'downloaded_file'; // Fallback file name if no valid file found
   }
 }
 

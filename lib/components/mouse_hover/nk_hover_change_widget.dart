@@ -25,9 +25,9 @@ class NkHoverChangeWidget {
       secondChild: secondChild,
       duration: NkGeneralSize.nkCommonDuration,
       alignmentry: alignmentry,
-      firstCurve: Curves.fastOutSlowIn,
-      secondCurve: Curves.fastOutSlowIn,
-      sizeCurve: Curves.fastOutSlowIn,
+      firstCurve: Curves.easeInOutCubicEmphasized,
+      secondCurve: Curves.easeInOutCubicEmphasized,
+      sizeCurve: Curves.easeInOutCubicEmphasized,
     );
   }
 }

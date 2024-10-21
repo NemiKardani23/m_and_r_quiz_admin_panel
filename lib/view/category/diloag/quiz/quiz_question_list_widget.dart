@@ -13,6 +13,7 @@ import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/quiz_create_
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/quiz_question_response.dart';
 
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/quiz/quiz_add_form_widget.dart';
+import 'package:m_and_r_quiz_admin_panel/view/category/diloag/quiz/quiz_question_add_multiple_widget.dart';
 
 class QuizQuestionListWidget extends StatefulWidget {
   final List<QuizAddQustionEditorModel> questionList;
@@ -89,9 +90,17 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
 
 // New function to map API response and add questions to the list
   void addQuestionsToList(List<QuizQuestionData> apiData) {
-    List<QuizAddQustionEditorModel> loadedQuestions = apiData.map((e) {
+    // Use a dynamic list for loadedQuestions
+    List<QuizAddQustionEditorModel> loadedQuestions = [];
+
+    FocusNode defaultFocusNode =
+        FocusNode(); // Reuse the same focus node where possible
+
+    for (int i = 0; i < apiData.length; i++) {
+      var e = apiData[i];
+
       // Mapping each API question to QuizAddQustionEditorModel
-      return QuizAddQustionEditorModel(
+      var questionModel = QuizAddQustionEditorModel(
         isEditable: false,
         marks: e.marks,
         isNewData: false,
@@ -101,18 +110,19 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
             controller: QuillController.basic(),
           ),
         ),
-        options: e.optionsList.map((op) {
+        options: List.generate(e.optionsList.length, (opIndex) {
           return QuizQuestionOptionsEditorModel(
             optionController: QuizAddEditorModel(
-              initalValue: op,
-              controller: QuillController.basic(editorFocusNode: FocusNode()),
+              initalValue: e.optionsList[opIndex],
+              controller:
+                  QuillController.basic(editorFocusNode: defaultFocusNode),
             ),
           );
-        }).toList(),
+        }),
         questionController: QuizAddEditorModel(
           hint: "Question",
           initalValue: e.questionText,
-          controller: QuillController.basic(editorFocusNode: FocusNode()),
+          controller: QuillController.basic(editorFocusNode: defaultFocusNode),
         ),
         initalValue: e.questionText,
         quizData: e,
@@ -123,11 +133,15 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
         description: QuizQuestionOptionsEditorModel(
           optionController: QuizAddEditorModel(
             initalValue: e.answerDescription,
-            controller: QuillController.basic(editorFocusNode: FocusNode()),
+            controller:
+                QuillController.basic(editorFocusNode: defaultFocusNode),
           ),
         ),
       );
-    }).toList();
+
+      // Add questionModel to loadedQuestions dynamically
+      loadedQuestions.add(questionModel);
+    }
 
     // Update state with the newly loaded questions
     setState(() {
@@ -186,26 +200,29 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
   uploadQuestion(QuizAddQustionEditorModel data) {
     ApiWorker()
         .setQuestion(
-            quizId: widget.quizCreateData!.testId.toString(),
-            questionTypeId: data.questionType!.questionTypeId.toString(),
-            questionText: quillDeltaToHtml(data
-                .questionController.controller.document
-                .toDelta()
-                .toJson())!,
-            marks: data.marks!,
-            duration: data.qustionCompletionTime!.inSeconds.toString(),
-            correctAnswer: quillDeltaToHtml(data
-                .ansOption!.optionController.controller.document
-                .toDelta()
-                .toJson())!,
-            answerDescription: quillDeltaToHtml(data
-                .description?.optionController.controller.document
-                .toDelta()
-                .toJson()),
-            optionsList: data.options!
-                .map((e) => quillDeltaToHtml(
-                    e.optionController.controller.document.toDelta().toJson())!)
-                .toList())
+      quizId: widget.quizCreateData!.testId.toString(),
+      questionTypeId: data.questionType!.questionTypeId.toString(),
+      questionText: quillDeltaToHtml(
+          data.questionController.controller.document.toDelta().toJson())!,
+      marks: data.marks!,
+      duration: data.qustionCompletionTime!.inSeconds.toString(),
+      correctAnswer: quillDeltaToHtml(data
+          .ansOption!.optionController.controller.document
+          .toDelta()
+          .toJson())!,
+      answerDescription: quillDeltaToHtml(data
+          .description?.optionController.controller.document
+          .toDelta()
+          .toJson()),
+      optionsList: List.generate(
+        data.options!.length,
+        (index) => quillDeltaToHtml(
+          data.options![index].optionController.controller.document
+              .toDelta()
+              .toJson(),
+        )!,
+      ),
+    )
         .then((value) {
       if (value != null && value.testId != null) {
         for (var element in questionList) {
@@ -213,6 +230,7 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
             questionList.remove(element);
           }
         }
+
         widget.onTestUpdated?.call(value);
         addSingleQuestionToList(value);
       }
@@ -268,19 +286,33 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
         ),
         if (widget.quizCreateData != null) ...[
           nkSmallSizedBox,
-          Align(
-            alignment: Alignment.bottomRight,
-            child: FittedBox(
-              child: MyThemeButton(
-                padding: 10.horizontal,
-                leadingIcon: const Icon(
-                  Icons.add,
-                  color: secondaryIconColor,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FittedBox(
+                child: MyThemeButton(
+                  padding: 10.horizontal,
+                  leadingIcon: const Icon(
+                    Icons.add,
+                    color: secondaryIconColor,
+                  ),
+                  buttonText: "$addStr $questionStr $multipleStr",
+                  fontSize: NkFontSize.smallFont,
+                  onPressed: onAddMultipleQuestion,
                 ),
-                buttonText: "$addStr $questionStr",
-                onPressed: onAddQuestion,
               ),
-            ),
+              FittedBox(
+                child: MyThemeButton(
+                  padding: 10.horizontal,
+                  leadingIcon: const Icon(
+                    Icons.add,
+                    color: secondaryIconColor,
+                  ),
+                  buttonText: "$addStr $questionStr",
+                  onPressed: onAddQuestion,
+                ),
+              ),
+            ],
           )
         ]
       ],
@@ -299,6 +331,30 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
           ),
         ),
       );
+    });
+  }
+
+  onAddMultipleQuestion() {
+    showAdaptiveDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+            child: QuizQuestionAddMultiple(
+          testId: widget.quizCreateData?.testId.toString(),
+        ));
+      },
+    ).then((value) {
+      if (value != null && value is QuizQuestionUpdatedTest?) {
+        qUIZZZDATAHANDLER = DataHandler();
+        widget.onTestUpdated
+            ?.call(QuizQuestionData.fromJson(value?.toJson() ?? {}).copyWith(
+          updatedTest: QuizQuestionUpdatedTest.fromJson(value?.toJson() ?? {}),
+        ));
+        questionList = [];
+        widget.questionList.clear();
+        callApi();
+        
+      }
     });
   }
 
@@ -389,15 +445,14 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
                                     .toString())
                             .then((value) {
                           if (value != null && value.status == true) {
-                             setState(() {
-  questionList.removeAt(index);
-});
-                          }
+                            setState(() {
+                              questionList.removeAt(index);
                             });
+                          }
+                        });
                       },
                     );
                   });
-              
             },
             child: const MyRegularText(
               label: removeStr,

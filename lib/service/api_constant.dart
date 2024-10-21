@@ -1,4 +1,6 @@
 
+// ignore_for_file: constant_identifier_names
+
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionhelper.dart';
 
 mixin class ApiConstant implements APIStatusCode {
@@ -45,16 +47,21 @@ mixin class ApiConstant implements APIStatusCode {
   final String updateQuestionAPI = "update_practice_question.php";
   final String deleteQuestionAPI = "delete_practice_question.php";
 
+   // Quiz Question Multiple
+
+  final String downloadSampleQuestionAPI = "download_sample_excel.php";
+  final String importQuestionAPI = "import_questions.php";
+
 }
 
 mixin class ApiSecurity {
   // ignore: non_constant_identifier_names
-  final String content_type = "application/json";
-  final String accept = "application/json";
+ static const String content_type = "application/json";
+ static const String accept = "application/json";
   final String authorization = "Authorization";
   final String $ApiAccessKey = 'ComplexAccessKey2024@';
 
-  Future<Map<String, String>> getHeaderWithAuth() async {
+ static Future<Map<String, String>> getHeaderWithAuth() async {
     return {
       'Content-Type': content_type,
       'Accept': accept,

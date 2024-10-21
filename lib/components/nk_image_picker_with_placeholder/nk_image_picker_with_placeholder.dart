@@ -44,7 +44,11 @@ class _NkPickerWithPlaceHolderState extends State<NkPickerWithPlaceHolder> {
   }
 
   Future<void> _pickFile() async {
-    _initialFileType = widget.pickType ?? FileType.any;
+    if (allowedExtensions != null && allowedExtensions!.isNotEmpty) {
+      _initialFileType = FileType.custom;
+    } else {
+      _initialFileType = widget.pickType ?? FileType.any;
+    }
     FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: _initialFileType, allowedExtensions: allowedExtensions);
 
@@ -61,6 +65,7 @@ class _NkPickerWithPlaceHolderState extends State<NkPickerWithPlaceHolder> {
   }
 
   void _removeFile() {
+   
     setState(() {
       initalFileUrl = widget.imageUrl;
       widget.onFilePicked?.call(null, null);
@@ -122,10 +127,12 @@ class _NkPickerWithPlaceHolderState extends State<NkPickerWithPlaceHolder> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        GestureDetector(
-          onTap: _pickFile,
-          child: _buildFilePreview(),
-        ),
+        Builder(builder: (context) {
+          return GestureDetector(
+            onTap: _pickFile,
+            child: _buildFilePreview(),
+          );
+        }),
         if (_fileBytes != null) ...[
           TextButton.icon(
             onPressed: _removeFile,
