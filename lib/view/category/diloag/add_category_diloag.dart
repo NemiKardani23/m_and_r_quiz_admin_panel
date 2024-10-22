@@ -74,6 +74,14 @@ class AddCategoryDiloag extends StatelessWidget {
           fileTypeModel: fileTypeModel,
           parentId: parentId,
         );
+        
+        case CategoryTypeENUM.ePublisher:
+        return AddDocumentDiloag(
+          categoryDataModel: categoryDataModel,
+          onUpdated: onUpdated,
+          fileTypeModel: fileTypeModel,
+          parentId: parentId,
+        );
       case CategoryTypeENUM.exam:
         return QuizAddFormWidget(
           quizCreateData:  quizCreateData,

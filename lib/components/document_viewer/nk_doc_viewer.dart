@@ -1,5 +1,4 @@
 import 'dart:html' as html;
-import 'package:flutter/material.dart';
 import 'dart:ui_web' as ui_web;
 
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
@@ -46,7 +45,7 @@ class _NkWebDocumentViewerState extends State<NkWebDocumentViewer> {
       } else if (_isOfficeFormat()) {
         // Use Microsoft Office Viewer for Word, Excel, PowerPoint formats
         _iframeElement.src =
-            'https://view.officeapps.live.com/op/embed.aspx?src=${Uri.encodeComponent(widget.networkUrl!)}';
+            'https://view.officeapps.live.com/op/embed.aspx?src=${Uri.encodeComponent(widget.networkUrl!)}&embedded=false';
       } else {
         throw UnsupportedError("Unsupported document format");
       }

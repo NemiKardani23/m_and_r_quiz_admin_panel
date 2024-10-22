@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 
 /// [NkGetXFontStyle] USE CUSTOM FONT
 
@@ -6,7 +7,8 @@ class NkGetXFontStyle {
   static const primaryCustomFontStyle = "Helvetica";
 
   static TextTheme primaryTextTheme(BuildContext context) =>
-      Theme.of(context).textTheme.apply(
-            fontFamily: primaryCustomFontStyle,
-          );
+      GoogleFonts.poppinsTextTheme().apply(
+        bodyColor: primaryTextColor,
+        decorationColor: primaryTextColor,
+      );
 }

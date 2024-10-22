@@ -3,6 +3,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:m_and_r_quiz_admin_panel/components/app_bar/my_app_bar.dart';
 import 'package:m_and_r_quiz_admin_panel/components/html_editor/nk_quill_editor.dart';
 import 'package:m_and_r_quiz_admin_panel/components/mouse_hover/nk_hover_change_widget.dart';
+import 'package:m_and_r_quiz_admin_panel/components/nk_enable_disable_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/components/nk_image_picker_with_placeholder/nk_image_picker_with_placeholder.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/null_check_oprations.dart';
@@ -134,7 +135,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
         ],
       ),
       content: AlertDialog(
-        backgroundColor: transparent,
+         backgroundColor: transparent,
         contentPadding: 0.all,
         titlePadding: 0.all.copyWith(bottom: nkRegularPadding.bottom),
         content: SingleChildScrollView(
@@ -242,6 +243,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
     return Column(
       children: [
         MyCommnonContainer(
+          color: dialogBackgroundColor,
           padding: nkRegularPadding.copyWith(
             top: 0,
           ),
@@ -267,7 +269,6 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
         questionTypeDataHandler.when(
             context: context,
             successBuilder: (questioTYPELIST) {
-              questioTYPELIST.length.$PRINT;
               return QuizQuestionListWidget(
                 onTestUpdated: (value) {
                   setState(() {
@@ -350,11 +351,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
                 FittedBox(
                   child: MyThemeButton(
                     padding: 10.horizontal,
-                    leadingIcon: const Icon(
-                      Icons.add,
-                      color: secondaryIconColor,
-                    ),
-                    buttonText: "$updateStr $examStr",
+                    buttonText: updateStr,
                     onPressed: onUpdateQuiz,
                   ),
                 )
@@ -424,9 +421,10 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
         quizCreateData = widget.quizCreateData!;
         quizAddEditorModelList.first.controller
             .setContents(htmlToQuillDelta(quizCreateData?.title!)!);
-        if (quizCreateData?.description != null) {
-          quizAddEditorModelList.last.controller
-              .setContents(htmlToQuillDelta(quizCreateData?.description!)!);
+        if (quizCreateData?.description != null &&
+            quizCreateData?.description!.isNotEmpty == true) {
+          quizAddEditorModelList.last.controller.setContents(
+              htmlToQuillDelta(quizCreateData?.description ?? "")!);
         }
         isCreateExamEditable = false;
         isCreateQuestion = false;
@@ -434,7 +432,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
     }
   }
 
-  onCreateExam() {
+  onCreateExam() async {
     var titleData = quizAddEditorModelList.first.controller;
     var description = quizAddEditorModelList.last.controller;
     nkDevLog("Plaintext : ${titleData.plainTextEditingValue.text}");
@@ -445,13 +443,15 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
       return;
     } else if (CheckNullData.checkNullOrEmptyString(
         description.plainTextEditingValue.text.toString())) {
-      var convertedTitle =
-          quillDeltaToHtml(titleData.document.toDelta().toJson());
+      var convertedTitle = await quillDeltaToHtmlAndUpload(
+          titleData.document.toDelta().toJson());
       ApiWorker()
           .createQuiz(
         fileTypeId: widget.fileTypeModel.id.toString(),
         title: convertedTitle!,
         categoryId: widget.parentId!,
+        thumbnail: NKMultipart.getMultipartFileBytesNullable(
+            name: onImagePicked?.$2 ?? "", fileBytes: onImagePicked?.$1),
       )
           .then((value) {
         if (value != null) {
@@ -469,15 +469,17 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
       });
       return;
     } else {
-      var convertedTitle =
-          quillDeltaToHtml(titleData.document.toDelta().toJson());
-      var convertedDescription =
-          quillDeltaToHtml(description.document.toDelta().toJson());
+      var convertedTitle = await quillDeltaToHtmlAndUpload(
+          titleData.document.toDelta().toJson());
+      var convertedDescription = await quillDeltaToHtmlAndUpload(
+          description.document.toDelta().toJson());
       ApiWorker()
           .createQuiz(
               fileTypeId: widget.fileTypeModel.id.toString(),
               title: convertedTitle!,
               categoryId: widget.parentId!,
+              thumbnail: NKMultipart.getMultipartFileBytesNullable(
+                  name: onImagePicked?.$2 ?? "", fileBytes: onImagePicked?.$1),
               description: convertedDescription)
           .then((value) {
         if (value != null) {
@@ -502,15 +504,15 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
     });
   }
 
-  onUpdateQuiz() {
+  onUpdateQuiz() async {
     var titleData = quizAddEditorModelList.first.controller;
     var description = quizAddEditorModelList.last.controller;
     nkDevLog("Plaintext : ${titleData.plainTextEditingValue.text}");
     nkDevLog("PlainDES : ${description.plainTextEditingValue.text}");
     var convertedTitle =
-        quillDeltaToHtml(titleData.document.toDelta().toJson());
-    var convertedDescription =
-        quillDeltaToHtml(description.document.toDelta().toJson());
+        await quillDeltaToHtmlAndUpload(titleData.document.toDelta().toJson());
+    var convertedDescription = await quillDeltaToHtmlAndUpload(
+        description.document.toDelta().toJson());
     ApiWorker()
         .updateQuiz(
       quizId: quizCreateData!.testId.toString(),
@@ -542,12 +544,15 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
   }
 
   Widget _examThumbnail() {
-    return NkPickerWithPlaceHolder(
-      fileType: "image",
-      imageUrl: quizCreateData?.thumbnail,
-      pickType: FileType.image,
-      lableText: headingImageStr,
-      onFilePicked: (imageBytes, imageName) {},
+    return NkEnableDisableWidget(
+      isEnable: isCreateExamEditable || isCreateQuestion,
+      child: NkPickerWithPlaceHolder(
+        fileType: "image",
+        imageUrl: quizCreateData?.thumbnail,
+        pickType: FileType.image,
+        lableText: headingImageStr,
+        onFilePicked: (imageBytes, imageName) {},
+      ),
     );
   }
 
@@ -561,19 +566,19 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
 
         // quizAddEditorModel.controller.editorFocusNode?.requestFocus();
 
-        nkDevLog("FOCUSED WIDGET : $focusedController");
+        nkDevLog("FOCUSED WIDGET TITLE : $focusedController");
       },
       child: NkQuillEditor(
-        unSelect: (unSelected) {
-          setState(() {
-            focusedController = null;
-          });
-        },
+        // unSelect: (unSelected) {
+        //   setState(() {
+        //     focusedController = null;
+        //   });
+        // },
         isSelected: focusedController == quizAddEditorModel.controller,
         hint: quizAddEditorModel.hint,
         editorKey: quizAddEditorModel.editorKey,
         controller: quizAddEditorModel.controller,
-        isReaDOnly: !isCreateQuestion && !isCreateExamEditable,
+        isReaDOnly: isCreateQuestion == false && isCreateExamEditable == false,
         // controller: QuillEditorController(),
       ),
     );
@@ -587,14 +592,14 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
           focusedController = quizAddEditorModel.controller;
         });
 
-        nkDevLog("FOCUSED WIDGET : $focusedController");
+        nkDevLog("FOCUSED WIDGET SUB : $focusedController");
       },
       child: NkQuillEditor(
-        unSelect: (unSelected) {
-          setState(() {
-            focusedController = null;
-          });
-        },
+        // unSelect: (unSelected) {
+        //   setState(() {
+        //     focusedController = null;
+        //   });
+        // },
         isSelected: focusedController == quizAddEditorModel.controller,
         hint: quizAddEditorModel.hint,
         editorKey: quizAddEditorModel.editorKey,

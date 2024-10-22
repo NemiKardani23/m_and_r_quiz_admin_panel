@@ -2,24 +2,20 @@ import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionhelper.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionmanager.dart';
 import 'package:m_and_r_quiz_admin_panel/router/custom_page_builder.dart';
+import 'package:m_and_r_quiz_admin_panel/router/page_not_found.dart';
 import 'package:m_and_r_quiz_admin_panel/view/app_management/app_management_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/auth/login_screen.dart';
-import 'package:m_and_r_quiz_admin_panel/view/basic/basic_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/category_folder/category_folder_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/category_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/dahsboard/dashboard_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/home/home_screen.dart';
-import 'package:m_and_r_quiz_admin_panel/view/questions/questions_screen.dart';
-import 'package:m_and_r_quiz_admin_panel/view/student/student_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/utills_management_screen.dart';
 
 class AppRoutes {
   static const String loginScreen = "/login";
   static const String intro = "/intro";
   static const String dashboardScreen = "/dashboard";
-  static const String basicScreen = "/basic";
-  static const String studentScreen = "/student";
-  static const String questionsScreen = "/questions";
+
   static const String appManagementScreen = "/app-management";
   static const String utilsManagementScreen = "/utils-management";
   static const String categoryScreen = "/category";
@@ -99,54 +95,7 @@ class AppRoutes {
                     },
                   ),
                 ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                path: basicScreen,
-                name: basicScreen,
-                builder: (context, state) {
-                  return const BasicScreen();
-                },
-                pageBuilder: (context, state) {
-                  return CustomPageBuilder.getTransitionPage(
-                      child: const BasicScreen(),
-                      settings: state,
-                      context: context,
-                      state: state);
-                },
-              ),
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                path: studentScreen,
-                name: studentScreen,
-                builder: (context, state) {
-                  return const StudentScreen();
-                },
-                pageBuilder: (context, state) {
-                  return CustomPageBuilder.getTransitionPage(
-                      child: const StudentScreen(),
-                      settings: state,
-                      context: context,
-                      state: state);
-                },
-              ),
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                path: questionsScreen,
-                name: questionsScreen,
-                builder: (context, state) {
-                  return const QuestionsScreen();
-                },
-                pageBuilder: (context, state) {
-                  return CustomPageBuilder.getTransitionPage(
-                      child: const QuestionsScreen(),
-                      settings: state,
-                      context: context,
-                      state: state);
-                },
-              ),
-            ]),
+           
             StatefulShellBranch(routes: [
               GoRoute(
                 path: appManagementScreen,
@@ -268,7 +217,7 @@ class AppRoutes {
       },
       observers: [AuthRouteObserver()],
       errorBuilder: (context, state) {
-        return const FlutterLogo();
+        return const PageNotFound();
       },
     );
   }

@@ -74,9 +74,9 @@ class _CategoryTypeManagementScreenState
                 padding: 10.horizontal,
                 leadingIcon: const Icon(
                   Icons.add,
-                  color: secondaryIconColor,
+                  color: primaryIconColor,
                 ),
-                buttonText: "$addStr $categoryTypeStr",
+                buttonText: "",
                 onPressed: () {
                   showAdaptiveDialog(
                       context: context,
@@ -102,22 +102,9 @@ class _CategoryTypeManagementScreenState
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  MyRegularText(
-                    align: TextAlign.start,
-                    label: catType.name,
-                  ),
-                  MyRegularText(
-                    label: catType.createdAt?.toIso8601String() ?? "",
-                    fontSize: NkFontSize.extraSmallFont,
-                    color: secondaryTextColor,
-                  )
-                ],
-              ),
+            MyRegularText(
+              align: TextAlign.start,
+              label: catType.name,
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -169,6 +156,8 @@ class _CategoryTypeManagementScreenState
                   ],
                 ),
                 CupertinoSlidingSegmentedControl<String>(
+                  backgroundColor: primaryColor,
+                  thumbColor: selectionColor,
                   onValueChanged: (value) async {
                     var res = await ApiWorker()
                         .changeCategoryTypeStatus(

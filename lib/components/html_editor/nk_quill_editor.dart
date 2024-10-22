@@ -4,8 +4,11 @@ import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:flutter_quill_delta_from_html/flutter_quill_delta_from_html.dart';
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
+import 'package:html/parser.dart';
 import 'package:m_and_r_quiz_admin_panel/components/nk_html_viewer/nk_html_viewer_web.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
+import 'package:m_and_r_quiz_admin_panel/service/api_worker.dart';
+import 'package:m_and_r_quiz_admin_panel/utills/image_upload/nk_multipart.dart';
 import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart'; // Your app imports
 // ignore: implementation_imports, library_prefixes
 import 'package:flutter_quill_extensions/src/editor_toolbar_shared/image_picker/image_options.dart'
@@ -49,11 +52,52 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
   }
 
   @override
+  void didUpdateWidget(NkQuillEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Check if the isReaDOnly state has changed
+    if (oldWidget.isReaDOnly != widget.isReaDOnly) {
+      _setReadOnlyMode();
+    }
+
+    // Update the initial content if it's different from the previous one
+    if (oldWidget.initalContent != widget.initalContent) {
+      _setInitialContent();
+    }
+
+    // Handle other parameter updates
+    if (oldWidget.isSelected != widget.isSelected ||
+        oldWidget.border != widget.border) {
+      setState(() {}); // Redraw if selection state or border changed
+    }
+  }
+
+  void _setReadOnlyMode() {
+    if (widget.isReaDOnly) {
+      widget.controller.readOnly = true;
+      widget.controller.editorFocusNode?.unfocus();
+    } else {
+      widget.controller.readOnly = false;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (widget.isReaDOnly) {
-      return NkHtmlViewerWEB(
-        htmlContent: widget.initalContent ?? getHtmlText() ?? "",
-      );
+      if (widget.initalContent == null) {
+        return FutureBuilder(
+          future: getHtmlText(),
+          builder: (context, snapshot) {
+            return NkHtmlViewerWEB(
+              htmlContent: snapshot.data ?? "",
+            );
+          },
+        );
+      } else {
+        return NkHtmlViewerWEB(
+          htmlContent: widget.initalContent!,
+        );
+      }
     } else {
       return quillEditor(context);
     }
@@ -61,7 +105,7 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
 
   Widget quillEditor(BuildContext context) {
     var themeData = Theme.of(context).copyWith(
-      cupertinoOverrideTheme: const CupertinoThemeData(
+      cupertinoOverrideTheme:  const CupertinoThemeData(
           brightness: Brightness.dark,
           primaryColor: secondaryColor,
           scaffoldBackgroundColor: black,
@@ -70,8 +114,8 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
           primaryContrastingColor: secondaryColor),
       cardTheme: const CardTheme(color: transparent, elevation: 0),
       bottomSheetTheme:
-          const BottomSheetThemeData(backgroundColor: secondaryColor),
-      sliderTheme: const SliderThemeData(
+           const BottomSheetThemeData(backgroundColor: secondaryColor),
+      sliderTheme:  const SliderThemeData(
           thumbColor: Colors.green,
           activeTrackColor: secondaryColor,
           inactiveTrackColor: secondaryColor,
@@ -82,20 +126,20 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
         foregroundColor: primaryTextColor,
         textStyle: const TextStyle(color: primaryTextColor),
       )),
-      dialogTheme: const DialogTheme(
+      dialogTheme:  const DialogTheme(
           iconColor: primaryIconColor,
           backgroundColor: primaryColor,
           surfaceTintColor: primaryColor,
           contentTextStyle: TextStyle(color: primaryTextColor),
           titleTextStyle: TextStyle(color: primaryTextColor)),
-      checkboxTheme: const CheckboxThemeData(
+      checkboxTheme:  const CheckboxThemeData(
           checkColor: WidgetStatePropertyAll(secondaryColor),
           fillColor: WidgetStatePropertyAll(selectionColor)),
     );
     return Theme(
       data: themeData,
       child: CupertinoTheme(
-        data: const CupertinoThemeData(
+        data:  const CupertinoThemeData(
             brightness: Brightness.light,
             primaryColor: secondaryColor,
             scaffoldBackgroundColor: black,
@@ -113,17 +157,17 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
           child: quill.QuillEditor.basic(
             controller: widget.controller,
             configurations: quill.QuillEditorConfigurations(
-                editorKey: widget.editorKey,
+                //editorKey: widget.editorKey,
                 padding: 10.all,
-                showCursor: !widget.isReaDOnly,
+                // showCursor: !widget.isReaDOnly,
                 autoFocus: !widget.isReaDOnly,
-                floatingCursorDisabled: true,
+                floatingCursorDisabled: false,
                 placeholder: widget.hint ?? "Write something...",
                 embedBuilders: kIsWeb
                     ? FlutterQuillEmbeds.editorWebBuilders()
                     : FlutterQuillEmbeds.editorBuilders(),
                 maxHeight: 300,
-                dialogTheme: const quill.QuillDialogTheme(
+                dialogTheme:  const quill.QuillDialogTheme(
                   dialogBackgroundColor: primaryColor,
                   isWrappable: true,
                   buttonTextStyle: TextStyle(color: primaryTextColor),
@@ -141,9 +185,9 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
   }
 
   /// Method to get the HTML content from the editor
-  String? getHtmlText() {
+  Future<String?> getHtmlText() async {
     var jsonDelta = widget.controller.document.toDelta().toJson();
-    var htmlText = quillDeltaToHtml(jsonDelta);
+    var htmlText = await quillDeltaToHtmlAndUpload(jsonDelta);
     debugPrint(htmlText);
     return htmlText;
   }
@@ -169,40 +213,113 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
   }
 }
 
-/// Helper function to convert Quill Delta to HTML
-String? quillDeltaToHtml(List<Map<String, dynamic>>? delta) {
-  delta?.forEach(
-    (element) {
-      element.entries.toString().$PRINT;
-    },
-  );
-  if (delta == null || delta.every((x) => x["insert"]=="")) {
+/// Helper function to convert Quill Delta to HTML and upload images
+Future<String?> quillDeltaToHtmlAndUpload(
+    List<Map<String, dynamic>>? delta) async {
+  // A map to store previously uploaded images and their server URLs
+  Map<String, String> uploadedImagesCache = {};
+
+  // Log delta entries for debugging
+  delta?.forEach((element) {
+    nkDevLog("Element: ${element.entries}");
+  });
+
+  // Check if delta is null or empty
+  if (delta == null || delta.every((x) => x["insert"] == "")) {
     return null;
   }
 
+  // Log delta data
   nkDevLog("DELTA DATA : ${delta.map((x) => x.toString())}");
 
+  // Iterate through the delta and upload images if not already uploaded
+  for (var element in delta) {
+    if (element.containsKey("insert") && element["insert"] is Map) {
+      var insert = element["insert"] as Map;
+      if (insert.containsKey("image")) {
+        String localImagePath = insert["image"];
+
+        // Check if the image is already uploaded
+        if (uploadedImagesCache.containsKey(localImagePath)) {
+          // If already uploaded, replace the local path with the stored URL
+          nkDevLog("Image already uploaded. Using cached URL.");
+          element["insert"] = {"image": uploadedImagesCache[localImagePath]};
+        } else {
+          // Upload the image to the server
+          String? uploadedImageUrl = await uploadImage(localImagePath);
+
+          if (uploadedImageUrl != null) {
+            // Replace the local image path with the URL from the server
+            element["insert"] = {"image": uploadedImageUrl};
+
+            // Cache the uploaded image path and URL
+            uploadedImagesCache[localImagePath] = uploadedImageUrl;
+          }
+        }
+      }
+    }
+  }
+
+  // Convert Delta to HTML
   final converter = QuillDeltaToHtmlConverter(
     delta,
-    ConverterOptions.forEmail(),
+    ConverterOptions.forEmail(), // Customize options as per your need
   );
 
   final html = converter.convert();
   nkDevLog("HTML CODEEEE \n$html");
-    
-    if(html =="<p><br/></p>"){
-      return null;
-    }
+
+  // If the HTML is just an empty line, return null
+  if (html == "<p><br/></p>") {
+    return null;
+  }
+
+  // Log the HTML
+  nkDevLog("Generated HTML: $html");
+
   return html;
 }
 
+Future<String?> uploadImage(String localImagePath) async {
+  try {
+    return ApiWorker()
+        .uploadFile(
+            file: NKMultipart.getMultipartStringFile(file: localImagePath),
+            uploadType: "Quiz")
+        .then(
+      (value) {
+        if (value != null && value.data != null && value.status == true) {
+          return value.data!.fileUrl;
+        } else {
+          return localImagePath;
+        }
+      },
+    );
+  } catch (e) {
+    nkDevLog("Error uploading image: $e");
+    return null;
+  }
+}
+
 Delta? htmlToQuillDelta(String? html) {
-  if (html == null) {
+  if (html == null || html == "") {
     return null;
   }
   final converter = HtmlToDelta().convert(html);
 
   return converter;
+}
+
+String? htmlToStringText(String? html) {
+  if (html == null || html == "") {
+    return null;
+  }
+
+  var doc = parse(
+    html,
+  );
+
+  return doc.body?.text;
 }
 
 class NkQuillToolbar extends StatelessWidget {
@@ -218,8 +335,8 @@ class NkQuillToolbar extends StatelessWidget {
     var themeData = Theme.of(context).copyWith(
       cardTheme: const CardTheme(color: transparent, elevation: 0),
       bottomSheetTheme:
-          const BottomSheetThemeData(backgroundColor: secondaryColor),
-      sliderTheme: const SliderThemeData(
+           const BottomSheetThemeData(backgroundColor: secondaryColor),
+      sliderTheme:  const SliderThemeData(
           thumbColor: Colors.green,
           activeTrackColor: secondaryColor,
           inactiveTrackColor: secondaryColor,
@@ -230,13 +347,13 @@ class NkQuillToolbar extends StatelessWidget {
         foregroundColor: primaryTextColor,
         textStyle: const TextStyle(color: primaryTextColor),
       )),
-      dialogTheme: const DialogTheme(
+      dialogTheme:  const DialogTheme(
           iconColor: primaryIconColor,
           backgroundColor: primaryColor,
           surfaceTintColor: primaryColor,
           contentTextStyle: TextStyle(color: primaryTextColor),
           titleTextStyle: TextStyle(color: primaryTextColor)),
-      checkboxTheme: const CheckboxThemeData(
+      checkboxTheme:  const CheckboxThemeData(
           checkColor: WidgetStatePropertyAll(secondaryColor),
           fillColor: WidgetStatePropertyAll(selectionColor)),
     );
@@ -252,7 +369,7 @@ class NkQuillToolbar extends StatelessWidget {
           toolbarIconCrossAlignment: WrapCrossAlignment.start,
           axis: Axis.horizontal,
           buttonOptions: const _NkQuillToolbarButtonOptions(),
-          dialogTheme: const quill.QuillDialogTheme(
+          dialogTheme:  const quill.QuillDialogTheme(
             dialogBackgroundColor: primaryColor,
             isWrappable: true,
             buttonTextStyle: TextStyle(color: primaryTextColor),
@@ -271,7 +388,7 @@ class NkQuillToolbar extends StatelessWidget {
                           );
                     },
                   ),
-                  dialogTheme: const quill.QuillDialogTheme(
+                  dialogTheme:  const quill.QuillDialogTheme(
                     dialogBackgroundColor: primaryColor,
                     isWrappable: true,
                     buttonTextStyle: TextStyle(color: primaryTextColor),

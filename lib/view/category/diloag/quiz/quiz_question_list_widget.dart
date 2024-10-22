@@ -196,32 +196,83 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
     });
   }
 
+  void updateSingleQuestionInList(QuizQuestionData apiData) {
+    for (int i = 0; i < questionList.length; i++) {
+      if (questionList[i].quizData?.questionId == apiData.questionId) {
+        // Mapping the API question to QuizAddQustionEditorModel
+        QuizAddQustionEditorModel updatedQuestion = QuizAddQustionEditorModel(
+          isEditable: false,
+          marks: apiData.marks,
+          isNewData: false,
+          ansOption: QuizQuestionOptionsEditorModel(
+            optionController: QuizAddEditorModel(
+              initalValue: apiData.correctAnswer,
+              controller: QuillController.basic(),
+            ),
+          ),
+          options: apiData.optionsList.map((op) {
+            return QuizQuestionOptionsEditorModel(
+              optionController: QuizAddEditorModel(
+                initalValue: op,
+                controller: QuillController.basic(editorFocusNode: FocusNode()),
+              ),
+            );
+          }).toList(),
+          questionController: QuizAddEditorModel(
+            hint: "Question",
+            initalValue: apiData.questionText,
+            controller: QuillController.basic(editorFocusNode: FocusNode()),
+          ),
+          initalValue: apiData.questionText,
+          quizData: apiData,
+          questionType: widget.questionTypeList.firstWhereOrNull(
+            (element) =>
+                element.questionTypeId.toString() == apiData.questionTypeId,
+          ),
+          qustionCompletionTime: apiData.duration?.toDuration,
+          description: QuizQuestionOptionsEditorModel(
+            optionController: QuizAddEditorModel(
+              initalValue: apiData.answerDescription,
+              controller: QuillController.basic(editorFocusNode: FocusNode()),
+            ),
+          ),
+        );
+
+        // Update the specific question in the list and exit the loop early
+        setState(() {
+          questionList[i] = updatedQuestion;
+        });
+        break; // Exit the loop once the update is done
+      }
+    }
+  }
+
   /// Upload Question To Server
-  uploadQuestion(QuizAddQustionEditorModel data) {
+  uploadQuestion(QuizAddQustionEditorModel data) async {
     ApiWorker()
         .setQuestion(
       quizId: widget.quizCreateData!.testId.toString(),
       questionTypeId: data.questionType!.questionTypeId.toString(),
-      questionText: quillDeltaToHtml(
-          data.questionController.controller.document.toDelta().toJson())!,
+      questionText: (await quillDeltaToHtmlAndUpload(
+          data.questionController.controller.document.toDelta().toJson()))!,
       marks: data.marks!,
       duration: data.qustionCompletionTime!.inSeconds.toString(),
-      correctAnswer: quillDeltaToHtml(data
+      correctAnswer: (await quillDeltaToHtmlAndUpload(data
           .ansOption!.optionController.controller.document
           .toDelta()
-          .toJson())!,
-      answerDescription: quillDeltaToHtml(data
+          .toJson()))!,
+      answerDescription: (await quillDeltaToHtmlAndUpload(data
           .description?.optionController.controller.document
           .toDelta()
-          .toJson()),
-      optionsList: List.generate(
+          .toJson())),
+      optionsList: (await Future.wait(List.generate(
         data.options!.length,
-        (index) => quillDeltaToHtml(
+        (index) async => (await quillDeltaToHtmlAndUpload(
           data.options![index].optionController.controller.document
               .toDelta()
               .toJson(),
-        )!,
-      ),
+        ))!,
+      ).toList())),
     )
         .then((value) {
       if (value != null && value.testId != null) {
@@ -233,6 +284,52 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
 
         widget.onTestUpdated?.call(value);
         addSingleQuestionToList(value);
+      }
+    });
+  }
+
+  /// Update Question To Server
+  Future updateQuestion(QuizAddQustionEditorModel data) async {
+    return await ApiWorker()
+        .updateQuestion(
+      questionId: data.quizData!.questionId.toString(),
+      quizId: widget.quizCreateData!.testId.toString(),
+      questionTypeId: data.questionType?.questionTypeId.toString(),
+      questionText: (await quillDeltaToHtmlAndUpload(
+          data.questionController.controller.document.toDelta().toJson()))!,
+      marks: data.marks,
+      duration: data.qustionCompletionTime?.inSeconds.toString(),
+      correctAnswer: (await quillDeltaToHtmlAndUpload(data
+          .ansOption!.optionController.controller.document
+          .toDelta()
+          .toJson())),
+      answerDescription: (await quillDeltaToHtmlAndUpload(data
+          .description?.optionController.controller.document
+          .toDelta()
+          .toJson())),
+      optionsList: (await Future.wait(List.generate(
+        data.options!.length,
+        (index) async =>
+            (await quillDeltaToHtmlAndUpload(
+              data.options?[index].optionController.controller.document
+                  .toDelta()
+                  .toJson(),
+            )) ??
+            "",
+      ).toList())),
+    )
+        .then((value) {
+      if (value != null && value.questionId != null) {
+        NKToast.success(
+            title: htmlToStringText(data.quizData?.questionText),
+            description: SuccessStrings.updatedSuccessfully);
+
+        updateSingleQuestionInList(value);
+        // setState(() {
+        //   data.isEditable = false;
+        //   data.isNewData = false;
+        // });
+        return value;
       }
     });
   }
@@ -292,23 +389,20 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
               FittedBox(
                 child: MyThemeButton(
                   padding: 10.horizontal,
-                  leadingIcon: const Icon(
-                    Icons.add,
-                    color: secondaryIconColor,
-                  ),
-                  buttonText: "$addStr $questionStr $multipleStr",
+                  buttonText: "$uploadStr $multipleStr",
                   fontSize: NkFontSize.smallFont,
                   onPressed: onAddMultipleQuestion,
                 ),
               ),
+              5.space,
               FittedBox(
                 child: MyThemeButton(
                   padding: 10.horizontal,
                   leadingIcon: const Icon(
                     Icons.add,
-                    color: secondaryIconColor,
+                    color: primaryIconColor,
                   ),
-                  buttonText: "$addStr $questionStr",
+                  buttonText: "",
                   onPressed: onAddQuestion,
                 ),
               ),
@@ -353,7 +447,6 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
         questionList = [];
         widget.questionList.clear();
         callApi();
-        
       }
     });
   }
@@ -438,18 +531,26 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
                               .questionController.initalValue ??
                           "",
                       onPressed: () async {
-                        ApiWorker()
-                            .deleteQuestion(
-                                questionId: quizAddQustionEditorModel
-                                    .quizData!.questionId
-                                    .toString())
-                            .then((value) {
-                          if (value != null && value.status == true) {
-                            setState(() {
-                              questionList.removeAt(index);
-                            });
-                          }
-                        });
+                        if (quizAddQustionEditorModel.quizData != null) {
+                          ApiWorker()
+                              .deleteQuestion(
+                                  questionId: quizAddQustionEditorModel
+                                      .quizData!.questionId
+                                      .toString())
+                              .then((value) {
+                            if (value != null && value.status == true) {
+                              NKToast.success(
+                                  title: SuccessStrings.deletedSuccessfully);
+                              setState(() {
+                                questionList.removeAt(index);
+                              });
+                            }
+                          });
+                        } else {
+                          setState(() {
+                            questionList.removeAt(index);
+                          });
+                        }
                       },
                     );
                   });
@@ -641,7 +742,8 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
     return CheckboxListTile.adaptive(
       hoverColor: transparent,
       enabled: isEditable,
-      tileColor: transparent,
+
+      // tileColor: transparent,
       controlAffinity: ListTileControlAffinity.leading,
       contentPadding: 0.all,
       value:
@@ -663,15 +765,16 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
         if (value == true) {
           WidgetsBinding.instance.addPostFrameCallback(
             (timeStamp) {
-              setState(() {
+              setState(() async {
                 questionList[perentIndex].ansOption = model;
                 questionList[perentIndex]
                         .ansOption
                         ?.optionController
                         .initalValue =
-                    quillDeltaToHtml(model.optionController.controller.document
+                    (await quillDeltaToHtmlAndUpload(model
+                        .optionController.controller.document
                         .toDelta()
-                        .toJson());
+                        .toJson()));
                 // currectAnswer = model;
               });
             },
@@ -797,7 +900,7 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
       children: [
         MyCommnonContainer(
             padding: 8.all,
-            color: lightGreyColor,
+            color: primaryColor,
             child: NkTimeCounterField(
               onChanged: (value) {
                 modelData.qustionCompletionTime = value;
@@ -840,12 +943,13 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
             FittedBox(
               child: MyThemeButton(
                 padding: 10.horizontal,
-                leadingIcon: const Icon(
-                  Icons.add,
-                  color: secondaryIconColor,
-                ),
-                buttonText: "$updateStr $questionStr",
-                onPressed: null,
+                isLoadingButton: true,
+                buttonText: updateStr,
+                onPressed: () async {
+                  if (validateQuestionField(model)) {
+                    await updateQuestion(model);
+                  }
+                },
               ),
             )
           ].addSpaceEveryWidget(space: 5.space),

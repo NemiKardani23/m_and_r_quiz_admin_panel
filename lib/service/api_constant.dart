@@ -1,4 +1,3 @@
-
 // ignore_for_file: constant_identifier_names
 
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionhelper.dart';
@@ -9,7 +8,16 @@ mixin class ApiConstant implements APIStatusCode {
   /// Auth
 
   final String loginAPI = "login.php";
+  final String logoutAPI = "logout.php";
   final String refreshTokenAPI = "refreshToken.php";
+
+  /// Banner
+  final String bannerListAPI = "view_banners.php";
+  final String bannerAddAPI = "create_banner.php";
+  final String bannerUpdateAPI = "update_banner.php";
+  final String bannerDeleteAPI = "delete_banner.php";
+  final String bannerUpdateStatusAPI = "update_banner_status.php";
+
 
   /// Category Type
 
@@ -27,13 +35,13 @@ mixin class ApiConstant implements APIStatusCode {
   final String fileTypeListAPI = "view_file_types.php";
 
   /// Category
- final String categoryListAPI="view_categories.php";
+  final String categoryListAPI = "view_categories.php";
   final String categoryAddAPI = "create_category.php";
   final String categoryUpdateAPI = "update_category.php";
   final String categoryDeleteAPI = "delete_category.php";
 
   /// Question Type
-    final String questionTypeAPI = "view_question_types.php";
+  final String questionTypeAPI = "view_question_types.php";
 
   /// Quiz
   final String quizListAPI = "view_practice_tests.php";
@@ -47,21 +55,24 @@ mixin class ApiConstant implements APIStatusCode {
   final String updateQuestionAPI = "update_practice_question.php";
   final String deleteQuestionAPI = "delete_practice_question.php";
 
-   // Quiz Question Multiple
+  // Quiz Question Multiple
 
   final String downloadSampleQuestionAPI = "download_sample_excel.php";
   final String importQuestionAPI = "import_questions.php";
 
+  ///------- Custom API ------------
+
+  final String uploadDynamicFileAPI = "upload_dynamic_file.php";
 }
 
 mixin class ApiSecurity {
   // ignore: non_constant_identifier_names
- static const String content_type = "application/json";
- static const String accept = "application/json";
+  static const String content_type = "application/json";
+  static const String accept = "application/json";
   final String authorization = "Authorization";
   final String $ApiAccessKey = 'ComplexAccessKey2024@';
 
- static Future<Map<String, String>> getHeaderWithAuth() async {
+  static Future<Map<String, String>> getHeaderWithAuth() async {
     return {
       'Content-Type': content_type,
       'Accept': accept,

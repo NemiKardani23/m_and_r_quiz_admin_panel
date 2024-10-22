@@ -57,6 +57,8 @@ class NKMultipart {
         filename: file.path.split('/').last);
   }
 
+
+
   static MultipartFile getMultipartFileBytes({required Uint8List fileBytes,required String name}) {
     return MultipartFile.fromBytes(fileBytes,
         filename: name);
@@ -66,6 +68,17 @@ class NKMultipart {
     if (fileBytes == null) return null;
     return MultipartFile.fromBytes(fileBytes,
         filename: name);
+  }
+
+     static MultipartFile getMultipartStringFile({required String file,String? name}) {
+    return MultipartFile.fromString(file,
+        filename: name??file.split('/').last);
+  }
+
+  static MultipartFile? getMultipartStringFileNullable({String? file,String? name}) {
+    if (file == null) return null;
+    return MultipartFile.fromString(file,
+        filename: name??file.split('/').last);
   }
 
 

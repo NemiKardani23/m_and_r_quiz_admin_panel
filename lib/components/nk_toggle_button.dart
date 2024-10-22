@@ -15,7 +15,7 @@ class NkToggleButton extends StatefulWidget {
     this.activeColor = selectionColor,
     this.inactiveColor = Colors.grey,
     this.selectedTextColor = Colors.white,
-    this.unselectedTextColor = Colors.black,
+    this.unselectedTextColor = primaryTextColor,
     required this.onToggle,
     this.initialIndex = 0, // Default value for initial index
   });

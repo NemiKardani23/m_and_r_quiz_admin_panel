@@ -1,69 +1,71 @@
+import 'package:m_and_r_quiz_admin_panel/components/mouse_hover/nk_hover_change_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
+import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionmanager.dart';
+import 'package:m_and_r_quiz_admin_panel/service/api_worker.dart';
 
-class DashboardScreen extends StatefulWidget {
+int selectedIndex = 0;
+
+class DashboardScreen extends StatelessWidget {
   final StatefulNavigationShell child;
   const DashboardScreen({super.key, required this.child});
 
-  @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
-}
-
-class _DashboardScreenState extends State<DashboardScreen> {
-  int selectedIndex = 0;
-
-  // final List<Widget> pageList = [
-  //   const HomeScreen(),
-  //   const BasicScreen(),
-  //   const StudentScreen(),
-  //   const QuestionsScreen(),
-  //   const AppManagementScreen(),
-  //   const UtillsManagementScreen(),
-  //   const CategoryScreen(),
-  // ];
-
+  // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    selectedIndex = widget.child.currentIndex;
-    nkDevLog("SELECTED INDEX : ${widget.child.currentIndex}");
-    return MyScaffold(context: context, myBody: myBody);
+    selectedIndex = child.currentIndex;
+    nkDevLog("SELECTED INDEX : ${child.currentIndex}");
+    return MyScaffold(
+      context: context,
+      myBody: myBody(context),
+      myDrawer: context.isMobile ? _bar : null,
+      myFloatingActionButtonLocation: FloatingActionButtonLocation.startTop,
+      myFloatingActionButton: context.isMobile ? drawerButton(context) : null,
+    );
   }
 
-  Widget get myBody {
+  Widget myBody(BuildContext context) {
     return Flex(
       direction: context.isMobile ? Axis.vertical : Axis.horizontal,
       children: [
         if (!context.isMobile) ...[_bar],
         if (context.isLargeDesktop) ...[
-          Flexible(child: navigatePage()),
+          Flexible(child: navigatePage(context)),
         ] else ...[
-          navigatePage(),
+          navigatePage(context),
         ],
-        if (context.isMobile) ...[_bar]
+        // if (context.isMobile) ...[_bar]
       ],
     );
   }
 
-  Widget navigatePage() {
+  Widget navigatePage(BuildContext context) {
     if (context.isLargeDesktop) {
       return Center(
         child: SizedBox(
           height: context.height,
           width: context.width / 2,
-          child: widget.child,
+          child: child,
         ),
       );
     } else {
-      return Expanded(child: widget.child);
+      return Expanded(child: child);
     }
   }
 
   Widget get _bar {
-    return _AppMenu(
-      selectedIndex: selectedIndex,
-      onItemSelected: (int index) {
-        widget.child.goBranch(index);
-      },
-    );
+    return Builder(builder: (context) {
+      return _AppMenu(
+        selectedIndex: selectedIndex,
+        onItemSelected: (int index) {
+          Scaffold.of(context).closeDrawer();
+          child.goBranch(index);
+        },
+      );
+    });
+  }
+
+  Widget drawerButton(BuildContext context) {
+    return const DrawerButton();
   }
 }
 
@@ -74,236 +76,200 @@ class _AppMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (context.isMobile) {
-      return SizedBox(
-        height: context.height * 0.12,
-        child: PageView(
-          clipBehavior: Clip.none,
-          children: [
-            Card(
-              margin: nkRegularPadding,
-              clipBehavior: Clip.antiAlias,
-              child: ClipRRect(
-                child: Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _mobileTabComponent(context,
-                          index: 0,
-                          onSelectedItem: onItemSelected,
-                          tabItem: BottomNavigationBarItem(
-                            icon: Icon(Icons.home, color: selctedIconColor(0)),
-                            label: 'Home',
-                          )),
-                      _mobileTabComponent(
-                        context,
-                        index: 1,
-                        onSelectedItem: onItemSelected,
-                        tabItem: BottomNavigationBarItem(
-                          icon: Icon(
-                            Icons.category,
-                            color: selctedIconColor(1),
-                          ),
-                          label: basicStr,
-                        ),
-                      ),
-                      _mobileTabComponent(
-                        context,
-                        index: 2,
-                        onSelectedItem: onItemSelected,
-                        tabItem: BottomNavigationBarItem(
-                          icon: Icon(
-                            Icons.people,
-                            color: selctedIconColor(2),
-                          ),
-                          label: "Student",
-                        ),
-                      ),
-                      _mobileTabComponent(context,
-                          index: 3,
-                          onSelectedItem: onItemSelected,
-                          tabItem: BottomNavigationBarItem(
-                            icon: Icon(
-                              Icons.people,
-                              color: selctedIconColor(3),
-                            ),
-                            label: "Questions",
-                          )),
-                    ]),
-              ),
+    return Padding(
+      padding: const EdgeInsets.all(8.0).copyWith(right: 30),
+      child: Drawer(
+        shadowColor: shadowColor,
+        width: 200,
+        shape: RoundedRectangleBorder(
+            side: BorderSide(
+              color: white.withOpacity(.2),
             ),
-            Card(
-              margin: nkRegularPadding,
-              clipBehavior: Clip.antiAlias,
-              child: ClipRRect(
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _mobileTabComponent(context,
-                          index: 4,
-                          onSelectedItem: onItemSelected,
-                          tabItem: BottomNavigationBarItem(
-                            icon: Icon(
-                              Icons.app_settings_alt,
-                              color: selctedIconColor(4),
-                            ),
-                            label: "App Management",
-                          )),
-                      _mobileTabComponent(context,
-                          index: 5,
-                          onSelectedItem: onItemSelected,
-                          tabItem: BottomNavigationBarItem(
-                            icon: Icon(
-                              Icons.admin_panel_settings_rounded,
-                              color: selctedIconColor(5),
-                            ),
-                            label: utilsManagementStr,
-                          )),
-                      _mobileTabComponent(context,
-                          index: 6,
-                          onSelectedItem: onItemSelected,
-                          tabItem: BottomNavigationBarItem(
-                            icon: Icon(
-                              Icons.category,
-                              color: selctedIconColor(6),
-                            ),
-                            label: categoryStr,
-                          )),
-                    ]),
-              ),
-            ),
-          ],
-        ),
-      );
-    } else {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Drawer(
-          shadowColor: secondaryColor,
-          width: 200,
-          shape: RoundedRectangleBorder(
-              borderRadius: NkGeneralSize.nkCommonBorderRadius),
-          elevation: 10,
-          child: ListView(
-            shrinkWrap: true,
-            padding: nkRegularPadding,
-            children: <Widget>[
-              MyCommnonContainer(
-                child: MyRegularText(
-                  label: appNameStr,
-                  fontSize: NkFontSize.headingFont,
-                  fontWeight: NkGeneralSize.nkBoldFontWeight,
-                ),
-              ),
-              _webTabBuilder(0,
-                  onItemSelected: onItemSelected,
-                  tabName: "Home",
-                  icon: Icon(
-                    Icons.home,
-                    color: selctedIconColor(0),
-                  )),
-              _webTabBuilder(1,
-                  onItemSelected: onItemSelected,
-                  tabName: basicStr,
-                  icon: Icon(
-                    Icons.category,
-                    color: selctedIconColor(1),
-                  )),
-              _webTabBuilder(2,
-                  onItemSelected: onItemSelected,
-                  tabName: "Settings",
-                  icon: Icon(
-                    Icons.settings,
-                    color: selctedIconColor(2),
-                  )),
-              _webTabBuilder(3,
-                  onItemSelected: onItemSelected,
-                  tabName: "Questions",
-                  icon: Icon(
-                    Icons.people,
-                    color: selctedIconColor(3),
-                  )),
-              _webTabBuilder(4,
-                  onItemSelected: onItemSelected,
-                  tabName: "App Management",
-                  icon: Icon(
-                    Icons.app_settings_alt,
-                    color: selctedIconColor(4),
-                  )),
-              _webTabBuilder(5,
-                  onItemSelected: onItemSelected,
-                  tabName: utilsManagementStr,
-                  icon: Icon(
-                    Icons.admin_panel_settings_rounded,
-                    color: selctedIconColor(5),
-                  )),
-              _webTabBuilder(6,
-                  onItemSelected: onItemSelected,
-                  tabName: categoryStr,
-                  icon: Icon(
-                    Icons.category,
-                    color: selctedIconColor(6),
-                  )),
-            ].addSpaceEveryWidget(space: nkExtraSmallSizedBox),
-          ),
-        ),
-      );
-    }
-  }
-
-  Widget _mobileTabComponent(BuildContext context,
-      {required BottomNavigationBarItem tabItem,
-      required int index,
-      Function(int)? onSelectedItem}) {
-    return Flexible(
-      fit: FlexFit.tight,
-      child: InkResponse(
-        onTap: () {
-          onSelectedItem?.call(index);
-        },
+            borderRadius: NkGeneralSize.nkCommonBorderRadius),
+        elevation: 0,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            tabItem.icon,
-            if (tabItem.label != null) ...[
-              MyRegularText(
-                fontSize: NkFontSize.smallFont,
-                label: tabItem.label!,
-                fontWeight: selectedIndex == index
-                    ? NkGeneralSize.nkBoldFontWeight
-                    : null,
-                color: selectedIndex == index
-                    ? primaryTextColor
-                    : primaryTextColor.withOpacity(0.5),
+            Flexible(
+              child: ListView(
+                // shrinkWrap: true,
+                padding: nkRegularPadding,
+                children: <Widget>[
+                  MyCommnonContainer(
+                    color: transparent,
+                    child: MyRegularText(
+                      label: appNameStr,
+                      fontSize: NkFontSize.headingFont,
+                      fontWeight: NkGeneralSize.nkBoldFontWeight,
+                    ),
+                  ),
+                  nkExtraSmallSizedBox,
+                  _webTabBuilder(0,
+                      onItemSelected: onItemSelected,
+                      tabName: "Home",
+                      icon: Icon(
+                        Icons.home,
+                        color: selctedIconColor(0),
+                      )),
+                  _webTabBuilder(1,
+                      onItemSelected: onItemSelected,
+                      tabName: "App",
+                      icon: Icon(
+                        Icons.app_settings_alt,
+                        color: selctedIconColor(1),
+                      )),
+                  _webTabBuilder(2,
+                      onItemSelected: onItemSelected,
+                      tabName: utilsStr,
+                      icon: Icon(
+                        Icons.admin_panel_settings_rounded,
+                        color: selctedIconColor(2),
+                      )),
+                  _webTabBuilder(3,
+                      onItemSelected: onItemSelected,
+                      tabName: categoryStr,
+                      icon: Icon(
+                        Icons.category,
+                        color: selctedIconColor(3),
+                      )),
+                ].addSpaceEveryWidget(space: 10.space),
               ),
-            ]
+            ),
+            nkSmallSizedBox,
+            _webLogoutButton(context),
           ],
         ),
       ),
     );
   }
+
+  // Widget _mobileTabComponent(BuildContext context,
+  //     {required BottomNavigationBarItem tabItem,
+  //     required int index,
+  //     Function(int)? onSelectedItem}) {
+  //   return Flexible(
+  //     fit: FlexFit.tight,
+  //     child: InkResponse(
+  //       onTap: () {
+  //         onSelectedItem?.call(index);
+  //       },
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           tabItem.icon,
+  //           if (tabItem.label != null) ...[
+  //             MyRegularText(
+  //               fontSize: NkFontSize.smallFont,
+  //               label: tabItem.label!,
+  //               fontWeight: selectedIndex == index
+  //                   ? NkGeneralSize.nkBoldFontWeight
+  //                   : null,
+  //               color: selectedIndex == index
+  //                   ? primaryTextColor
+  //                   : primaryTextColor.withOpacity(0.5),
+  //             ),
+  //           ]
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _webTabBuilder(int index,
       {required void Function(int)? onItemSelected,
       required String tabName,
       required Widget icon}) {
-    return Card(
-      elevation: selectedIndex == index ? null : 0,
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: ListTile(
-        selected: selectedIndex == index,
-        minVerticalPadding: 0,
-        horizontalTitleGap: 0,
-        contentPadding: 10.all,
-        onTap: () {
-          onItemSelected?.call(index);
-        },
-        title: MyRegularText(
-          label: tabName,
-          color: selctedIconColor(index),
+    return NkHoverChangeWidget.hoverWidget(
+        child: Card(
+          elevation: selectedIndex == index ? null : 0,
+          color: selectedIndex == index ? selectionColor : null,
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          child: ListTile(
+            minTileHeight: 30,
+            selected: selectedIndex == index,
+            minVerticalPadding: 0,
+            horizontalTitleGap: 0,
+            contentPadding: 8.all,
+            onTap: () {
+              onItemSelected?.call(index);
+            },
+            title: MyRegularText(
+              maxlines: 1,
+              label: tabName,
+              color: selctedIconColor(index),
+            ),
+            leading: icon,
+          ),
         ),
-        leading: icon,
-      ),
-    );
+        hoverChild: Card(
+          color: primaryHoverColor,
+          elevation: selectedIndex == index ? null : 0,
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          child: ListTile(
+            minTileHeight: 30,
+            selected: selectedIndex == index,
+            minVerticalPadding: 0,
+            horizontalTitleGap: 0,
+            contentPadding: 8.all,
+            onTap: () {
+              onItemSelected?.call(index);
+            },
+            title: MyRegularText(
+              maxlines: 1,
+              label: tabName,
+              color: primaryHoverTextColor,
+            ),
+            leading: icon,
+          ),
+        ));
+  }
+
+  Widget _webLogoutButton(BuildContext context) {
+    return _webTabBuilder(-1, onItemSelected: (int) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              alignment: context.isMobile || context.isTablet
+                  ? null
+                  : Alignment.bottomLeft,
+              backgroundColor: primaryColor,
+              title: MyRegularText(
+                label: areYouSureYouWantToLogoutStr,
+                fontSize: NkFontSize.headingFont,
+                fontWeight: NkGeneralSize.nkBoldFontWeight,
+              ),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const MyRegularText(
+                      label: cancleStr,
+                    )),
+                TextButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStatePropertyAll(errorColor.withOpacity(.2))),
+                    onPressed: () {
+                      ApiWorker().logout().then(
+                        (value) {
+                          if (value != null && value.status == true) {
+                            SessionManager.clearData();
+                            AppRoutes.navigator.refresh();
+                          }
+                        },
+                      );
+                    },
+                    child: const MyRegularText(label: logoutStr)),
+              ]).fadeLeftAnimation;
+        },
+      );
+    },
+        tabName: logoutStr,
+        icon: const Icon(
+          Icons.logout,
+          color: errorColor,
+        ));
   }
 
   Color selctedIconColor(int index) {

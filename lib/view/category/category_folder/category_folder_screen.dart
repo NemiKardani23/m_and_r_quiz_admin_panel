@@ -52,7 +52,8 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
         perentId: widget.categoryId?.toString(),
         categoryLavel: widget.lavel?.toString(),
       );
-    } else if (fileTypeENUM == CategoryTypeENUM.document) {
+    } else if (fileTypeENUM == CategoryTypeENUM.document ||
+        fileTypeENUM == CategoryTypeENUM.ePublisher) {
       callApi(
         id: widget.categoryId?.toString(),
       );
@@ -163,6 +164,7 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
               child: MyCommnonContainer(
                 isCardView: true,
                 margin: nkRegularPadding,
+                color: transparent,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -222,65 +224,70 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
                 ),
               ),
             ),
-            fileTypeData.when(
-              context: context,
-              successBuilder: (catTypeList) {
-                return PopupMenuButton<CategoryTypeENUM>(
-                  tooltip: "$addStr $folderStr",
-                  icon: MyCommnonContainer(
-                    padding: 10.all,
-                    isCardView: true,
-                    child: const Icon(Icons.add),
-                  ),
-                  onSelected: (value) {
-                    // CategoryData? data;
-                    // if (categoryData.data != null &&
-                    //     categoryData.data?.isNotEmpty == true) {
-                    //   data = categoryData.data?.firstWhere((element) =>
-                    //       element.parentId.toString() == widget.categoryId);
-                    // }
-                    showAdaptiveDialog(
-                      builder: (context) {
-                        return Center(
-                          child: AddCategoryDiloag(
-                            parentId: widget.categoryId?.toString(),
-                            fileTypeModel: catTypeList.firstWhere((element) =>
-                                element.typeName?.toUpperCase() ==
-                                value.categoryType),
-                            categoryType: value,
-                            onUpdated: (catData) {
-                              callApi(
-                                perentId: widget.categoryId?.toString(),
-                                categoryLavel: widget.lavel?.toString(),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                      context: context,
-                    );
-                  },
-                  itemBuilder: (context) {
-                    return List.generate(
-                      catTypeList.length,
-                      (index) {
-                        return PopupMenuItem(
-                          value: convertStringToCategoryType(
-                              (catTypeList[index].typeName ?? "")
-                                  .toUpperCase()),
-                          child: ListTile(
-                            leading: const Icon(Icons.folder),
-                            title: MyRegularText(
-                                align: TextAlign.start,
-                                label: catTypeList[index].typeName ?? ""),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                );
-              },
-            )
+            if (fileTypeENUM == CategoryTypeENUM.folder) ...[
+              fileTypeData.when(
+                context: context,
+                successBuilder: (catTypeList) {
+                  return PopupMenuButton<CategoryTypeENUM>(
+                    tooltip: addStr,
+                    icon: MyThemeButton(
+                      padding: 10.horizontal,
+                      leadingIcon: const Icon(
+                        Icons.add,
+                        color: primaryIconColor,
+                      ),
+                      buttonText: "",
+                    ),
+                    onSelected: (value) {
+                      // CategoryData? data;
+                      // if (categoryData.data != null &&
+                      //     categoryData.data?.isNotEmpty == true) {
+                      //   data = categoryData.data?.firstWhere((element) =>
+                      //       element.parentId.toString() == widget.categoryId);
+                      // }
+                      showAdaptiveDialog(
+                        builder: (context) {
+                          return Center(
+                            child: AddCategoryDiloag(
+                              parentId: widget.categoryId?.toString(),
+                              fileTypeModel: catTypeList.firstWhere((element) =>
+                                  element.typeName?.toUpperCase() ==
+                                  value.categoryType),
+                              categoryType: value,
+                              onUpdated: (catData) {
+                                callApi(
+                                  perentId: widget.categoryId?.toString(),
+                                  categoryLavel: widget.lavel?.toString(),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                        context: context,
+                      );
+                    },
+                    itemBuilder: (context) {
+                      return List.generate(
+                        catTypeList.length,
+                        (index) {
+                          return PopupMenuItem(
+                            value: convertStringToCategoryType(
+                                (catTypeList[index].typeName ?? "")
+                                    .toUpperCase()),
+                            child: ListTile(
+                              leading: const Icon(Icons.folder),
+                              title: MyRegularText(
+                                  align: TextAlign.start,
+                                  label: catTypeList[index].typeName ?? ""),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              )
+            ]
           ],
         ),
         if (!isPerentCategory) ...[
@@ -378,7 +385,7 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
               _categoryIcon(categoryData),
               MyRegularText(label: categoryData.name ?? ""),
               _detailsChips(categoryData)
-            ],
+            ].addSpaceEveryWidget(space: 5.space),
           )
         ],
       ),
@@ -477,10 +484,8 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
                   appWidth: 1.dp,
                 )
               ] else ...[
-                Icon(
-                  Icons.quiz,
-                  size: 1.dp,
-                )
+                Image.asset(Assets.assetsIconsExam,
+                    height: 1.dp, width: 1.dp, fit: BoxFit.cover)
               ],
               NkHtmlViewerWEB(
                 htmlContent: quizzzzData.title ?? "",
@@ -499,65 +504,70 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
     CategoryTypeENUM fileTypeENUM = convertStringToCategoryType(
         (fileTypeViewData?.typeName ?? "").toUpperCase());
 
+    double iconSize = context.isMobile || context.isTablet ? 60 : 1.dp;
+
     switch (fileTypeENUM) {
       case CategoryTypeENUM.folder:
         if (categoryData.image != null) {
           return MyNetworkImage(
             imageUrl: categoryData.image ?? "",
-            appHeight: 1.dp,
-            appWidth: 1.dp,
+            appHeight: iconSize,
+            appWidth: iconSize,
           );
         } else {
-          return Icon(
-            Icons.folder,
-            size: 1.dp,
-          );
+          // return Icon(
+          //   Icons.folder,
+          //   size: 1.dp,
+          // );
+          return Image.asset(Assets.assetsIconsOpenFolder,
+              // color: selectionColor,
+              height: iconSize,
+              width: iconSize,
+              fit: BoxFit.cover);
         }
 
       case CategoryTypeENUM.document:
         if (categoryData.image != null) {
           return MyNetworkImage(
             imageUrl: categoryData.image ?? "",
-            appHeight: 1.dp,
-            appWidth: 1.dp,
+            appHeight: iconSize,
+            appWidth: iconSize,
           );
         } else {
-          return Icon(
-            Icons.insert_drive_file,
-            size: 1.dp,
-          );
+          // return Icon(
+          //   Icons.insert_drive_file,
+          //   size: 1.dp,
+          // );
+          return Image.asset(Assets.assetsIconsDoc,
+              height: iconSize, width: iconSize, fit: BoxFit.cover);
         }
       case CategoryTypeENUM.ePublisher:
         if (categoryData.image != null) {
           return MyNetworkImage(
             imageUrl: categoryData.image ?? "",
-            appHeight: 1.dp,
-            appWidth: 1.dp,
+            appHeight: iconSize,
+            appWidth: iconSize,
           );
         } else {
-          return Icon(
-            CupertinoIcons.book_fill,
-            size: 1.dp,
-          );
+          return Image.asset(Assets.assetsIconsEBook,
+              height: iconSize, width: iconSize, fit: BoxFit.cover);
         }
       case CategoryTypeENUM.exam:
         if (categoryData.image != null) {
           return MyNetworkImage(
             imageUrl: categoryData.image ?? "",
-            appHeight: 1.dp,
-            appWidth: 1.dp,
+            appHeight: iconSize,
+            appWidth: iconSize,
           );
         } else {
-          return Icon(
-            Icons.quiz,
-            size: 1.dp,
-          );
+          return Image.asset(Assets.assetsIconsExam,
+              height: iconSize, width: iconSize, fit: BoxFit.cover);
         }
 
       default:
         return Icon(
           Icons.folder,
-          size: 1.dp,
+          size: iconSize,
         );
     }
   }
@@ -571,43 +581,64 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
     );
     return Wrap(
         alignment: WrapAlignment.start,
-        spacing: 5,
-        runSpacing: 0,
+        spacing: 10,
+        runSpacing: 10,
         children: [
           Chip(
             padding: 8.horizontal,
             shape: RoundedRectangleBorder(
+                side: const BorderSide(color: transparent),
                 borderRadius: NkGeneralSize.nkCommonBorderRadius),
             labelPadding: 0.all,
             label: MyRegularText(
               label: categoryTypeViewData?.name ?? "",
               fontSize: NkFontSize.smallFont,
+              color: successPrimary.withOpacity(.8),
             ),
             color: WidgetStatePropertyAll(successPrimary.withOpacity(.2)),
           ),
           Chip(
             padding: 8.horizontal,
             shape: RoundedRectangleBorder(
+                side: const BorderSide(color: transparent),
                 borderRadius: NkGeneralSize.nkCommonBorderRadius),
             labelPadding: 0.all,
             label: MyRegularText(
               label: fileTypeViewData?.typeName ?? "",
               fontSize: NkFontSize.smallFont,
+              color: warningPrimary.withOpacity(.8),
             ),
             color: WidgetStatePropertyAll(warningPrimary.withOpacity(.2)),
           ),
           Chip(
             padding: 8.horizontal,
             shape: RoundedRectangleBorder(
+                side: const BorderSide(color: transparent),
                 borderRadius: NkGeneralSize.nkCommonBorderRadius),
             labelPadding: 0.all,
             label: MyRegularText(
               label: categoryData.status ?? "",
               fontSize: NkFontSize.smallFont,
+              color: _statusColourHandle(categoryData.status ?? "")
+                  .withOpacity(.8),
             ),
-            color: WidgetStatePropertyAll(infoPrimary.withOpacity(.2)),
+            color: WidgetStatePropertyAll(
+                _statusColourHandle(categoryData.status ?? "").withOpacity(.2)),
           ),
         ]);
+  }
+
+  Color _statusColourHandle(String status) {
+    switch (status.toUpperCase()) {
+      case "ACTIVE":
+        return infoPrimary;
+      case "INACTIVE":
+        return grey;
+      case "DELETED":
+        return errorColor;
+      default:
+        return infoPrimary;
+    }
   }
 
   Widget categoryList() {
@@ -619,7 +650,7 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
         successBuilder: (quizzzzList) {
           return ResponsiveGridList(
             minItemWidth: context.isMobile ? context.width : 200,
-            minItemsPerRow: 2,
+            minItemsPerRow: 1,
             maxItemsPerRow: 4,
             children: List.generate(quizzzzList.length, (index) {
               return quizComponent(quizzzzList[index], index);
@@ -634,7 +665,8 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
         CategoryTypeENUM fileType = convertStringToCategoryType(
             (selectedToggleType?.typeName ?? "").toUpperCase());
 
-        if (fileTypeENUM == CategoryTypeENUM.document) {
+        if (fileTypeENUM == CategoryTypeENUM.document ||
+            fileTypeENUM == CategoryTypeENUM.ePublisher) {
           return NkWebDocumentViewer(
             id: "${boardList.firstOrNull?.fileUrl}",
             networkUrl: boardList.firstOrNull?.fileUrl,
@@ -643,23 +675,22 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
         if (fileType == CategoryTypeENUM.folder) {
           return ResponsiveGridList(
             minItemWidth: context.isMobile ? context.width : 200,
-            minItemsPerRow: 2,
+            minItemsPerRow: 1,
             maxItemsPerRow: 4,
             children: List.generate(boardList.length, (index) {
               return boardComponent(boardList[index], index);
             }).toList(),
           );
-        } else if (fileType == CategoryTypeENUM.document) {
+        } else if (fileType == CategoryTypeENUM.document ||
+            fileType == CategoryTypeENUM.ePublisher) {
           return ResponsiveGridList(
             minItemWidth: context.isMobile ? context.width : 200,
-            minItemsPerRow: 2,
+            minItemsPerRow: 1,
             maxItemsPerRow: 4,
             children: List.generate(boardList.length, (index) {
               return boardComponent(boardList[index], index);
             }).toList(),
           );
-        } else if (fileType == CategoryTypeENUM.ePublisher) {
-          return const SizedBox();
         } else {
           return const SizedBox();
         }
@@ -668,43 +699,49 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
   }
 
   Widget _fileTypeTab() {
-    return fileTypeData.when(
-      context: context,
-      successBuilder: (p0) {
-        var selectedIndex =
-            p0.indexWhere((element) => element.id == selectedToggleType?.id);
-        return MyCommnonContainer(
-          isCardView: true,
-          child: NkToggleButton(
-            initialIndex: selectedIndex.isNegative ? 0 : selectedIndex,
-            options: p0.map((e) => e.typeName ?? "").toList()..insert(0, "All"),
-            onToggle: (int val) {
-              if (val == 0) {
-                selectedToggleType = null;
-                callApi(
-                  perentId: widget.categoryId?.toString(),
-                  categoryLavel: widget.lavel?.toString(),
-                );
-              } else {
-                selectedToggleType = p0[val - 1];
+    if (fileTypeENUM == CategoryTypeENUM.folder) {
+      return fileTypeData.when(
+        context: context,
+        successBuilder: (p0) {
+          var selectedIndex =
+              p0.indexWhere((element) => element.id == selectedToggleType?.id);
 
-                if (convertStringToCategoryType(
-                        selectedToggleType?.typeName ?? '') ==
-                    CategoryTypeENUM.exam) {
-                  callQuizApi(categoryId: widget.categoryId!.toString());
-                } else {
+          return MyCommnonContainer(
+            isCardView: true,
+            child: NkToggleButton(
+              initialIndex: selectedIndex.isNegative ? 0 : selectedIndex,
+              options: p0.map((e) => e.typeName ?? "").toList()
+                ..insert(0, "All"),
+              onToggle: (int val) {
+                if (val == 0) {
+                  selectedToggleType = null;
                   callApi(
                     perentId: widget.categoryId?.toString(),
                     categoryLavel: widget.lavel?.toString(),
-                    fileTypeId: p0[val - 1].id?.toString(),
                   );
+                } else {
+                  selectedToggleType = p0[val - 1];
+
+                  if (convertStringToCategoryType(
+                          selectedToggleType?.typeName ?? '') ==
+                      CategoryTypeENUM.exam) {
+                    callQuizApi(categoryId: widget.categoryId!.toString());
+                  } else {
+                    callApi(
+                      perentId: widget.categoryId?.toString(),
+                      categoryLavel: widget.lavel?.toString(),
+                      fileTypeId: p0[val - 1].id?.toString(),
+                    );
+                  }
                 }
-              }
-            },
-          ),
-        );
-      },
-    );
+              },
+            ),
+          );
+        },
+      );
+    } else {
+      return const SizedBox();
+    }
   }
 
   bool get isPerentCategory {
@@ -749,7 +786,7 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
           pathParameters: pathData,
         );
         break;
-      case CategoryTypeENUM.document:
+      case CategoryTypeENUM.document || CategoryTypeENUM.ePublisher:
         Map<String, String> pathData = {
           "id": catData.id.toString(),
           "lavel": ((catData.categoryLevel ?? 0) + 1).toString(),
@@ -796,6 +833,33 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
                     categoryType: fileTypeENUM,
                     onUpdated: (catData) {
                       callApi(
+                        fileTypeId: catData?.fileTypeId!.toString(),
+                        perentId: widget.categoryId?.toString(),
+                        categoryLavel: widget.lavel?.toString(),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+          context: context,
+        );
+        break;
+      case CategoryTypeENUM.document || CategoryTypeENUM.ePublisher:
+        showAdaptiveDialog(
+          builder: (context) {
+            return Center(
+              child: MyScrollView(
+                children: [
+                  AddCategoryDiloag(
+                    categoryDataModel: catData,
+                    parentId: widget.categoryId?.toString(),
+                    fileTypeModel: fileTypeData,
+                    categoryType: fileTypeENUM,
+                    onUpdated: (catData) {
+                      callApi(
+                        fileTypeId: catData?.fileTypeId!.toString(),
                         perentId: widget.categoryId?.toString(),
                         categoryLavel: widget.lavel?.toString(),
                       );

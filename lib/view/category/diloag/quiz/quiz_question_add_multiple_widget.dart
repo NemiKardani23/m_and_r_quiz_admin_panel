@@ -68,7 +68,7 @@ class _QuizQuestionAddMultipleState extends State<QuizQuestionAddMultiple> {
         children: [
           10.space,
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const MyRegularText(
                 label: "Demo Excel Sheet",
@@ -76,8 +76,12 @@ class _QuizQuestionAddMultipleState extends State<QuizQuestionAddMultiple> {
               ),
               10.space,
               MyThemeButton(
+                child: Icon(
+                  Icons.download,
+                  color: primaryIconColor,
+                ),
                 onPressed: _downloadDemoExcelSheet,
-                buttonText: "Download",
+                buttonText: "",
               ),
             ],
           ),
@@ -97,7 +101,7 @@ class _QuizQuestionAddMultipleState extends State<QuizQuestionAddMultiple> {
           if (_selectedFile != null) ...[
             FittedBox(
               child: MyThemeButton(
-                  buttonText: saveStr,
+                  buttonText: uploadStr,
                   isLoadingButton: true,
                   onPressed: () async {
                     await ApiWorker()

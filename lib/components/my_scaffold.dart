@@ -1,4 +1,5 @@
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
+import 'package:m_and_r_quiz_admin_panel/grid_background.dart';
 
 class MyScaffold extends Scaffold {
   final BuildContext context;
@@ -62,11 +63,11 @@ class MyScaffold extends Scaffold {
         top: isTopSafeArea,
         left: isLeftSafeArea,
         right: isRightSafeArea,
-        minimum: minimumPadding,
+        minimum: minimumPadding.copyWith(top: context.isMobile ? 5.h : null),
         child: Column(
           children: [
             if (myAppBar != null) ...[myAppBar!],
-            Flexible(child: myBody),
+            Flexible(child: AnimatedGridBackground(child: myBody)),
           ],
         ));
   }

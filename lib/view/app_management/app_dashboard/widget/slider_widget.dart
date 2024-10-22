@@ -69,7 +69,10 @@ class _SliderWidgetState extends State<_SliderWidget> {
                 AnimatedSmoothIndicator(
                   activeIndex: _current,
                   count: widget.sliderItemList.length,
-                  effect: const ScrollingDotsEffect(),
+                  effect:  ScrollingDotsEffect(
+                    activeDotColor: selectionColor,
+                    dotColor: grey.withOpacity(0.2),
+                  ),
                 ),
                 MyRegularText(
                     label: " ${_current + 1}/ ${widget.sliderItemList.length}"),

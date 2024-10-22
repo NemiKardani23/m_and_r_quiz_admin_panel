@@ -143,4 +143,34 @@ class DecorationUtils {
       ),
     );
   }
+
+   InputDecorationTheme getOutlineInputDecorationTheme() {
+    return InputDecorationTheme(
+      fillColor: textFieldBgColor,
+      filled: true,
+      labelStyle: TextStyle(
+        color: secondaryTextColor,
+        fontSize: NkFontSize.smallFont,
+      ),
+      hintStyle: const TextStyle(
+        color: secondaryTextColor,
+      ),
+      enabledBorder: getOutlineInputDecoration(
+        isEnable: true,
+        enableColor: textFieldBorderColor,
+        borderRadius: NkGeneralSize.nkCommonBorderRadius,
+      ).enabledBorder,
+      focusedBorder: getOutlineInputDecoration(
+        isEnable: true,
+        focusedColor: textFieldBorderColor,
+        borderRadius: NkGeneralSize.nkCommonBorderRadius,
+      ).focusedBorder,
+      errorBorder: getOutlineInputDecoration(
+        isEnable: false,
+      ).errorBorder,
+      focusedErrorBorder: getOutlineInputDecoration(
+        isEnable: false,
+      ).focusedErrorBorder,
+    );
+  }
 }

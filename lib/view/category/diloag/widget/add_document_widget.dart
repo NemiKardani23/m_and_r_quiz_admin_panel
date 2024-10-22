@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:m_and_r_quiz_admin_panel/components/app_bar/my_app_bar.dart';
+import 'package:m_and_r_quiz_admin_panel/components/nk_enable_disable_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/components/nk_image_picker_with_placeholder/nk_image_picker_with_placeholder.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/service/api_worker.dart';
@@ -13,13 +14,14 @@ class AddDocumentDiloag extends StatefulWidget {
   final CategoryData? categoryDataModel;
   final Function(CategoryData? catData)? onUpdated;
   final FileTypeData fileTypeModel;
-  final    String? parentId;
+  final String? parentId;
 
   const AddDocumentDiloag({
     super.key,
     this.categoryDataModel,
     this.onUpdated,
-    required this.fileTypeModel, this.parentId,
+    required this.fileTypeModel,
+    this.parentId,
   });
   @override
   State<AddDocumentDiloag> createState() => _AddDocumentDiloagState();
@@ -53,6 +55,10 @@ class _AddDocumentDiloagState extends State<AddDocumentDiloag> {
       folderTitleController.text = widget.categoryDataModel?.name ?? "";
       folderDescriptionController.text =
           widget.categoryDataModel?.description ?? "";
+
+      selectedCategoryType = CategoryTypeData.fromJson({
+        "id": widget.categoryDataModel?.typeId,
+      });
     }
     super.initState();
   }
@@ -132,13 +138,16 @@ class _AddDocumentDiloagState extends State<AddDocumentDiloag> {
           ),
           MyRegularText(
               label: "${widget.fileTypeModel.typeName} $categoryTypeStr"),
-          CategoryTypeOptionSelectWidget(
-            onValueChanged: (categoryType) {
-              setState(() {
-                selectedCategoryType = categoryType;
-              });
-            },
-            value: selectedCategoryType,
+          NkEnableDisableWidget(
+            isEnable: categoryDataModel == null,
+            child: CategoryTypeOptionSelectWidget(
+              onValueChanged: (categoryType) {
+                setState(() {
+                  selectedCategoryType = categoryType;
+                });
+              },
+              value: selectedCategoryType,
+            ),
           ),
           nkExtraSmallSizedBox,
           MyThemeButton(
@@ -147,22 +156,47 @@ class _AddDocumentDiloagState extends State<AddDocumentDiloag> {
                   ? "$updateStr ${widget.fileTypeModel.typeName}"
                   : "$addStr ${widget.fileTypeModel.typeName}",
               onPressed: () async {
-                  if (onDocPicked == null) {
-                      NKToast.warning(
-                          description:
-                              "Please select ${widget.fileTypeModel.typeName} $fileStr");
-                      return;
-                    }
-                    if (selectedCategoryType == null) {
-                      NKToast.warning(
-                          description:
-                              "Please select ${widget.fileTypeModel.typeName} $categoryTypeStr");
-                      return;
-                    }
+                
                 if (formKey.currentState!.validate()) {
                   if (widget.categoryDataModel != null) {
+                    ApiWorker()
+                        .updateCategory(
+                      fileTypeId: categoryDataModel!.fileTypeId.toString(),
+                      typeId: categoryDataModel!.typeId.toString(),
+                      categoryId: categoryDataModel!.id.toString(),
+                      file: NKMultipart.getMultipartImageBytesNullable(
+                          name: onDocPicked?.$2 ?? "",
+                          imageBytes: onDocPicked?.$1),
+                      categoryImage: NKMultipart.getMultipartImageBytesNullable(
+                          name: onThumbImagePicked?.$2 ?? "",
+                          imageBytes: onThumbImagePicked?.$1),
+                      name: categoryDataModel?.name ?? "",
+                      parentId: categoryDataModel?.parentId.toString(),
+                      description: categoryDataModel?.description ?? "",
+                    )
+                        .then((value) {
+                      if (value != null && value.status == true) {
+                        widget.onUpdated!(widget.categoryDataModel);
+                        NKToast.success(
+                            description:
+                                "${widget.fileTypeModel.typeName} ${SuccessStrings.updatedSuccessfully}");
+                        Navigator.pop(context);
+                      }
+                    });
                   } else {
-                  
+
+                    if (onDocPicked == null) {
+                  NKToast.warning(
+                      description:
+                          "Please select ${widget.fileTypeModel.typeName} $fileStr");
+                  return;
+                }
+                if (selectedCategoryType == null) {
+                  NKToast.warning(
+                      description:
+                          "Please select ${widget.fileTypeModel.typeName} $categoryTypeStr");
+                  return;
+                }
                     await ApiWorker()
                         .addCategory(
                       categoryImage: NKMultipart.getMultipartImageBytesNullable(
@@ -171,7 +205,7 @@ class _AddDocumentDiloagState extends State<AddDocumentDiloag> {
                       file: NKMultipart.getMultipartImageBytesNullable(
                           name: onDocPicked?.$2 ?? "",
                           imageBytes: onDocPicked?.$1),
-                        name: folderTitleController.text,
+                      name: folderTitleController.text,
                       parentId: widget.parentId,
                       typeId: selectedCategoryType!.id.toString(),
                       fileTypeId: widget.fileTypeModel.id.toString(),

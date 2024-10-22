@@ -8,7 +8,6 @@ import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionhelper.dar
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../export/___app_file_exporter.dart';
-import 'dart:typed_data';
 import 'dart:html' as HTML;
 
 final logger = PrettyDioLogger(

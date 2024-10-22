@@ -41,7 +41,7 @@ class _FileTypeManagementScreenState extends State<FileTypeManagementScreen>
           });
         } else {
           setState(() {
-             TempDataStore.tempFileTypeList.value = null;
+            TempDataStore.tempFileTypeList.value = null;
             fileTypeListData
                 .onEmpty(value?.message ?? ErrorStrings.noDataFound);
           });
@@ -50,7 +50,7 @@ class _FileTypeManagementScreenState extends State<FileTypeManagementScreen>
     ).catchError(
       (e) {
         setState(() {
-           TempDataStore.tempFileTypeList.value = null;
+          TempDataStore.tempFileTypeList.value = null;
           fileTypeListData.onError(ErrorStrings.oopsSomethingWentWrong);
         });
       },
@@ -74,9 +74,9 @@ class _FileTypeManagementScreenState extends State<FileTypeManagementScreen>
                 padding: 10.horizontal,
                 leadingIcon: const Icon(
                   Icons.add,
-                  color: secondaryIconColor,
+                  color: primaryIconColor,
                 ),
-                buttonText: "$addStr $fileTypeStr",
+                buttonText: "",
                 onPressed: () {
                   showAdaptiveDialog(
                       context: context,
@@ -102,22 +102,9 @@ class _FileTypeManagementScreenState extends State<FileTypeManagementScreen>
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  MyRegularText(
-                    align: TextAlign.start,
-                    label: fileType.typeName ?? "",
-                  ),
-                  MyRegularText(
-                    label: fileType.createdAt?.toIso8601String() ?? "",
-                    fontSize: NkFontSize.extraSmallFont,
-                    color: secondaryTextColor,
-                  )
-                ],
-              ),
+            MyRegularText(
+              align: TextAlign.start,
+              label: fileType.typeName ?? "",
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -168,6 +155,8 @@ class _FileTypeManagementScreenState extends State<FileTypeManagementScreen>
                   ],
                 ),
                 CupertinoSlidingSegmentedControl<String>(
+                  backgroundColor: primaryColor,
+                  thumbColor: selectionColor,
                   onValueChanged: (value) async {
                     var res = await ApiWorker()
                         .changeFileTypeStatus(

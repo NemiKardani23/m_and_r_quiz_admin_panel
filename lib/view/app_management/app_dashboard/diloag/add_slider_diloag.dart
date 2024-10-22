@@ -1,14 +1,15 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:m_and_r_quiz_admin_panel/components/app_bar/my_app_bar.dart';
 import 'package:m_and_r_quiz_admin_panel/components/nk_image_picker_with_placeholder/nk_image_picker_with_placeholder.dart';
-import 'package:m_and_r_quiz_admin_panel/components/widget/media_type_option_select_widget.dart';
-import 'package:m_and_r_quiz_admin_panel/components/widget/slide_mode_option_select_widget.dart';
+
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
-import 'package:m_and_r_quiz_admin_panel/view/app_management/model/slider_list_model.dart';
+import 'package:m_and_r_quiz_admin_panel/service/api_worker.dart';
+import 'package:m_and_r_quiz_admin_panel/utills/image_upload/nk_multipart.dart';
+import 'package:m_and_r_quiz_admin_panel/view/app_management/app_dashboard/model/banner_response.dart';
 
 class AddSliderDiloag extends StatefulWidget {
-  final SliderListModel? sliderListModel;
-  final Function(SliderListModel? updatedSlider)? onUpdate;
+  final BannerData? sliderListModel;
+  final Function(BannerData? updatedSlider)? onUpdate;
   const AddSliderDiloag({super.key, this.sliderListModel, this.onUpdate});
 
   @override
@@ -16,14 +17,12 @@ class AddSliderDiloag extends StatefulWidget {
 }
 
 class _AddSliderDiloagState extends State<AddSliderDiloag> {
-  String? selectedMediaType = "Image";
-  String? selectedModeType = "Normal";
   (
     Uint8List? imageBytes,
     String? imageName,
   )? onImagePicked;
 
-  SliderListModel? _sliderListModel;
+  BannerData? _sliderListModel;
 
   @override
   void initState() {
@@ -32,11 +31,7 @@ class _AddSliderDiloagState extends State<AddSliderDiloag> {
     super.initState();
   }
 
-  get loadModelData {
-    selectedMediaType =
-        _sliderListModel?.sliderContentType ?? selectedMediaType;
-    selectedModeType = _sliderListModel?.sliderMode ?? selectedModeType;
-  }
+  get loadModelData {}
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +40,8 @@ class _AddSliderDiloagState extends State<AddSliderDiloag> {
       titlePadding: 16.horizontal,
       title: MyAppBar(
         heading: _sliderListModel != null
-            ? "$editStr $sliderStr"
-            : "$addStr $sliderStr",
+            ? "$editStr $bannerStr"
+            : "$addStr $bannerStr",
       ),
       content: ConstrainedBox(
         constraints: BoxConstraints(
@@ -64,102 +59,78 @@ class _AddSliderDiloagState extends State<AddSliderDiloag> {
         Center(
           child: NkPickerWithPlaceHolder(
             pickType: FileType.any,
-            imageUrl: _sliderListModel?.image ?? "",
-            fileType: selectedMediaType?.toLowerCase() ?? "",
+            imageUrl: _sliderListModel?.imageUrl ?? "",
+            fileType: "image",
             onFilePicked: (imageBytes, imageName) {
               onImagePicked = (imageBytes, imageName);
             },
           ),
         ),
-        _selectMediaType(context),
-        _selectMode(context),
         MyThemeButton(
             isLoadingButton: true,
             buttonText: _sliderListModel != null
-                ? "$updateStr $sliderStr"
-                : "$addStr $sliderStr",
+                ? "$updateStr $bannerStr"
+                : "$addStr $bannerStr",
             onPressed: () async {
               if (widget.sliderListModel != null) {
-                // await FirebaseEditFun().editAppDashboardSlider(
-                //     sliderData: _sliderListModel!,
-                //     image: onImagePicked?.$1,
-                //     filename: onImagePicked?.$2).then((data) {
-                //         if (data != null) {
-                //   NKToast.success(
-                //       title:
-                //           "$sliderStr ${SuccessStrings.updatedSuccessfully}");
-                //               Navigator.pop(context);
-                //   widget.onUpdate?.call(data);
-                // }
-                //     },);
-              
+                if (onImagePicked == null) {
+                  NKToast.error(
+                      title: "$bannerStr ${ErrorStrings.selectImage}");
+                  return;
+                } else {
+                  ApiWorker()
+                      .updateBanner(
+                          image: NKMultipart.getMultipartFileBytes(
+                              fileBytes: onImagePicked!.$1!,
+                              name: onImagePicked!.$2!),
+                          id: widget.sliderListModel!.id!.toString())
+                      .then((data) {
+                    if (data != null) {
+                      NKToast.success(
+                          title:
+                              "$bannerStr ${SuccessStrings.updatedSuccessfully}");
+                      widget.onUpdate?.call(data);
+                      Navigator.pop(context);
+                    }
+                  });
+                }
               } else {
                 if (onImagePicked == null) {
                   NKToast.error(
-                      title: "$sliderStr ${ErrorStrings.selectImage}");
+                      title: "$bannerStr ${ErrorStrings.selectImage}");
                   return;
+                } else {
+                  ApiWorker()
+                      .addBanner(
+                          image: NKMultipart.getMultipartFileBytes(
+                              fileBytes: onImagePicked!.$1!,
+                              name: onImagePicked!.$2!))
+                      .then((data) {
+                    if (data != null && data.status == true) {
+                      NKToast.success(
+                          title:
+                              "$bannerStr ${SuccessStrings.addedSuccessfully}");
+
+                      widget.onUpdate?.call(null);
+                      Navigator.pop(context);
+                    }
+                  });
                 }
-                SliderListModel sliderData = SliderListModel(
-                  sliderContentType: selectedMediaType,
-                  sliderMode: selectedModeType,
-                );
-              //  await FirebaseAddFun().addAppDashboardSlider(
-              //       sliderData: sliderData,
-              //       image: onImagePicked!.$1,
-              //       filename: onImagePicked!.$2).then((data) {
-              //             if (data != null) {
-              //     NKToast.success(
-              //         title: "$sliderStr ${SuccessStrings.addedSuccessfully}");
-              //             Navigator.pop(context);
-              //     widget.onUpdate?.call(data);
-              //   }
-              //       },);
-            
+
+                //  await FirebaseAddFun().addAppDashboardSlider(
+                //       sliderData: sliderData,
+                //       image: onImagePicked!.$1,
+                //       filename: onImagePicked!.$2).then((data) {
+                //             if (data != null) {
+                //     NKToast.success(
+                //         title: "$sliderStr ${SuccessStrings.addedSuccessfully}");
+                //             Navigator.pop(context);
+                //     widget.onUpdate?.call(data);
+                //   }
+                //       },);
               }
             })
       ].addSpaceEveryWidget(space: nkSmallSizedBox),
-    );
-  }
-
-  Widget _selectMediaType(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const MyRegularText(label: "$selectStr $mediaTypeStr"),
-        nkExtraSmallSizedBox,
-        MediaTypeOptionSelectWidget(
-          value: selectedMediaType,
-          onValueChanged: (p0) {
-            if (_sliderListModel != null) {
-              _sliderListModel!.sliderContentType = p0;
-            }
-            setState(() {
-              selectedMediaType = p0;
-            });
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _selectMode(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const MyRegularText(label: "$selectStr $modeTypeStr"),
-        nkExtraSmallSizedBox,
-        SlideOptionSelectWidget(
-          value: selectedModeType,
-          onValueChanged: (p0) {
-            if (_sliderListModel != null) {
-              _sliderListModel!.sliderMode = p0;
-            }
-            setState(() {
-              selectedModeType = p0;
-            });
-          },
-        ),
-      ],
     );
   }
 }

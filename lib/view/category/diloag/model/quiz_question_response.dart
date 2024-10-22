@@ -123,7 +123,7 @@ class QuizQuestionData {
 
   factory QuizQuestionData.fromJson(Map<String, dynamic> json) {
     return QuizQuestionData(
-      questionId: json["question_id"],
+      questionId: int.tryParse(json["question_id"].toString()),
       sequence: json["sequence"],
       testId: json["test_id"]?.toString(),
       questionTypeId: json["question_type_id"].toString(),
@@ -131,7 +131,7 @@ class QuizQuestionData {
       optionsList: json["options_list"] == null
           ? []
           : List<String>.from(json["options_list"]!.map((x) => x)),
-      marks: json["marks"],
+      marks: json["marks"].toString(),
       duration: json["duration"].toString(),
       correctAnswer: json["correct_answer"],
       answerDescription: json["answer_description"],

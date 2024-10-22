@@ -2,7 +2,7 @@
 library;
 
 //Login
-const String appNameStr = "M&REducation Quiz Admin";
+const String appNameStr = "Study Verse Admin";
 const String welcomeStr = "Welcome";
 const String toStr = "to";
 const String loginStr = "Login";
@@ -14,10 +14,13 @@ const String passwordStr = "Password";
 /// HOME
 const String totalStudentStr = "Total Students";
 const String totalQuizStr = "Total Quiz";
+const String logoutStr = "Logout";
+const String areYouSureYouWantToLogoutStr = "Are you sure you want to logout?";
 
 /// BASIC
 const String basicStr = "Basic";
 const String addStr = "Add";
+const String uploadStr = "Upload";
 const String editStr = "Edit";
 const String cancleStr = "Cancle";
 const String updateStr = "Update";
@@ -66,8 +69,8 @@ const String scrollUpStr = "Scroll Up";
 
 // App Dashboard
 const String appDashboardStr = "App Dashboard";
-const String appDashboardSliderStr = "App Dashboard Slider";
-const String sliderStr = "Slider";
+const String appDashboardSliderStr = "App Banner";
+const String bannerStr = "Banner";
 const String mediaTypeStr = "Media Type";
 const String modeTypeStr = "Mode Type";
 
@@ -76,7 +79,7 @@ const String myLearningStr = "My Learning";
 const String categoryStr = "Category";
 
 // Utils Management
-const String utilsManagementStr = "Utils Management";
+const String utilsStr = "Utils";
 const String fileTypeStr = "File Type";
 const String managementStr = "Management";
 const String categoryTypeStr = "Category Type";

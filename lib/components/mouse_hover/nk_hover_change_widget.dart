@@ -30,4 +30,18 @@ class NkHoverChangeWidget {
       sizeCurve: Curves.easeInOutCubicEmphasized,
     );
   }
+
+  static Widget hoverWidget({
+    required final Widget child,
+    required final Widget hoverChild,
+    AlignmentGeometry alignmentry = Alignment.center,
+  }) {
+    return HoverWidget(
+      onHover: (event) {
+        
+      },
+      hoverChild: hoverChild,
+      child: child,
+    );
+  }
 }

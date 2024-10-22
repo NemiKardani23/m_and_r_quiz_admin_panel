@@ -66,7 +66,7 @@ class MyDeleteDialog extends StatelessWidget {
         buttonText: closeStr,
         color: transparent,
         fontColor: primaryTextColor,
-        shape: const RoundedRectangleBorder(
+        shape:  RoundedRectangleBorder(
             side: BorderSide(
               color: secondaryColor,
               width: 1,

@@ -10,7 +10,7 @@ class NkGeneralSize {
   static const BorderRadius nkCommonSmoothBorderRadius =
       BorderRadius.all(Radius.circular(8));
 
-  static const double nkCommoElevation = 10;
+  static const double nkCommoElevation = 0;
 
   static const FontWeight nkMediumBoldFontWeight = FontWeight.w600;
 

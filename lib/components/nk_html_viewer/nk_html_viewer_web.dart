@@ -19,6 +19,7 @@ class NkHtmlViewerWEB extends StatelessWidget {
   Widget build(BuildContext context) {
     return HtmlWidget(
       htmlContent,
+      textStyle: Theme.of(context).textTheme.bodyMedium,
       factoryBuilder: () => NkHtmlViewerWEBFactory(), // Custom factory for rendering
       customWidgetBuilder: (element) {
         if (element.localName == 'img' &&

@@ -20,10 +20,10 @@ class NkTheme {
       primaryColorLight: primaryColor,
       primaryColorDark: primaryColor,
       cardTheme: CardTheme(
-          surfaceTintColor: primaryContainerBGColor,
+          surfaceTintColor: primaryContainerColor,
           margin: 10.all,
           shadowColor: shadowColor,
-          color: primaryContainerBGColor,
+          color: primaryContainerColor,
           elevation: NkGeneralSize.nkCommoElevation,
           shape: RoundedRectangleBorder(
             borderRadius: NkGeneralSize.nkCommonBorderRadius,
@@ -60,7 +60,7 @@ class NkTheme {
           clipBehavior: Clip.antiAlias,
           tilePadding: EdgeInsets.zero,
           childrenPadding: nkSmallPadding),
-      colorScheme: const ColorScheme.light(
+      colorScheme:  const ColorScheme.light(
         primary: primaryColor,
         error: errorColor,
         onError: errorColor,
@@ -100,7 +100,7 @@ class NkTheme {
         textStyle: WidgetStatePropertyAll(TextStyle(
             color: primaryTextColor, fontSize: NkFontSize.regularFont)),
       )),
-      menuTheme: const MenuThemeData(
+      menuTheme:  const MenuThemeData(
           style: MenuStyle(
               shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                   borderRadius: NkGeneralSize.nkCommonSmoothBorderRadius)),
@@ -109,7 +109,7 @@ class NkTheme {
               elevation: WidgetStatePropertyAll(10),
               mouseCursor: WidgetStatePropertyAll(MouseCursor.defer))),
       dropdownMenuTheme:
-          DropdownMenuThemeData(menuStyle: const MenuStyle(backgroundColor: WidgetStatePropertyAll(primaryColor)), textStyle: TextStyle(color: primaryTextColor, fontSize: NkFontSize.regularFont), inputDecorationTheme: InputDecorationTheme(suffixIconColor: primaryIconColor, focusColor: DecorationUtils(context).getUnderlineInputDecoration().focusColor, focusedBorder: DecorationUtils(context).getUnderlineInputDecoration().focusedBorder, counterStyle: DecorationUtils(context).getUnderlineInputDecoration().counterStyle, contentPadding: DecorationUtils(context).getUnderlineInputDecoration().contentPadding, errorBorder: DecorationUtils(context).getUnderlineInputDecoration().errorBorder, enabledBorder: DecorationUtils(context).getUnderlineInputDecoration().enabledBorder, disabledBorder: DecorationUtils(context).getUnderlineInputDecoration().disabledBorder, errorStyle: DecorationUtils(context).getUnderlineInputDecoration().errorStyle, hintStyle: DecorationUtils(context).getUnderlineInputDecoration().hintStyle, errorMaxLines: DecorationUtils(context).getUnderlineInputDecoration().errorMaxLines, fillColor: DecorationUtils(context).getUnderlineInputDecoration().fillColor, focusedErrorBorder: DecorationUtils(context).getUnderlineInputDecoration().focusedErrorBorder, border: DecorationUtils(context).getUnderlineInputDecoration().border)),
+          DropdownMenuThemeData(menuStyle:  const MenuStyle(backgroundColor: WidgetStatePropertyAll(primaryColor)), textStyle: TextStyle(color: primaryTextColor, fontSize: NkFontSize.regularFont), inputDecorationTheme: InputDecorationTheme(suffixIconColor: primaryIconColor, focusColor: DecorationUtils(context).getUnderlineInputDecoration().focusColor, focusedBorder: DecorationUtils(context).getUnderlineInputDecoration().focusedBorder, counterStyle: DecorationUtils(context).getUnderlineInputDecoration().counterStyle, contentPadding: DecorationUtils(context).getUnderlineInputDecoration().contentPadding, errorBorder: DecorationUtils(context).getUnderlineInputDecoration().errorBorder, enabledBorder: DecorationUtils(context).getUnderlineInputDecoration().enabledBorder, disabledBorder: DecorationUtils(context).getUnderlineInputDecoration().disabledBorder, errorStyle: DecorationUtils(context).getUnderlineInputDecoration().errorStyle, hintStyle: DecorationUtils(context).getUnderlineInputDecoration().hintStyle, errorMaxLines: DecorationUtils(context).getUnderlineInputDecoration().errorMaxLines, fillColor: DecorationUtils(context).getUnderlineInputDecoration().fillColor, focusedErrorBorder: DecorationUtils(context).getUnderlineInputDecoration().focusedErrorBorder, border: DecorationUtils(context).getUnderlineInputDecoration().border)),
       searchBarTheme: searchBarThemeData(context),
       tabBarTheme: tabBarTheme,
       dialogTheme: dialogTheme,
@@ -127,10 +127,10 @@ class NkTheme {
       datePickerTheme: datePickerThemeData(context),
       scrollbarTheme: scrollbarTheme,
       checkboxTheme: CheckboxThemeData(
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           side: BorderSide(color: primaryButtonColor),
         ),
-        side: BorderSide(color: primaryButtonColor),
+        side: const BorderSide(color: primaryButtonColor),
         fillColor: WidgetStateProperty.resolveWith<Color?>((states) {
           if (states.contains(WidgetState.selected)) {
             return primaryButtonColor;
@@ -165,7 +165,7 @@ class NkTheme {
         padding: WidgetStatePropertyAll(10.all),
       );
 
-  static AppBarTheme get appBarTheme => const AppBarTheme(
+  static AppBarTheme get appBarTheme =>  const AppBarTheme(
       color: backgroundColor,
       elevation: 0,
       systemOverlayStyle: SystemUiOverlayStyle(
@@ -180,7 +180,7 @@ class NkTheme {
       titleTextStyle: TextStyle());
 
   static get systemChromeStyle => {
-        SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        SystemChrome.setSystemUIOverlayStyle( const SystemUiOverlayStyle(
           statusBarColor: backgroundColor,
           statusBarIconBrightness: Brightness.dark,
           statusBarBrightness: Brightness.light,
@@ -194,7 +194,7 @@ class NkTheme {
 
   static DatePickerThemeData datePickerThemeData(BuildContext context) =>
       DatePickerThemeData(
-          todayBackgroundColor: const WidgetStatePropertyAll(secondaryColor),
+          todayBackgroundColor:  const WidgetStatePropertyAll(secondaryColor),
           todayBorder:
               WidgetStateBorderSide.resolveWith((states) => const BorderSide(
                     color: errorColor,

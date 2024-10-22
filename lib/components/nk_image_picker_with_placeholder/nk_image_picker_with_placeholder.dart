@@ -92,9 +92,15 @@ class _NkPickerWithPlaceHolderState extends State<NkPickerWithPlaceHolder> {
         );
       } else {
         if (widget.fileType == "image") {
-          return Icon(Icons.image, size: context.height * 0.2);
+          return Image.asset(
+            Assets.assetsIconsGallery,
+            height: context.height * 0.2,
+            width: context.height * 0.2,);
         } else {
-          return Icon(Icons.insert_drive_file, size: context.height * 0.2);
+          return Image.asset(
+            Assets.assetsIconsUploadFile,
+            height: context.height * 0.2,
+            width: context.height * 0.2,);
         }
       }
     } else {
@@ -117,7 +123,10 @@ class _NkPickerWithPlaceHolderState extends State<NkPickerWithPlaceHolder> {
         );
       } else {
         // For other document types
-        return Icon(Icons.insert_drive_file, size: context.height * 0.2);
+        return Image.asset(
+            Assets.assetsIconsUploadFile,
+            height: context.height * 0.2,
+            width: context.height * 0.2,);
       }
     }
   }

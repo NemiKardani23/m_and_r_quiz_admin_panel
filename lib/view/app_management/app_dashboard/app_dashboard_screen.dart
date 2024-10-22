@@ -1,8 +1,10 @@
-
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:image_network/image_network.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
+import 'package:m_and_r_quiz_admin_panel/service/api_worker.dart';
 import 'package:m_and_r_quiz_admin_panel/view/app_management/app_dashboard/diloag/add_slider_diloag.dart';
-import 'package:m_and_r_quiz_admin_panel/view/app_management/model/slider_list_model.dart';
+import 'package:m_and_r_quiz_admin_panel/view/app_management/app_dashboard/model/banner_response.dart';
+
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 part '../app_dashboard/widget/slider_widget.dart';
 
@@ -14,7 +16,7 @@ class AppDashboardScreen extends StatefulWidget {
 }
 
 class _AppDashboardScreenState extends State<AppDashboardScreen> {
-  DataHandler<List<SliderListModel>> sliderListData = DataHandler();
+  DataHandler<List<BannerData>> sliderListData = DataHandler();
 
   int _hoverIndex = -1;
 
@@ -26,25 +28,21 @@ class _AppDashboardScreenState extends State<AppDashboardScreen> {
 
   get sliderData {
     sliderListData.startLoading();
-    // FirebaseGetFun().getAppDashboardSliderList().then(
-    //   (value) {
-    //     if (value != null && value.isNotEmpty) {
-    //       setState(() {
-    //         sliderListData.onSuccess(value);
-    //       });
-    //     } else {
-    //       setState(() {
-    //         sliderListData.onEmpty(ErrorStrings.noDataFound);
-    //       });
-    //     }
-    //   },
-    // ).catchError(
-    //   (error) {
-    //     setState(() {
-    //       sliderListData.onError(ErrorStrings.oopsSomethingWentWrong);
-    //     });
-    //   },
-    // );
+    ApiWorker().getBannerList().then(
+      (value) {
+        if (value != null && value.data.isNotEmpty && value.status == true) {
+          setState(() {
+            sliderListData.onSuccess(value.data);
+          });
+        } else {
+          sliderListData.onEmpty(value?.message ?? ErrorStrings.noDataFound);
+        }
+      },
+    ).catchError(
+      (e) {
+        sliderListData.onError(ErrorStrings.oopsSomethingWentWrong);
+      },
+    );
   }
 
   @override
@@ -78,11 +76,7 @@ class _AppDashboardScreenState extends State<AppDashboardScreen> {
             FittedBox(
               child: MyThemeButton(
                   padding: 10.horizontal,
-                  leadingIcon: const Icon(
-                    Icons.add,
-                    color: secondaryIconColor,
-                  ),
-                  buttonText: "$addStr $sliderStr",
+                  buttonText: "$addStr $bannerStr",
                   onPressed: () {
                     showAdaptiveDialog(
                         context: context,
@@ -100,7 +94,11 @@ class _AppDashboardScreenState extends State<AppDashboardScreen> {
                         }).then(
                       (value) => setState(() {}),
                     );
-                  }),
+                  },
+                  child: const Icon(
+                    Icons.add,
+                    color: primaryIconColor,
+                  )),
             ),
           ],
         ),
@@ -111,9 +109,10 @@ class _AppDashboardScreenState extends State<AppDashboardScreen> {
             successBuilder: (p0) {
               return List.generate(p0.length, (index) {
                 var data = p0[index];
-                return Card(
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                return MyCommnonContainer(
+                  // clipBehavior: Clip.antiAliasWithSaveLayer,
                   margin: 16.all.copyWith(left: 32, right: 32),
+                  image: DecorationImage(image: NetworkImage(data.imageUrl!)),
                   child: MouseRegion(
                     onEnter: (event) {
                       setState(() {
@@ -127,14 +126,10 @@ class _AppDashboardScreenState extends State<AppDashboardScreen> {
                     },
                     child: Stack(
                       children: [
-                        Positioned.fill(
-                          child: _SliderWidget.sliderImageWidgetBuilder(context,
-                              imageUrl: data.image ?? ""),
-                        ),
                         if (_hoverIndex == index) ...[
                           Positioned.fill(
                             child: Container(
-                              color: secondaryColor.withOpacity(0.5),
+                              color: secondaryColor.withOpacity(0.2),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
@@ -146,7 +141,7 @@ class _AppDashboardScreenState extends State<AppDashboardScreen> {
                                             builder: (builder) {
                                               return MyDeleteDialog(
                                                 appBarTitle:
-                                                    "$deleteStr $sliderStr",
+                                                    "$deleteStr $bannerStr",
                                                 onPressed: () async {
                                                   // await FirebaseDeleteFun()
                                                   //     .deleteAppDashboardSlider(
@@ -194,7 +189,7 @@ class _AppDashboardScreenState extends State<AppDashboardScreen> {
                                       },
                                       icon: const Icon(
                                         Icons.edit,
-                                        color: secondaryIconColor,
+                                        color: primaryIconColor,
                                       )),
                                 ],
                               ),

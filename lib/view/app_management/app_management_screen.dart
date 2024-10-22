@@ -1,6 +1,5 @@
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/view/app_management/app_dashboard/app_dashboard_screen.dart';
-import 'package:m_and_r_quiz_admin_panel/view/app_management/app_my_learning/app_my_learning_screen.dart';
 
 int _selectedIndex = 0;
 
@@ -18,7 +17,7 @@ class _AppManagementScreenState extends State<AppManagementScreen>
   @override
   void initState() {
     _tabController =
-        TabController(length: 2, vsync: this, initialIndex: _selectedIndex);
+        TabController(length: 1, vsync: this, initialIndex: _selectedIndex);
     _tabController.addListener(() {
       _selectedIndex = _tabController.index;
     });
@@ -43,7 +42,9 @@ class _AppManagementScreenState extends State<AppManagementScreen>
           child: TabBarView(
               physics: const NeverScrollableScrollPhysics(),
               controller: _tabController,
-              children: const [AppDashboardScreen(), AppMyLearningScreen()]),
+              children: const [
+                AppDashboardScreen(),
+              ]),
         )
       ],
     );
@@ -53,9 +54,6 @@ class _AppManagementScreenState extends State<AppManagementScreen>
     return TabBar(controller: _tabController, tabs: const [
       Tab(
         text: appDashboardStr,
-      ),
-      Tab(
-        text: myLearningStr,
       ),
     ]);
   }

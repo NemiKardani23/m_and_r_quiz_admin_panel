@@ -52,6 +52,12 @@ export 'package:go_router/go_router.dart';
 // Network Image
 export  'package:m_and_r_quiz_admin_panel/components/my_network_image.dart';
 
+// Lottie
+export 'package:lottie/lottie.dart';
+
+// Assets
+export 'package:m_and_r_quiz_admin_panel/genrated/assets.dart';
+
 
 //----------------------------------- Component Export -----------------------------------
 

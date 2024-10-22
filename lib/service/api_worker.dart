@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:m_and_r_quiz_admin_panel/common_model/global_crud_response.dart';
+import 'package:m_and_r_quiz_admin_panel/common_model/image_upload_response.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/local_storage/session/sessionhelper.dart';
 import 'package:m_and_r_quiz_admin_panel/service/dio_client.dart';
+import 'package:m_and_r_quiz_admin_panel/view/app_management/app_dashboard/model/banner_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/auth/model/refresh_token_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/question_type_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/quiz_create_response.dart';
@@ -13,6 +15,7 @@ import 'package:m_and_r_quiz_admin_panel/view/utills_management/file_type_manage
 
 class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
   DioClient get dioClient => getInstance();
+
   //Todo: AUTH
 
   Future<UserDetails?> loginAdmin({
@@ -41,6 +44,29 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
     }
   }
 
+  Future<GlobalCrudResponse?> logout() async {
+    final String sendingUrl = logoutAPI;
+    var data = FormData.fromMap({
+      'session_id': SessionHelper.loginResponse?.sessionId,
+      'device_id': (await NkCommonFunction.webBrowserInfo).userAgent,
+      'access_key': $ApiAccessKey,
+    });
+
+    var response = await postByCustom(
+      sendingUrl,
+      data: data,
+      options: Options(
+        headers: authHeader,
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      return GlobalCrudResponse.fromJson(response.data!);
+    } else {
+      return null;
+    }
+  }
+
   Future<RefreshTokenResponse?> refreshToken() async {
     final String sendingUrl = refreshTokenAPI;
 
@@ -60,6 +86,91 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
       );
       SessionHelper.instance.setLoginData(SessionHelper.loginResponse!);
       return data;
+    } else {
+      return null;
+    }
+  }
+
+  // Todo: Banner
+
+  Future<BannerResponse?> getBannerList() async {
+    final String sendingUrl = bannerListAPI;
+    var sendingData = {
+      'access_key': $ApiAccessKey,
+    };
+    var response = await getByCustom(
+      sendingUrl,
+      queryParameters: sendingData,
+      options: Options(
+        headers: authHeader,
+      ),
+    );
+
+    if (response.statusCode == 200 && response.data != null) {
+      return BannerResponse.fromJson(response.data!);
+    } else {
+      return null;
+    }
+  }
+
+  Future<GlobalCrudResponse?> addBanner({
+    required MultipartFile image,
+  }) async {
+    final String sendingUrl = bannerAddAPI;
+    var data = FormData.fromMap({
+      'access_key': $ApiAccessKey,
+      'banner_image': image,
+    });
+    var response = await postByCustom(
+      sendingUrl,
+      data: data,
+      options: Options(
+        headers: authHeader,
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      return GlobalCrudResponse.fromJson(response.data!);
+    } else {
+      return null;
+    }
+  }
+
+  Future<BannerData?> updateBanner({
+    required MultipartFile image,
+    required String id,
+  }) async {
+    final String sendingUrl = bannerUpdateAPI;
+    var data = FormData.fromMap(
+        {'access_key': $ApiAccessKey, 'banner_image': image, 'banner_id': id});
+    var response = await postByCustom(
+      sendingUrl,
+      data: data,
+      options: Options(
+        headers: authHeader,
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      return BannerData.fromJson(response.data["data"]!);
+    } else {
+      return null;
+    }
+  }
+
+  Future<GlobalCrudResponse?> deleteBanner({required String id}) async {
+    final String sendingUrl = bannerDeleteAPI;
+    var data = FormData.fromMap({'access_key': $ApiAccessKey, 'banner_id': id});
+    var response = await postByCustom(
+      sendingUrl,
+      data: data,
+      options: Options(
+        headers: authHeader,
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      return GlobalCrudResponse.fromJson(response.data!);
     } else {
       return null;
     }
@@ -572,11 +683,8 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
   //   }
   // }
 
-
   Future<QuizQuestionUpdatedTest?> setMultipleQuestion(
-      {required String testID,
-      required MultipartFile file
-      }) async {
+      {required String testID, required MultipartFile file}) async {
     final String sendingUrl = importQuestionAPI;
     Map<String, dynamic> data = {
       'access_key': $ApiAccessKey,
@@ -584,7 +692,6 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
       'question_file': file
     };
 
-   
     var response = await postByCustom(
       sendingUrl,
       data: FormData.fromMap(data),
@@ -599,8 +706,6 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
       return null;
     }
   }
-
-
 
   // Todo: Quiz Question
   Future<QuizQuestionResponse?> getQuizQuestionList(
@@ -666,6 +771,50 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
     }
   }
 
+  Future<QuizQuestionData?> updateQuestion(
+      {required String quizId,
+      required String questionId,
+      String? questionTypeId,
+      String? questionText,
+      String? marks,
+      String? duration,
+      String? correctAnswer,
+      String? answerDescription,
+      List<String>? optionsList}) async {
+    final String sendingUrl = updateQuestionAPI;
+    Map<String, dynamic> data = {
+      'access_key': $ApiAccessKey,
+      'test_id': quizId,
+      'question_id': questionId,
+      'question_type_id': questionTypeId,
+      'question_text': questionText,
+      'marks': marks,
+      'duration': duration,
+      'correct_answer': correctAnswer,
+      'answer_description': answerDescription
+    };
+
+    if (optionsList != null) {
+      for (int i = 0; i < optionsList.length; i++) {
+        data.addAll({'options_list[$i]': optionsList[i]});
+      }
+    }
+
+    var response = await postByCustom(
+      sendingUrl,
+      data: FormData.fromMap(data),
+      options: Options(
+        headers: authHeader,
+      ),
+    );
+
+    if (response.statusCode == 200 && response.data != null) {
+      return QuizQuestionData.fromJson(response.data['data']);
+    } else {
+      return null;
+    }
+  }
+
   Future<GlobalCrudResponse?> deleteQuestion(
       {required String questionId}) async {
     final String sendingUrl = deleteQuestionAPI;
@@ -681,6 +830,33 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
 
     if (response.statusCode == 200) {
       return GlobalCrudResponse.fromJson(response.data!);
+    } else {
+      return null;
+    }
+  }
+
+  /// ********************************************************************* // COMMON API // /*************************************************************************************************/
+
+  /// [uploadFile] Use For Upload File To Server
+  Future<ImageUploadResponse?> uploadFile(
+      {required MultipartFile file, required String uploadType}) async {
+    final String sendingUrl = uploadDynamicFileAPI;
+    Map<String, dynamic> data = {
+      'access_key': $ApiAccessKey,
+      'context': uploadType,
+      'file': file
+    };
+
+    var response = await postByCustom(
+      sendingUrl,
+      data: data,
+      options: Options(
+        headers: authHeader,
+      ),
+    );
+
+    if (response.statusCode == 200 && response.data != null) {
+      return ImageUploadResponse.fromJson(response.data!);
     } else {
       return null;
     }
