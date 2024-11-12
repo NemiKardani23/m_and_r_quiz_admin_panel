@@ -58,7 +58,10 @@ class _CategoryTypeOptionSelectWidgetState
                         isSelected ? "Selected" : "Select",
                     deleteIcon: isSelected
                         ? const Icon(Icons.check)
-                        : const Icon(Icons.circle_outlined),
+                        : Icon(
+                            Icons.circle_outlined,
+                            color: primaryIconColor.withOpacity(.5),
+                          ),
                     onDeleted: () {
                       setState(() {
                         selectedCategoryType = categoryTypeList[index];
@@ -67,7 +70,7 @@ class _CategoryTypeOptionSelectWidgetState
                     },
                     elevation: isSelected ? NkGeneralSize.nkCommoElevation : 0,
                     color: isSelected
-                        ? WidgetStatePropertyAll(selectionColor.withOpacity(.2))
+                        ? WidgetStatePropertyAll(selectionColor.withOpacity(.8))
                         : WidgetStatePropertyAll(grey.withOpacity(.2)),
                     label: MyRegularText(
                       label: categoryTypeList[index].name,

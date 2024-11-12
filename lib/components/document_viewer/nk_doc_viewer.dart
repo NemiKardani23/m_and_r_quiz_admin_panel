@@ -42,6 +42,9 @@ class _NkWebDocumentViewerState extends State<NkWebDocumentViewer> {
       if (_isPdf()) {
         // Use Google Docs Viewer for PDF files
         _iframeElement.src = widget.networkUrl!;
+        setState(() {
+          _isLoading = false; // Document is loaded
+        });
       } else if (_isOfficeFormat()) {
         // Use Microsoft Office Viewer for Word, Excel, PowerPoint formats
         _iframeElement.src =
