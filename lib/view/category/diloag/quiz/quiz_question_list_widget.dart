@@ -130,13 +130,16 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
           (element) => element.questionTypeId.toString() == e.questionTypeId,
         ),
         qustionCompletionTime: e.duration?.toDuration,
-        description: QuizQuestionOptionsEditorModel(
-          optionController: QuizAddEditorModel(
-            initalValue: e.answerDescription,
-            controller:
-                QuillController.basic(editorFocusNode: defaultFocusNode),
-          ),
-        ),
+        description: e.answerDescription != null &&
+                e.answerDescription!.isNotEmpty
+            ? QuizQuestionOptionsEditorModel(
+                optionController: QuizAddEditorModel(
+                  initalValue: e.answerDescription,
+                  controller:
+                      QuillController.basic(editorFocusNode: defaultFocusNode),
+                ),
+              )
+            : null,
       );
 
       // Add questionModel to loadedQuestions dynamically
@@ -361,11 +364,11 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
     }
   }
 
-  @override
-  void didUpdateWidget(covariant QuizQuestionListWidget oldWidget) {
-    questionList = widget.questionList;
-    super.didUpdateWidget(oldWidget);
-  }
+  // @override
+  // void didUpdateWidget(covariant QuizQuestionListWidget oldWidget) {
+  //   questionList = widget.questionList;
+  //   super.didUpdateWidget(oldWidget);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -373,6 +376,20 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
       children: [
         qUIZZZDATAHANDLER.when(
           context: context,
+          errorBuilder: (p0) {
+            if (questionList.isNotEmpty) {
+              return Column(
+                children: List.generate(questionList.length, (index) {
+                  return questionListWidget(
+                      context, index, questionList[index]);
+                }).addSpaceEveryWidget(space: 10.space),
+              );
+            } else {
+              return NkErrorWidget(
+                errorMessage: p0,
+              );
+            }
+          },
           successBuilder: ($QUIZLIST) {
             return Column(
               children: List.generate(questionList.length, (index) {
@@ -403,7 +420,9 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
                     color: primaryIconColor,
                   ),
                   buttonText: "",
-                  onPressed: onAddQuestion,
+                  onPressed: () {
+                    onAddQuestion();
+                  },
                 ),
               ),
             ],
@@ -414,6 +433,8 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
   }
 
   onAddQuestion() {
+    nkDevLog("ADD QUESTION");
+
     setState(() {
       questionList.add(
         QuizAddQustionEditorModel(
@@ -833,8 +854,7 @@ class _QuizQuestionListWidgetState extends State<QuizQuestionListWidget> {
   }
 
   Widget _descriptionWidget(QuizAddQustionEditorModel model) {
-    if (model.description == null ||
-        model.description?.optionController.initalValue == null) {
+    if (model.description == null) {
       return model.isEditable
           ? TextButton.icon(
               style: const ButtonStyle(

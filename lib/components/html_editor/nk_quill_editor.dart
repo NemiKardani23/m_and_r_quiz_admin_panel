@@ -94,9 +94,14 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
           },
         );
       } else {
-        return NkHtmlViewerWEB(
+        if(widget.initalContent?.isNotEmpty==true){
+return NkHtmlViewerWEB(
           htmlContent: widget.initalContent!,
         );
+        }else{
+          return Container();
+        }
+        
       }
     } else {
       return quillEditor(context);
@@ -179,7 +184,7 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
   }
 
   _setInitialContent() {
-    if (widget.initalContent != null) {
+    if (widget.initalContent != null && widget.initalContent!.isNotEmpty) {
       widget.controller.setContents(htmlToQuillDelta(widget.initalContent)!);
     }
   }

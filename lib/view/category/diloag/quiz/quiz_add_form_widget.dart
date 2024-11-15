@@ -105,7 +105,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: transparent,
+       backgroundColor: primaryColor,
       alignment: Alignment.center,
       title: Column(
         children: [
