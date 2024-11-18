@@ -103,6 +103,7 @@ class _NkWebDocumentViewerState extends State<NkWebDocumentViewer> {
     return widget.networkUrl != null &&
         (widget.networkUrl!.toLowerCase().endsWith('.docx') ||
             widget.networkUrl!.toLowerCase().endsWith('.pptx') ||
+            widget.networkUrl!.toLowerCase().endsWith('.ppsx') ||
             widget.networkUrl!.toLowerCase().endsWith('.xlsx'));
   }
 
