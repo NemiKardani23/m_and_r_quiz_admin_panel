@@ -47,6 +47,10 @@ const String stateStr = "State";
 const String countryStr = "Country";
 const String imageStr = "Image";
 const String addStudentStr = "Add Student";
+const String idStr = "Id";
+const String verifyStr = "Verify";
+const String isAdminStr = "Is Admin";
+const String userStr = "User";
 
 /// QUESTION
 const String questionStr = "Question";
@@ -95,6 +99,8 @@ const String thumbImageStr = "Thumb Image";
 const String headingImageStr = "Heading Image";
 const String titleStr = "Title";
 const String subTitleStr = "Sub Title";
+
+
 
 abstract final class ErrorStrings {
   static const String noDataFound = "No data found";

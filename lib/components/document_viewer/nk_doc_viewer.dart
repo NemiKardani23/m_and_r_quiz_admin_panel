@@ -47,6 +47,9 @@ class _NkWebDocumentViewerState extends State<NkWebDocumentViewer> {
         });
       } else if (_isOfficeFormat()) {
         // Use Microsoft Office Viewer for Word, Excel, PowerPoint formats
+        setState(() {
+          _isLoading = false; // Document is loaded
+        });
         _iframeElement.src =
             'https://view.officeapps.live.com/op/embed.aspx?src=${Uri.encodeComponent(widget.networkUrl!)}&embedded=false';
       } else {

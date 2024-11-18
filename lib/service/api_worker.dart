@@ -10,6 +10,7 @@ import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/question_typ
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/quiz_create_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/quiz_question_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/model/category_response.dart';
+import 'package:m_and_r_quiz_admin_panel/view/student_management/model/user_management_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/category_type_management/model/category_type_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/file_type_management/model/file_type_response.dart';
 
@@ -511,6 +512,26 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
     }
   }
 
+  Future<GlobalCrudResponse?> changeCategoryStatus(
+      {required String status, required String id}) async {
+    final String sendingUrl = categoryUpdateStatusAPI;
+    var data = FormData.fromMap(
+        {'access_key': $ApiAccessKey, 'status': status, 'category_id': id});
+    var response = await postByCustom(
+      sendingUrl,
+      data: data,
+      options: Options(
+        headers: authHeader,
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      return GlobalCrudResponse.fromJson(response.data!);
+    } else {
+      return null;
+    }
+  }
+
   Future<GlobalCrudResponse?> deleteCategory(
       {required String categoryId}) async {
     final String sendingUrl = categoryDeleteAPI;
@@ -550,6 +571,26 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
     }
   }
 
+  Future<GlobalCrudResponse?> changeQuestionStatus(
+      {required String status, required String id}) async {
+    final String sendingUrl = updateQuizStatusAPI;
+    var data = FormData.fromMap(
+        {'access_key': $ApiAccessKey, 'status': status, 'test_id': id});
+    var response = await postByCustom(
+      sendingUrl,
+      data: data,
+      options: Options(
+        headers: authHeader,
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      return GlobalCrudResponse.fromJson(response.data!);
+    } else {
+      return null;
+    }
+  }
+
   /// Todo: Create Exam
   Future<QuizCreateResponse?> getQuizList({required String categoryId}) async {
     final String sendingUrl = quizListAPI;
@@ -577,6 +618,7 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
       {required String title,
       String? description,
       required String fileTypeId,
+      required String typeId,
       MultipartFile? thumbnail,
       required String categoryId}) async {
     final String sendingUrl = createQuizAPI;
@@ -830,6 +872,28 @@ class ApiWorker extends DioClient with ApiSecurity, ApiConstant {
 
     if (response.statusCode == 200) {
       return GlobalCrudResponse.fromJson(response.data!);
+    } else {
+      return null;
+    }
+  }
+
+  // Todo: USER API
+
+  Future<UserManagementResponse?> getUserList() async {
+    final String sendingUrl = userListAPI;
+      Map<String, dynamic> queryParameters = {
+      'access_key': $ApiAccessKey,
+    };
+    var response = await getByCustom(
+      sendingUrl,
+      queryParameters:  queryParameters,
+      options: Options(
+        headers: authHeader,
+      ),
+    );
+
+    if (response.statusCode == 200 && response.data != null) {
+      return UserManagementResponse.fromJson(response.data!);
     } else {
       return null;
     }

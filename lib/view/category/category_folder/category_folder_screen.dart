@@ -35,7 +35,8 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
   DataHandler<List<CategoryData>> categoryData = DataHandler();
   DataHandler<List<FileTypeData>> fileTypeData = DataHandler();
   DataHandler<List<CategoryTypeData>> categoryTypeData = DataHandler();
-  DataHandler<List<QuizCreateData>> quizDataList = DataHandler();
+  DataHandler<List<QuizCreateData>> quizDataList =
+      DataHandler<List<QuizCreateData>>();
 
   List<Map<String, String>> childRoutesData = [];
 
@@ -384,12 +385,56 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
             children: [
               _categoryIcon(categoryData),
               MyRegularText(label: categoryData.name ?? ""),
-              _detailsChips(categoryData)
+              _detailsChips(
+                fileTypeId: categoryData.fileTypeId,
+                typeId: categoryData.typeId,
+                status: categoryData.status,
+              ),
+              5.space,
+              _activeInActiveSelector(
+                status: categoryData.status ?? "inactive",
+                onValueChanged: (value) {
+                  ApiWorker()
+                      .changeCategoryStatus(
+                          status: value ?? "", id: categoryData.id.toString())
+                      .then((response) {
+                    if (response != null && response.status == true) {
+                      setState(() {
+                        categoryData = categoryData.copyWith(status: value);
+                      });
+                    }
+                  });
+                },
+              ),
             ].addSpaceEveryWidget(space: 5.space),
           )
         ],
       ),
     );
+  }
+
+  Widget _activeInActiveSelector(
+      {required String status, void Function(String?)? onValueChanged}) {
+    return CupertinoSlidingSegmentedControl<String>(
+      backgroundColor: primaryColor,
+      thumbColor: selectionColor,
+      onValueChanged: onValueChanged ?? (val) {},
+      groupValue: status,
+      children: _statusTypeOptions(),
+    );
+  }
+
+  Map<String, Widget> _statusTypeOptions() {
+    return {
+      "active": MyRegularText(
+        label: "Active",
+        fontSize: NkFontSize.smallFont,
+      ),
+      "inactive": MyRegularText(
+        label: "Inactive",
+        fontSize: NkFontSize.smallFont,
+      ),
+    };
   }
 
   Widget quizComponent(QuizCreateData quizzzzData, int index) {
@@ -487,9 +532,40 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
                 Image.asset(Assets.assetsIconsExam,
                     height: 1.dp, width: 1.dp, fit: BoxFit.cover)
               ],
-              NkHtmlViewerWEB(
-                htmlContent: quizzzzData.title ?? "",
-              )
+              Center(
+                child: FittedBox(
+                  child: NkHtmlViewerWEB(
+                    htmlContent: quizzzzData.title ?? "",
+                  ),
+                ),
+              ),
+              5.space,
+              _detailsChips(
+                fileTypeId: quizzzzData.fileTypeId,
+                typeId: quizzzzData.typeId,
+                status: quizzzzData.status,
+              ),
+              10.space,
+              _activeInActiveSelector(
+                status: quizzzzData.status ?? "inactive",
+                onValueChanged: (value) async {
+                  var data = await ApiWorker()
+                      .changeQuestionStatus(
+                          status: value ?? "",
+                          id: quizzzzData.testId.toString())
+                      .then((response) {
+                    if (response != null && response.status == true) {
+                      NKToast.success(title: response.message);
+                      return value;
+                    }
+                  });
+                  setState(() {
+                    quizDataList.data?[index] = quizzzzData.copyWith(
+                      status: data,
+                    );
+                  });
+                },
+              ),
             ],
           )
         ],
@@ -513,6 +589,7 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
             imageUrl: categoryData.image ?? "",
             appHeight: iconSize,
             appWidth: iconSize,
+            fit: BoxFit.fill,
           );
         } else {
           // return Icon(
@@ -572,12 +649,12 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
     }
   }
 
-  Widget _detailsChips(CategoryData categoryData) {
+  Widget _detailsChips({num? typeId, num? fileTypeId, String? status}) {
     var categoryTypeViewData = categoryTypeData.data?.firstWhere(
-      (element) => element.id == categoryData.typeId,
+      (element) => element.id == typeId,
     );
     var fileTypeViewData = fileTypeData.data?.firstWhere(
-      (element) => element.id == categoryData.fileTypeId,
+      (element) => element.id == fileTypeId,
     );
     return Wrap(
         alignment: WrapAlignment.start,
@@ -610,36 +687,35 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
             ),
             color: WidgetStatePropertyAll(warningPrimary.withOpacity(.2)),
           ),
-          Chip(
-            padding: 8.horizontal,
-            shape: RoundedRectangleBorder(
-                side: const BorderSide(color: transparent),
-                borderRadius: NkGeneralSize.nkCommonBorderRadius),
-            labelPadding: 0.all,
-            label: MyRegularText(
-              label: categoryData.status ?? "",
-              fontSize: NkFontSize.smallFont,
-              color: _statusColourHandle(categoryData.status ?? "")
-                  .withOpacity(.8),
-            ),
-            color: WidgetStatePropertyAll(
-                _statusColourHandle(categoryData.status ?? "").withOpacity(.2)),
-          ),
+          // Chip(
+          //   padding: 8.horizontal,
+          //   shape: RoundedRectangleBorder(
+          //       side: const BorderSide(color: transparent),
+          //       borderRadius: NkGeneralSize.nkCommonBorderRadius),
+          //   labelPadding: 0.all,
+          //   label: MyRegularText(
+          //     label: status ?? "",
+          //     fontSize: NkFontSize.smallFont,
+          //     color: _statusColourHandle(status ?? "").withOpacity(.8),
+          //   ),
+          //   color: WidgetStatePropertyAll(
+          //       _statusColourHandle(status ?? "").withOpacity(.2)),
+          // ),
         ]);
   }
 
-  Color _statusColourHandle(String status) {
-    switch (status.toUpperCase()) {
-      case "ACTIVE":
-        return infoPrimary;
-      case "INACTIVE":
-        return grey;
-      case "DELETED":
-        return errorColor;
-      default:
-        return infoPrimary;
-    }
-  }
+  // Color _statusColourHandle(String status) {
+  //   switch (status.toUpperCase()) {
+  //     case "ACTIVE":
+  //       return infoPrimary;
+  //     case "INACTIVE":
+  //       return grey;
+  //     case "DELETED":
+  //       return errorColor;
+  //     default:
+  //       return infoPrimary;
+  //   }
+  // }
 
   Widget categoryList() {
     var fileType = convertStringToCategoryType(
@@ -706,36 +782,57 @@ class _CategoryFolderScreenState extends State<CategoryFolderScreen> {
           var selectedIndex =
               p0.indexWhere((element) => element.id == selectedToggleType?.id);
 
-          return MyCommnonContainer(
-            isCardView: true,
-            child: NkToggleButton(
-              initialIndex: selectedIndex.isNegative ? 0 : selectedIndex,
-              options: p0.map((e) => e.typeName ?? "").toList()
-                ..insert(0, "All"),
-              onToggle: (int val) {
-                if (val == 0) {
-                  selectedToggleType = null;
-                  callApi(
-                    perentId: widget.categoryId?.toString(),
-                    categoryLavel: widget.lavel?.toString(),
-                  );
-                } else {
-                  selectedToggleType = p0[val - 1];
+          return Row(
+            children: [
+              MyCommnonContainer(
+                isCardView: true,
+                child: NkToggleButton(
+                  initialIndex: selectedIndex.isNegative ? 0 : selectedIndex,
+                  options: p0.map((e) => e.typeName ?? "").toList()
+                    ..insert(0, "All"),
+                  onToggle: (int val) {
+                    if (val == 0) {
+                      selectedToggleType = null;
+                      callApi(
+                        perentId: widget.categoryId?.toString(),
+                        categoryLavel: widget.lavel?.toString(),
+                      );
+                    } else {
+                      selectedToggleType = p0[val - 1];
 
-                  if (convertStringToCategoryType(
-                          selectedToggleType?.typeName ?? '') ==
-                      CategoryTypeENUM.exam) {
-                    callQuizApi(categoryId: widget.categoryId!.toString());
-                  } else {
-                    callApi(
-                      perentId: widget.categoryId?.toString(),
-                      categoryLavel: widget.lavel?.toString(),
-                      fileTypeId: p0[val - 1].id?.toString(),
-                    );
-                  }
-                }
-              },
-            ),
+                      if (convertStringToCategoryType(
+                              selectedToggleType?.typeName ?? '') ==
+                          CategoryTypeENUM.exam) {
+                        callQuizApi(categoryId: widget.categoryId!.toString());
+                      } else {
+                        callApi(
+                          perentId: widget.categoryId?.toString(),
+                          categoryLavel: widget.lavel?.toString(),
+                          fileTypeId: p0[val - 1].id?.toString(),
+                        );
+                      }
+                    }
+                  },
+                ),
+              ),
+              5.space,
+              IconButton.filledTonal(
+                  padding: 0.all,
+                  onPressed: () {
+                    if (convertStringToCategoryType(
+                            selectedToggleType?.typeName ?? '') ==
+                        CategoryTypeENUM.exam) {
+                      callQuizApi(categoryId: widget.categoryId!.toString());
+                    } else {
+                      callApi(
+                        perentId: widget.categoryId?.toString(),
+                        categoryLavel: widget.lavel?.toString(),
+                        fileTypeId: selectedToggleType?.id?.toString(),
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.refresh, color: primaryIconColor))
+            ],
           );
         },
       );

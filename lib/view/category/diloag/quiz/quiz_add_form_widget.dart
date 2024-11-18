@@ -17,6 +17,8 @@ import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/quiz_add_edi
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/model/quiz_create_response.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/diloag/quiz/quiz_question_list_widget.dart';
 import 'package:m_and_r_quiz_admin_panel/view/category/model/category_response.dart';
+import 'package:m_and_r_quiz_admin_panel/view/utills_management/category_type_management/model/category_type_response.dart';
+import 'package:m_and_r_quiz_admin_panel/view/utills_management/category_type_management/widget/category_type_option_select_pick.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/file_type_management/model/file_type_response.dart';
 
 enum QuestionENUM { multiple, trueFalse }
@@ -88,6 +90,9 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
     Uint8List? imageBytes,
     String? imageName,
   )? onImagePicked;
+
+  CategoryTypeData? selectedCategoryType;
+
   @override
   void initState() {
     questionTypeDataHandler.startLoading();
@@ -105,7 +110,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-       backgroundColor: primaryColor,
+      backgroundColor: primaryColor,
       alignment: Alignment.center,
       title: Column(
         children: [
@@ -135,7 +140,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
         ],
       ),
       content: AlertDialog(
-         backgroundColor: transparent,
+        backgroundColor: transparent,
         contentPadding: 0.all,
         titlePadding: 0.all.copyWith(bottom: nkRegularPadding.bottom),
         content: SingleChildScrollView(
@@ -255,6 +260,23 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
               _quizTitle(quizAddEditorModelList.first),
               const MyRegularText(label: subTitleStr),
               _quizSubTitle(quizAddEditorModelList[1]),
+              const MyRegularText(label: "$folderStr $categoryTypeStr"),
+              NkEnableDisableWidget(
+                isEnable: isCreateQuestion,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints.loose(context.isMobile
+                      ? Size.fromWidth((context.width))
+                      : Size.fromWidth(context.width * 0.5)),
+                  child: CategoryTypeOptionSelectWidget(
+                    onValueChanged: (categoryType) {
+                      setState(() {
+                        selectedCategoryType = categoryType;
+                      });
+                    },
+                    value: selectedCategoryType,
+                  ),
+                ),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -418,6 +440,9 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
     if (widget.quizCreateData != null) {
       nkDevLog("QIZ DATA : ${widget.quizCreateData}");
       setState(() {
+        selectedCategoryType = CategoryTypeData.fromJson({
+          "id": widget.quizCreateData?.typeId,
+        });
         quizCreateData = widget.quizCreateData!;
         quizAddEditorModelList.first.controller
             .setContents(htmlToQuillDelta(quizCreateData?.title!)!);
@@ -441,12 +466,16 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
         titleData.plainTextEditingValue.text.toString())) {
       NKToast.error(title: "Title can't be empty");
       return;
+    } else if (selectedCategoryType == null) {
+      NKToast.error(title: "Please Select Category Type");
+      return;
     } else if (CheckNullData.checkNullOrEmptyString(
         description.plainTextEditingValue.text.toString())) {
       var convertedTitle = await quillDeltaToHtmlAndUpload(
           titleData.document.toDelta().toJson());
       ApiWorker()
           .createQuiz(
+        typeId: selectedCategoryType!.id.toString(),
         fileTypeId: widget.fileTypeModel.id.toString(),
         title: convertedTitle!,
         categoryId: widget.parentId!,
@@ -475,6 +504,7 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
           description.document.toDelta().toJson());
       ApiWorker()
           .createQuiz(
+              typeId: selectedCategoryType!.id.toString(),
               fileTypeId: widget.fileTypeModel.id.toString(),
               title: convertedTitle!,
               categoryId: widget.parentId!,
@@ -551,7 +581,11 @@ class _QuizAddFormWidgetState extends State<QuizAddFormWidget> {
         imageUrl: quizCreateData?.thumbnail,
         pickType: FileType.image,
         lableText: headingImageStr,
-        onFilePicked: (imageBytes, imageName) {},
+        onFilePicked: (imageBytes, imageName) {
+          setState(() {
+            onImagePicked = (imageBytes, imageName);
+          });
+        },
       ),
     );
   }

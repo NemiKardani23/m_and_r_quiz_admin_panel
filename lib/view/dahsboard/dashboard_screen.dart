@@ -130,6 +130,12 @@ class _AppMenu extends StatelessWidget {
                       icon: Icon(
                         Icons.category,
                         color: selctedIconColor(3),
+                      )), _webTabBuilder(4,
+                      onItemSelected: onItemSelected,
+                      tabName: userStr,
+                      icon: Icon(
+                        Icons.people,
+                        color: selctedIconColor(4),
                       )),
                 ].addSpaceEveryWidget(space: 10.space),
               ),

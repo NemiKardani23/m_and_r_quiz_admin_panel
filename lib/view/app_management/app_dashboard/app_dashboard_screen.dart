@@ -1,5 +1,4 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:image_network/image_network.dart';
 import 'package:m_and_r_quiz_admin_panel/export/___app_file_exporter.dart';
 import 'package:m_and_r_quiz_admin_panel/service/api_worker.dart';
 import 'package:m_and_r_quiz_admin_panel/view/app_management/app_dashboard/diloag/add_slider_diloag.dart';
@@ -172,15 +171,7 @@ class _AppDashboardScreenState extends State<AppDashboardScreen> {
                                               return AddSliderDiloag(
                                                 sliderListModel: data,
                                                 onUpdate: (updatedSlider) {
-                                                  if (sliderListData
-                                                          .data?.isNotEmpty ??
-                                                      false) {
-                                                    sliderListData.data
-                                                        ?.replaceRange(
-                                                            index,
-                                                            index + 1,
-                                                            [updatedSlider!]);
-                                                  }
+                                                    sliderData;
                                                 },
                                               );
                                             }).then(

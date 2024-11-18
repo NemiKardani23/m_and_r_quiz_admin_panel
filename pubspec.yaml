@@ -29,7 +29,7 @@ dependencies:
   shared_preferences: ^2.2.3
 
   # Network Image
-  image_network: ^2.5.6
+  extended_image: ^9.0.7
 
   #API handler
   toastification:  ^2.0.0
@@ -48,6 +48,12 @@ dependencies:
 
   #Smooth Page Indicator
   smooth_page_indicator: ^1.2.0+3
+
+  #Tbale View
+  syncfusion_flutter_datagrid: ^27.2.2
+  syncfusion_flutter_core: ^27.2.2
+
+
   ########################################## ROUTING ##########################################
   go_router: ^14.2.1
 

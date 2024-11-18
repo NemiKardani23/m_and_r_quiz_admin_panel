@@ -39,6 +39,7 @@ mixin class ApiConstant implements APIStatusCode {
   final String categoryAddAPI = "create_category.php";
   final String categoryUpdateAPI = "update_category.php";
   final String categoryDeleteAPI = "delete_category.php";
+  final String categoryUpdateStatusAPI = "update_category_status.php";
 
   /// Question Type
   final String questionTypeAPI = "view_question_types.php";
@@ -47,6 +48,7 @@ mixin class ApiConstant implements APIStatusCode {
   final String quizListAPI = "view_practice_tests.php";
   final String createQuizAPI = "create_practice_test.php";
   final String updateQuizAPI = "update_practice_test.php";
+  final String updateQuizStatusAPI = "update_practice_test_status.php";
   final String deleteQuizAPI = "delete_practice_test.php";
 
   /// Quiz Question
@@ -59,6 +61,9 @@ mixin class ApiConstant implements APIStatusCode {
 
   final String downloadSampleQuestionAPI = "download_sample_excel.php";
   final String importQuestionAPI = "import_questions.php";
+
+  // User
+  final String userListAPI = "view_users.php";
 
   ///------- Custom API ------------
 

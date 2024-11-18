@@ -94,14 +94,13 @@ class _NkQuillEditorState extends State<NkQuillEditor> {
           },
         );
       } else {
-        if(widget.initalContent?.isNotEmpty==true){
-return NkHtmlViewerWEB(
-          htmlContent: widget.initalContent!,
-        );
-        }else{
+        if (widget.initalContent?.isNotEmpty == true) {
+          return NkHtmlViewerWEB(
+            htmlContent: widget.initalContent!,
+          );
+        } else {
           return Container();
         }
-        
       }
     } else {
       return quillEditor(context);
@@ -110,7 +109,7 @@ return NkHtmlViewerWEB(
 
   Widget quillEditor(BuildContext context) {
     var themeData = Theme.of(context).copyWith(
-      cupertinoOverrideTheme:  const CupertinoThemeData(
+      cupertinoOverrideTheme: const CupertinoThemeData(
           brightness: Brightness.dark,
           primaryColor: secondaryColor,
           scaffoldBackgroundColor: black,
@@ -119,8 +118,8 @@ return NkHtmlViewerWEB(
           primaryContrastingColor: secondaryColor),
       cardTheme: const CardTheme(color: transparent, elevation: 0),
       bottomSheetTheme:
-           const BottomSheetThemeData(backgroundColor: secondaryColor),
-      sliderTheme:  const SliderThemeData(
+          const BottomSheetThemeData(backgroundColor: secondaryColor),
+      sliderTheme: const SliderThemeData(
           thumbColor: Colors.green,
           activeTrackColor: secondaryColor,
           inactiveTrackColor: secondaryColor,
@@ -131,20 +130,25 @@ return NkHtmlViewerWEB(
         foregroundColor: primaryTextColor,
         textStyle: const TextStyle(color: primaryTextColor),
       )),
-      dialogTheme:  const DialogTheme(
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: secondaryColor,
+        selectionColor: selectionColor.withOpacity(.2),
+        selectionHandleColor: selectionColor.withOpacity(.2),
+      ),
+      dialogTheme: const DialogTheme(
           iconColor: primaryIconColor,
           backgroundColor: primaryColor,
           surfaceTintColor: primaryColor,
           contentTextStyle: TextStyle(color: primaryTextColor),
           titleTextStyle: TextStyle(color: primaryTextColor)),
-      checkboxTheme:  const CheckboxThemeData(
+      checkboxTheme: const CheckboxThemeData(
           checkColor: WidgetStatePropertyAll(secondaryColor),
           fillColor: WidgetStatePropertyAll(selectionColor)),
     );
     return Theme(
       data: themeData,
       child: CupertinoTheme(
-        data:  const CupertinoThemeData(
+        data: const CupertinoThemeData(
             brightness: Brightness.light,
             primaryColor: secondaryColor,
             scaffoldBackgroundColor: black,
@@ -172,7 +176,7 @@ return NkHtmlViewerWEB(
                     ? FlutterQuillEmbeds.editorWebBuilders()
                     : FlutterQuillEmbeds.editorBuilders(),
                 maxHeight: 300,
-                dialogTheme:  const quill.QuillDialogTheme(
+                dialogTheme: const quill.QuillDialogTheme(
                   dialogBackgroundColor: primaryColor,
                   isWrappable: true,
                   buttonTextStyle: TextStyle(color: primaryTextColor),
@@ -340,8 +344,8 @@ class NkQuillToolbar extends StatelessWidget {
     var themeData = Theme.of(context).copyWith(
       cardTheme: const CardTheme(color: transparent, elevation: 0),
       bottomSheetTheme:
-           const BottomSheetThemeData(backgroundColor: secondaryColor),
-      sliderTheme:  const SliderThemeData(
+          const BottomSheetThemeData(backgroundColor: secondaryColor),
+      sliderTheme: const SliderThemeData(
           thumbColor: Colors.green,
           activeTrackColor: secondaryColor,
           inactiveTrackColor: secondaryColor,
@@ -352,13 +356,13 @@ class NkQuillToolbar extends StatelessWidget {
         foregroundColor: primaryTextColor,
         textStyle: const TextStyle(color: primaryTextColor),
       )),
-      dialogTheme:  const DialogTheme(
+      dialogTheme: const DialogTheme(
           iconColor: primaryIconColor,
           backgroundColor: primaryColor,
           surfaceTintColor: primaryColor,
           contentTextStyle: TextStyle(color: primaryTextColor),
           titleTextStyle: TextStyle(color: primaryTextColor)),
-      checkboxTheme:  const CheckboxThemeData(
+      checkboxTheme: const CheckboxThemeData(
           checkColor: WidgetStatePropertyAll(secondaryColor),
           fillColor: WidgetStatePropertyAll(selectionColor)),
     );
@@ -374,7 +378,7 @@ class NkQuillToolbar extends StatelessWidget {
           toolbarIconCrossAlignment: WrapCrossAlignment.start,
           axis: Axis.horizontal,
           buttonOptions: const _NkQuillToolbarButtonOptions(),
-          dialogTheme:  const quill.QuillDialogTheme(
+          dialogTheme: const quill.QuillDialogTheme(
             dialogBackgroundColor: primaryColor,
             isWrappable: true,
             buttonTextStyle: TextStyle(color: primaryTextColor),
@@ -393,7 +397,7 @@ class NkQuillToolbar extends StatelessWidget {
                           );
                     },
                   ),
-                  dialogTheme:  const quill.QuillDialogTheme(
+                  dialogTheme: const quill.QuillDialogTheme(
                     dialogBackgroundColor: primaryColor,
                     isWrappable: true,
                     buttonTextStyle: TextStyle(color: primaryTextColor),

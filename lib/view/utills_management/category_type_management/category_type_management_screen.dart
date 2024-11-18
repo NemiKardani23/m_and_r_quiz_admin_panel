@@ -102,9 +102,11 @@ class _CategoryTypeManagementScreenState
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MyRegularText(
-              align: TextAlign.start,
-              label: catType.name,
+            Flexible(
+              child: MyRegularText(
+                align: TextAlign.start,
+                label: catType.name,
+              ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -182,7 +184,7 @@ class _CategoryTypeManagementScreenState
                     }
                   },
                   groupValue: catType.status,
-                  children: _statusTypeOptions(),
+                  children: statusTypeOptions(),
                 )
               ],
             ),
@@ -206,7 +208,7 @@ class _CategoryTypeManagementScreenState
     );
   }
 
-  Map<String, Widget> _statusTypeOptions() {
+  Map<String, Widget> statusTypeOptions() {
     return {
       "active": MyRegularText(
         label: "Active",

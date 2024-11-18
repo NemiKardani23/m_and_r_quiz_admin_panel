@@ -73,6 +73,7 @@ class QuizCreateData {
     required this.updatedAt,
     required this.createdBy,
     required this.fileTypeId,
+    required this.typeId,
   });
 
   final int? testId;
@@ -88,6 +89,7 @@ class QuizCreateData {
   final DateTime? updatedAt;
   final num? createdBy;
   final int? fileTypeId;
+  final int? typeId;
 
   QuizCreateData copyWith({
     int? testId,
@@ -103,6 +105,7 @@ class QuizCreateData {
     DateTime? updatedAt,
     num? createdBy,
     int? fileTypeId,
+    int? typeId,
   }) {
     return QuizCreateData(
       testId: testId ?? this.testId,
@@ -118,6 +121,7 @@ class QuizCreateData {
       updatedAt: updatedAt ?? this.updatedAt,
       createdBy: createdBy ?? this.createdBy,
       fileTypeId: fileTypeId ?? this.fileTypeId,
+      typeId: typeId ?? this.typeId,
     );
   }
 
@@ -136,6 +140,7 @@ class QuizCreateData {
       updatedAt: DateTime.tryParse(json["updated_at"] ?? ""),
       createdBy: json["created_by"],
       fileTypeId: int.tryParse(json["file_type_id"].toString()),
+      typeId: int.tryParse(json["type_id"].toString()),
     );
   }
 
@@ -153,10 +158,11 @@ class QuizCreateData {
         "updated_at": updatedAt?.toIso8601String(),
         "created_by": createdBy,
         "file_type_id": fileTypeId,
+        "type_id": typeId,
       };
 
   @override
   String toString() {
-    return "$testId, $categoryId, $title, $description, $thumbnail, $totalQuestions, $totalDuration, $totalMarks, $status, $createdAt, $updatedAt, $createdBy, $fileTypeId, ";
+    return "$testId, $categoryId, $title, $description, $thumbnail, $totalQuestions, $totalDuration, $totalMarks, $status, $createdAt, $updatedAt, $createdBy, $fileTypeId, $typeId, ";
   }
 }

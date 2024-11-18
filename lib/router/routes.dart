@@ -9,6 +9,7 @@ import 'package:m_and_r_quiz_admin_panel/view/category/category_folder/category_
 import 'package:m_and_r_quiz_admin_panel/view/category/category_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/dahsboard/dashboard_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/home/home_screen.dart';
+import 'package:m_and_r_quiz_admin_panel/view/student_management/user_management_screen.dart';
 import 'package:m_and_r_quiz_admin_panel/view/utills_management/utills_management_screen.dart';
 
 class AppRoutes {
@@ -22,6 +23,8 @@ class AppRoutes {
   static const String subCategoryScreen = "sub-category";
   static const String subCategoryPass =
       "sub-category/:id/:lavel/:routeChildPath/:fileType";
+
+  static const String studentManagementScreen = "/student-management";
 
   static GlobalKey<NavigatorState>? $navigatorKey = GlobalKey<NavigatorState>();
 
@@ -95,7 +98,6 @@ class AppRoutes {
                     },
                   ),
                 ]),
-           
             StatefulShellBranch(routes: [
               GoRoute(
                 path: appManagementScreen,
@@ -198,7 +200,22 @@ class AppRoutes {
                       },
                     ),
                   ]),
-              
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                path: studentManagementScreen,
+                name: studentManagementScreen,
+                builder: (context, state) {
+                  return const UserManagementScreen();
+                },
+                pageBuilder: (context, state) {
+                  return CustomPageBuilder.getTransitionPage(
+                      child: const UserManagementScreen(),
+                      settings: state,
+                      context: context,
+                      state: state);
+                },
+              ),
             ]),
           ])
     ];

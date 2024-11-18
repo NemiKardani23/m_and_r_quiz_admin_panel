@@ -57,7 +57,7 @@ class _CategoryTypeOptionSelectWidgetState
                     deleteButtonTooltipMessage:
                         isSelected ? "Selected" : "Select",
                     deleteIcon: isSelected
-                        ? const Icon(Icons.check)
+                        ? const Icon(Icons.check, color: primaryIconColor)
                         : Icon(
                             Icons.circle_outlined,
                             color: primaryIconColor.withOpacity(.5),
@@ -69,6 +69,7 @@ class _CategoryTypeOptionSelectWidgetState
                       widget.onValueChanged?.call(selectedCategoryType);
                     },
                     elevation: isSelected ? NkGeneralSize.nkCommoElevation : 0,
+                    side: const BorderSide(color: transparent),
                     color: isSelected
                         ? WidgetStatePropertyAll(selectionColor.withOpacity(.8))
                         : WidgetStatePropertyAll(grey.withOpacity(.2)),

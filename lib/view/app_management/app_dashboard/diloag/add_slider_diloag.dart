@@ -89,8 +89,10 @@ class _AddSliderDiloagState extends State<AddSliderDiloag> {
                       NKToast.success(
                           title:
                               "$bannerStr ${SuccessStrings.updatedSuccessfully}");
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
                       widget.onUpdate?.call(data);
-                      Navigator.pop(context);
                     }
                   });
                 }
@@ -110,9 +112,10 @@ class _AddSliderDiloagState extends State<AddSliderDiloag> {
                       NKToast.success(
                           title:
                               "$bannerStr ${SuccessStrings.addedSuccessfully}");
-
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
                       widget.onUpdate?.call(null);
-                      Navigator.pop(context);
                     }
                   });
                 }
